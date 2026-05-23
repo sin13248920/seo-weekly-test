@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>방송 송출 시스템</title>
+
+<style>
+
+/* 전체 폰트 */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+
+    font-family:
+        "굴림",
+        Gulim,
+        "돋움",
+        Dotum,
+        sans-serif !important;
+}
+
+html, body{
+    width:100%;
+    height:100%;
+}
+
+body{
+    background:#0b0f14;
+    color:#d7dde5;
+    overflow:hidden;
+    position:relative;
+}
+
+/* CRT 효과 */
+body::before{
+    content:"";
+
+    position:absolute;
+    inset:0;
+
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            rgba(255,255,255,0.03) 0px,
+            rgba(255,255,255,0.03) 1px,
+            transparent 1px,
+            transparent 3px
+        );
+
+    opacity:0.08;
+
+    pointer-events:none;
+}
+
+/* 상단 바 */
+.topbar{
+    width:100%;
+    height:30px;
+
+    background:#1b222b;
+
+    border-bottom:1px solid #47515d;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 10px;
+
+    font-size:12px;
+}
+
+.topbar-left{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.led{
+    width:8px;
+    height:8px;
+
+    background:#4dff88;
+
+    border-radius:1px;
+
+    box-shadow:0 0 8px #4dff88;
+}
+
+.topbar-right{
+    color:#909aa8;
+}
+
+/* 중앙 */
+.center-area{
+    width:100%;
+    height:calc(100vh - 58px);
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    padding:20px;
+}
+
+/* 제목 */
+.main-title{
+    font-size:34px;
+    color:#f3f6fa;
+
+    margin-bottom:10px;
+}
+
+.system-status{
+    color:#6fff9e;
+
+    font-size:13px;
+
+    margin-bottom:36px;
+}
+
+/* 시계 */
+.big-clock{
+    font-size:84px;
+    font-weight:bold;
+
+    color:#ffffff;
+
+    letter-spacing:4px;
+
+    margin-bottom:18px;
+}
+
+/* 날짜 */
+.date-text{
+    font-size:18px;
+
+    color:#98a4b4;
+
+    margin-bottom:38px;
+}
+
+/* 다음 방송 */
+.next-box{
+    width:420px;
+    max-width:95%;
+
+    background:#12171d;
+
+    border:1px solid #38424e;
+
+    padding:20px;
+
+    margin-bottom:18px;
+}
+
+.next-title{
+    font-size:13px;
+
+    color:#77ffac;
+
+    margin-bottom:14px;
+}
+
+.next-time{
+    font-size:32px;
+    font-weight:bold;
+
+    color:#ffffff;
+
+    margin-bottom:10px;
+}
+
+.next-file{
+    color:#aab4c2;
+
+    font-size:14px;
+}
+
+/* 버튼 */
+.schedule-btn{
+    width:220px;
+    height:42px;
+
+    background:#445160;
+
+    border:1px solid #8994a1;
+
+    color:#ffffff;
+
+    font-size:14px;
+
+    cursor:pointer;
+}
+
+.schedule-btn:hover{
+    background:#566577;
+}
+
+/* 팝업 */
+.schedule-popup{
+    position:fixed;
+
+    top:50%;
+    left:50%;
+
+    transform:translate(-50%, -50%);
+
+    width:420px;
+    max-width:94%;
+
+    max-height:70vh;
+
+    overflow-y:auto;
+
+    background:#12171d;
+
+    border:1px solid #495463;
+
+    display:none;
+
+    z-index:1000;
+
+    box-shadow:
+        0 0 40px rgba(0,0,0,0.7);
+}
+
+.popup-header{
+    height:36px;
+
+    background:#1f2731;
+
+    border-bottom:1px solid #495463;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 12px;
+
+    font-size:13px;
+}
+
+.close-btn{
+    cursor:pointer;
+
+    color:#ff8f8f;
+}
+
+.schedule-list{
+    padding:14px;
+}
+
+.schedule-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:10px 12px;
+
+    margin-bottom:8px;
+
+    background:#0e1318;
+
+    border:1px solid #313b47;
+
+    font-size:14px;
+}
+
+.schedule-time{
+    color:#73ffab;
+
+    font-weight:bold;
+}
+
+.schedule-file{
+    color:#c0c7d1;
+}
+
+/* 배경 */
+.overlay{
+    position:fixed;
+    inset:0;
+
+    background:rgba(0,0,0,0.55);
+
+    display:none;
+
+    z-index:999;
+}
+
+/* 하단 */
+.footer{
+    width:100%;
+    height:28px;
+
+    background:#1a2027;
+
+    border-top:1px solid #39414d;
+
+    position:absolute;
+    bottom:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 10px;
+
+    font-size:12px;
+
+    color:#8d98a7;
+}
+
+.footer-right{
+    color:#73ffab;
+}
+
+/* 모바일 */
+@media(max-width:700px){
+
+    .big-clock{
+        font-size:52px;
+    }
+
+    .main-title{
+        font-size:26px;
+    }
+
+    .next-time{
+        font-size:24px;
+    }
+
+}
+
+</style>
+</head>
+<body>
+
+<!-- 상단 -->
+<div class="topbar">
+
+    <div class="topbar-left">
+
+        <div class="led"></div>
+
+        <div>
+            방송 송출 시스템
+        </div>
+
+    </div>
+
+    <div class="topbar-right">
+        AUTO MODE
+    </div>
+
+</div>
+
+<!-- 중앙 -->
+<div class="center-area">
+
+    <div class="main-title">
+        자동 방송 송출기
+    </div>
+
+    <div class="system-status" id="systemStatus">
+        SYSTEM READY
+    </div>
+
+    <div class="big-clock" id="clock">
+        00:00:00
+    </div>
+
+    <div class="date-text" id="dateText">
+        2026-05-08
+    </div>
+
+    <div class="next-box">
+
+        <div class="next-title">
+            다음 예약 방송
+        </div>
+
+        <div class="next-time" id="nextTime">
+            --:--
+        </div>
+
+        <div class="next-file" id="nextFile">
+            대기 중
+        </div>
+
+    </div>
+
+    <button class="schedule-btn" onclick="openSchedule()">
+        예약 방송 시간 보기
+    </button>
+
+</div>
+
+<!-- 팝업 -->
+<div class="overlay" id="overlay"></div>
+
+<div class="schedule-popup" id="schedulePopup">
+
+    <div class="popup-header">
+
+        <div>
+            예약 방송 목록
+        </div>
+
+        <div class="close-btn" onclick="closeSchedule()">
+            닫기
+        </div>
+
+    </div>
+
+    <div class="schedule-list" id="scheduleList">
+    </div>
+
+</div>
+
+<!-- 하단 -->
+<div class="footer">
+
+    <div>
+        STATUS : RUNNING
+    </div>
+
+    <div class="footer-right">
+        ANNOUNCEMENT AUTO PLAYER
+    </div>
+
+</div>
+
+<!-- 오디오 -->
+<audio id="player"></audio>
+
+<script>
+
+/* 방송 시간표 */
+const schedules = [
+
+    { time:"07:50", file:"1.mp3" },
+    { time:"08:00", file:"2.mp3" },
+    { time:"08:20", file:"3.mp3" },
+    { time:"08:30", file:"4.mp3" },
+    { time:"09:20", file:"5.mp3" },
+    { time:"09:30", file:"6.mp3" },
+    { time:"10:20", file:"7.mp3" },
+    { time:"10:30", file:"8.mp3" },
+    { time:"11:20", file:"9.mp3" },
+    { time:"11:30", file:"10.mp3" },
+    { time:"12:20", file:"11.mp3" },
+    { time:"13:15", file:"12.mp3" },
+    { time:"13:20", file:"13.mp3" },
+    { time:"14:10", file:"14.mp3" },
+    { time:"14:20", file:"15.mp3" },
+    { time:"15:10", file:"chime/chime7.mp3" },
+    { time:"15:20", file:"17.mp3" },
+    { time:"16:10", file:"18.mp3" }
+
+];
+
+const player = document.getElementById('player');
+
+let playedToday = {};
+
+/* 시계 */
+function updateClock(){
+
+    const now = new Date();
+
+    const h = String(now.getHours()).padStart(2,'0');
+    const m = String(now.getMinutes()).padStart(2,'0');
+    const s = String(now.getSeconds()).padStart(2,'0');
+
+    const currentTime = `${h}:${m}`;
+    const currentSeconds = `${h}:${m}:${s}`;
+
+    document.getElementById('clock').innerText =
+        currentSeconds;
+
+    document.getElementById('dateText').innerText =
+        now.getFullYear() + "-" +
+        String(now.getMonth()+1).padStart(2,'0') + "-" +
+        String(now.getDate()).padStart(2,'0');
+
+    checkSchedule(currentTime, s);
+
+    updateNextSchedule(currentTime);
+
+}
+
+/* 방송 체크 */
+function checkSchedule(currentTime, seconds){
+
+    schedules.forEach(schedule => {
+
+        if(
+            currentTime === schedule.time &&
+            seconds === "00" &&
+            !playedToday[schedule.time]
+        ){
+
+            playedToday[schedule.time] = true;
+
+            playAudio(schedule.file);
+
+        }
+
+    });
+
+}
+
+/* 오디오 재생 */
+function playAudio(file){
+
+    player.src = file;
+
+    player.play();
+
+    document.getElementById('systemStatus')
+    .innerText =
+        `NOW PLAYING : ${file}`;
+
+}
+
+/* 다음 방송 */
+function updateNextSchedule(currentTime){
+
+    const nowMinutes =
+        convertToMinutes(currentTime);
+
+    let next = null;
+
+    for(let schedule of schedules){
+
+        if(
+            convertToMinutes(schedule.time)
+            > nowMinutes
+        ){
+            next = schedule;
+            break;
+        }
+
+    }
+
+    if(next){
+
+        document.getElementById('nextTime')
+        .innerText = next.time;
+
+        document.getElementById('nextFile')
+        .innerText =
+            `재생 파일 : ${next.file}`;
+
+    } else {
+
+        document.getElementById('nextTime')
+        .innerText = '종료';
+
+        document.getElementById('nextFile')
+        .innerText =
+            '오늘 예약 방송 없음';
+
+    }
+
+}
+
+/* 시간 변환 */
+function convertToMinutes(time){
+
+    const parts = time.split(':');
+
+    return (
+        parseInt(parts[0]) * 60 +
+        parseInt(parts[1])
+    );
+
+}
+
+/* 예약표 생성 */
+function createScheduleList(){
+
+    const list =
+        document.getElementById('scheduleList');
+
+    list.innerHTML = '';
+
+    schedules.forEach(schedule => {
+
+        const item =
+            document.createElement('div');
+
+        item.className = 'schedule-item';
+
+        item.innerHTML = `
+            <div class="schedule-time">
+                ${schedule.time}
+            </div>
+
+            <div class="schedule-file">
+                ${schedule.file}
+            </div>
+        `;
+
+        list.appendChild(item);
+
+    });
+
+}
+
+/* 팝업 열기 */
+function openSchedule(){
+
+    document.getElementById('overlay')
+    .style.display = 'block';
+
+    document.getElementById('schedulePopup')
+    .style.display = 'block';
+
+}
+
+/* 팝업 닫기 */
+function closeSchedule(){
+
+    document.getElementById('overlay')
+    .style.display = 'none';
+
+    document.getElementById('schedulePopup')
+    .style.display = 'none';
+
+}
+
+/* 자정 초기화 */
+setInterval(() => {
+
+    const now = new Date();
+
+    if(
+        now.getHours() === 0 &&
+        now.getMinutes() === 0 &&
+        now.getSeconds() === 0
+    ){
+        playedToday = {};
+    }
+
+}, 1000);
+
+/* 시작 */
+createScheduleList();
+
+setInterval(updateClock, 1000);
+
+updateClock();
+
+</script>
+
+</body>
+</html>

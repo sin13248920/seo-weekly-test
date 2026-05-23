@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Header Component</title>
+
+    <style>
+        /* ===== 커스텀 폰트 ===== */
+        @font-face {
+            font-family: 'GwangjuFont';
+            src: url('빛고을광주_Medium.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        /* 전체 폰트 적용 */
+        * {
+            font-family: 'GwangjuFont', sans-serif;
+        }
+
+        /* ===== 헤더 ===== */
+        .site-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 10%;
+            background-color: #ffffff;
+            width: 100%;
+            border-bottom: 1px solid #eeeeee;
+            transition: all 0.3s ease;
+        }
+
+        /* ===== 로고 ===== */
+        .header-logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-logo a {
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .header-logo img {
+            height: 80px;   /* 🔥 로고 확대 */
+            width: auto;
+            display: block;
+        }
+
+        /* ===== 메뉴 ===== */
+        .header-nav {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .header-nav ul {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 50px;
+        }
+
+        .header-nav a {
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            color: #000000;
+            text-decoration: none;
+            text-transform: uppercase;
+            position: relative;
+            padding-bottom: 6px;
+            transition: color 0.3s ease;
+        }
+
+        .header-nav a:hover {
+            color: #555555;
+        }
+
+        .header-nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #002c5f;
+            transition: width 0.3s ease;
+        }
+
+        .header-nav a:hover::after {
+            width: 100%;
+        }
+
+        /* ===== 반응형 ===== */
+        @media (max-width: 768px) {
+            .site-header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px 5%;
+            }
+
+            .header-logo {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .header-nav {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .header-nav ul {
+                gap: 20px;
+            }
+
+            .header-nav a {
+                font-size: 13px;
+            }
+
+            .header-logo img {
+                height: 70px; /* 모바일에서는 살짝 줄임 */
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="site-header">
+
+    <!-- 로고 -->
+    <div class="header-logo">
+        <a href="index.html">
+            <img src="seoarchilogo.png" alt="SEO Architecture Logo">
+        </a>
+    </div>
+
+    <!-- 메뉴 -->
+    <nav class="header-nav">
+        <ul>
+            <li><a href="SERVICE.html">Service</a></li>
+            <li><a href="PROJECT.html">Project</a></li>
+            <li><a href="ABOUT.html">About</a></li>
+            <li><a href="CONTACT US.html">Contact Us</a></li>
+        </ul>
+    </nav>
+
+</header>
+
+</body>
+</html>
