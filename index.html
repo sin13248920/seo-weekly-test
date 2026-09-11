@@ -18,15 +18,16 @@
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             color: #222222;
             line-height: 1.6;
-            background-color: #f8f9fa;
+            background-color: #ffffff;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            padding-top: 60px;
         }
 
-        /* 고정된 헤더 스타일 */
+        /* 고정된 헤더 스타일 (스크롤 프로세서 제외, 뷰어와 동일) */
         header {
-            position: sticky;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
@@ -39,13 +40,14 @@
         }
 
         .header-container {
-            max-width: 1000px;
+            max-width: 1100px;
             width: 100%;
             margin: 0 auto;
             padding: 0 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            height: 100%;
         }
 
         .logo-img {
@@ -55,121 +57,250 @@
         }
 
         .header-nav {
-            font-size: 14px;
-            font-weight: 600;
-            color: #555555;
+            display: flex;
+            gap: 24px;
+            font-size: 15px;
+            font-weight: 700;
         }
 
-        /* 메인 콘텐츠 래퍼 */
-        .main-wrapper {
-            max-width: 1000px;
+        .header-nav a {
+            text-decoration: none;
+            color: #111111;
+        }
+
+        .header-nav a:hover {
+            color: #C91C1C;
+        }
+
+        /* 메인 콘텐츠 영역 (중앙일보 스타일 그리드) */
+        .main-container {
+            max-width: 1100px;
             width: 100%;
-            margin: 40px auto;
+            margin: 30px auto 60px auto;
             padding: 0 20px;
             flex: 1;
+        }
+
+        /* 섹션 타이틀 */
+        .section-header {
+            border-bottom: 2px solid #111111;
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
         }
 
         .section-title {
             font-size: 20px;
             font-weight: 800;
             color: #111111;
-            margin-bottom: 24px;
-            border-left: 4px solid #C91C1C;
-            padding-left: 12px;
             letter-spacing: -0.5px;
         }
 
-        /* 기사 카드 그리드 레이아웃 */
-        .article-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 25px;
-        }
-
-        .article-card {
-            background-color: #ffffff;
-            border: 1px solid #d1d8dd;
-            border-radius: 0;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            text-decoration: none;
-            color: inherit;
-            transition: transform 0.2s ease, border-color 0.2s ease;
-        }
-
-        .article-card:hover {
-            transform: translateY(-4px);
-            border-color: #111111;
-        }
-
-        .card-thumb-wrap {
-            width: 100%;
-            height: 180px;
-            background-color: #f1f3f5;
-            overflow: hidden;
-            border-bottom: 1px solid #e1e4e8;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #adb5bd;
+        .section-desc {
             font-size: 13px;
+            color: #777777;
         }
 
-        .card-thumb-wrap img {
+        /* 뉴스 그리드 레이아웃 */
+        .news-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        /* 주요 뉴스 (좌측 메인) */
+        .main-lead-article {
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #e1e4e8;
+        }
+
+        .lead-thumb {
+            width: 100%;
+            height: 380px;
+            background-color: #f8f9fa;
+            border: 1px solid #e1e4e8;
+            overflow: hidden;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #adb5bd;
+            font-size: 14px;
+        }
+
+        .lead-thumb img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: block;
         }
 
-        .card-body {
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-        }
-
-        .card-category {
+        .article-category {
             font-size: 12px;
             color: #C91C1C;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
             margin-bottom: 8px;
+            display: inline-block;
         }
 
-        .card-title {
-            font-size: 16px;
+        .lead-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: #111111;
+            line-height: 1.35;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .lead-title a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .lead-title a:hover {
+            color: #C91C1C;
+        }
+
+        .lead-summary {
+            font-size: 15px;
+            color: #555555;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .article-meta {
+            font-size: 12px;
+            color: #888888;
+        }
+
+        /* 서브 뉴스 리스트 (우측 및 하단) */
+        .sub-news-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sub-news-item {
+            display: flex;
+            gap: 15px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #f1f3f5;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .sub-news-item:hover .sub-title {
+            color: #C91C1C;
+        }
+
+        .sub-thumb {
+            width: 110px;
+            height: 80px;
+            background-color: #f8f9fa;
+            border: 1px solid #e1e4e8;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #adb5bd;
+            font-size: 11px;
+            overflow: hidden;
+        }
+
+        .sub-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .sub-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .sub-title {
+            font-size: 15px;
             font-weight: 700;
             color: #111111;
-            line-height: 1.45;
-            margin-bottom: 12px;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            line-height: 1.4;
+            margin-bottom: 6px;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
-        .card-date {
+        /* 하단 카드 뉴스 그리드 섹션 */
+        .grid-news-section {
+            margin-top: 50px;
+        }
+
+        .grid-news-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .grid-news-card {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #e1e4e8;
+            background-color: #ffffff;
+            transition: border-color 0.2s;
+        }
+
+        .grid-news-card:hover {
+            border-color: #111111;
+        }
+
+        .grid-thumb {
+            width: 100%;
+            height: 160px;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #adb5bd;
+            font-size: 12px;
+            border-bottom: 1px solid #e1e4e8;
+            overflow: hidden;
+        }
+
+        .grid-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .grid-text-wrap {
+            padding: 16px;
+        }
+
+        .grid-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #111111;
+            line-height: 1.4;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .grid-meta {
             font-size: 12px;
             color: #888888;
-            margin-top: auto;
         }
 
-        /* 로딩 및 안내 메시지 */
-        .status-message {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 60px 0;
-            font-size: 15px;
-            color: #666666;
-            background-color: #ffffff;
-            border: 1px solid #d1d8dd;
-        }
-
-        /* 푸터 영역 */
+        /* 푸터 영역 (뷰어와 100% 동일) */
         footer {
             background-color: #ffffff;
             border-top: 1px solid #d1d8dd;
@@ -180,18 +311,36 @@
         }
 
         .footer-inner {
-            max-width: 1000px;
+            max-width: 1100px;
             margin: 0 auto;
+        }
+
+        .footer-top {
             display: flex;
+            align-items: flex-start;
             justify-content: space-between;
-            align-items: center;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #d1d8dd;
         }
 
         .footer-logo-img {
             height: 24px;
             width: auto;
             display: block;
-            margin-bottom: 10px;
+        }
+
+        .footer-info {
+            flex: 1;
+            line-height: 1.7;
+            color: #777777;
+            padding-left: 30px;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
         }
 
         .footer-copyright {
@@ -199,120 +348,198 @@
             font-size: 12px;
         }
 
-        /* 반응형 디자인 (태블릿, 모바일) */
-        @media (max-width: 850px) {
-            .article-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+        .family-site-select {
+            padding: 8px 14px;
+            font-size: 13px;
+            border: 1px solid #cbd5e1;
+            background-color: #ffffff;
+            color: #333333;
+            cursor: pointer;
+            width: 200px;
         }
 
-        @media (max-width: 550px) {
-            .article-grid {
-                grid-template-columns: 1fr;
-            }
+        @media (max-width: 768px) {
+            .news-layout { grid-template-columns: 1fr; }
+            .grid-news-grid { grid-template-columns: 1fr; }
+            .footer-top { flex-direction: column; gap: 15px; }
+            .footer-info { padding-left: 0; }
         }
     </style>
 </head>
 <body>
 
-    <!-- 헤더 영역 -->
+    <!-- 헤더 영역 (뷰어와 동일, 스크롤 프로세서 없음) -->
     <header>
         <div class="header-container">
             <a href="index.html">
                 <img src="assets/seologo.png" alt="데일리 뉴스 로고" class="logo-img">
             </a>
-            <div class="header-nav">LATEST NEWS</div>
+            <nav class="header-nav">
+                <a href="index.html">홈</a>
+                <a href="#latestSection">전체기사</a>
+            </nav>
         </div>
     </header>
 
     <!-- 메인 콘텐츠 영역 -->
-    <div class="main-wrapper">
-        <h2 class="section-title">최신 기사</h2>
-        
-        <!-- 기사 카드들이 동적으로 꽂힐 그리드 컨테이너 -->
-        <div class="article-grid" id="articleGrid">
-            <div class="status-message">기사 목록을 불러오는 중입니다...</div>
+    <div class="main-container" id="latestSection">
+        <div class="section-header">
+            <h2 class="section-title">주요 뉴스</h2>
+            <span class="section-desc">실시간 최신 기사 순으로 제공됩니다.</span>
+        </div>
+
+        <!-- 중앙일보 스타일 레이아웃 (좌측 메인 + 우측 서브) -->
+        <div class="news-layout">
+            <!-- 좌측: 가장 최신 기사 (메인 리드) -->
+            <div id="mainLeadArea">
+                <div class="main-lead-article">
+                    <div class="lead-thumb">기사를 불러오는 중...</div>
+                    <span class="article-category">-</span>
+                    <h1 class="lead-title">최신 기사를 불러오는 중입니다.</h1>
+                    <p class="lead-summary">잠시만 기다려 주세요.</p>
+                    <div class="article-meta">-</div>
+                </div>
+            </div>
+
+            <!-- 우측: 그 다음 최신 기사들 (서브 리스트) -->
+            <div class="sub-news-list" id="subNewsArea">
+                <!-- 동적 생성 -->
+            </div>
+        </div>
+
+        <!-- 하단: 카드형 뉴스 섹션 -->
+        <div class="grid-news-section">
+            <div class="section-header">
+                <h2 class="section-title">많이 본 뉴스 & 추가 기사</h2>
+            </div>
+            <div class="grid-news-grid" id="gridNewsArea">
+                <!-- 동적 생성 -->
+            </div>
         </div>
     </div>
 
-    <!-- 푸터 영역 -->
+    <!-- 푸터 영역 (뷰어와 1도 안 건드리고 완벽히 일치) -->
     <footer>
         <div class="footer-inner">
-            <div>
+            <div class="footer-top">
                 <img src="assets/seologo.png" alt="데일리 뉴스 로고" class="footer-logo-img">
+                <div class="footer-info">
+                    주소: 서울특별시 중구 세종대로 123, 4층 | 대표번호: 02-123-4567 | 인터넷신문등록번호: 서울 아 00000<br>
+                    등록(발행)일자: 2026년 01월 01일 | 발행인: 홍길동 | 편집인: 김철수
+                </div>
+            </div>
+            <div class="footer-bottom">
                 <div class="footer-copyright">
                     Copyright &copy; Daily News All rights reserved. 무단 전재 및 재배포 금지.
+                </div>
+                <div class="family-site-select-wrap">
+                    <select class="family-site-select" onchange="if(this.value) { window.open(this.value, '_blank'); this.value=''; }">
+                        <option value="">데일리뉴스 관계사</option>
+                        <option value="https://sin13248920.github.io/Seo-Architecture/">서오건축</option>
+                        <option value="https://sin13248920.github.io/weekly-seo-e-viewer/index.html">월간서오 e뷰어</option>
+                    </select>
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- 자바스크립트: 기사 자동 로드 및 정렬 로직 -->
+    <!-- 자바스크립트: 기사 JSON들을 불러와서 파일 이름 숫자가 큰 순(최신순)으로 정렬 후 배치 -->
     <script>
-        window.addEventListener('DOMContentLoaded', function() {
-            // ⭐ [중요] 여기에 보유하고 계신 기사 JSON 파일들의 이름(확장자 제외)을 리스트업 해주세요.
-            // 나중에 기사가 추가될 때마다 이 배열에 ID만 계속 추가해 주시면 됩니다!
-            const articleIds = ["26091101", "26091102", "26091103"]; // 예시 ID들
+        window.addEventListener('DOMContentLoaded', async function() {
+            // 프로젝트에 존재하는 기사 JSON ID 목록들을 관리하는 배열입니다.
+            // 새로운 기사 JSON을 추가하면 여기 목록에 ID(파일명 숫자)만 추가해 주시면 홈 화면에 자동 반영됩니다!
+            const articleIds = ["26091101", "26091102", "26091103"]; // 예시 ID 목록 (실제 파일명에 맞게 수정/추가하세요)
 
-            const gridContainer = document.getElementById('articleGrid');
+            let articlesData = [];
 
-            if (articleIds.length === 0) {
-                gridContainer.innerHTML = `<div class="status-message">등록된 최신 기사가 없습니다.</div>`;
+            // 각 JSON 파일을 비동기로 불러와 배열에 저장
+            for (const id of articleIds) {
+                try {
+                    const response = await fetch(`articles/${id}.json`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        articlesData.push(data);
+                    }
+                } catch (e) {
+                    console.error(`${id}.json 파일을 불러오지 못했습니다.`, e);
+                }
+            }
+
+            // 요청하신 핵심 조건: JSON 파일 이름의 숫자가 가장 큰 순(최신순)으로 정렬
+            // (예: 26091102.json 이 26091101.json 보다 크므로 앞으로 정렬됨)
+            articlesData.sort((a, b) => Number(b.id) - Number(a.id));
+
+            if (articlesData.length === 0) {
+                document.getElementById('mainLeadArea').innerHTML = "<p style='padding:40px; text-align:center;'>등록된 기사가 없습니다.</p>";
                 return;
             }
 
-            // 요청하신 대로 파일 이름의 숫자 크기 기준 '내림차순 정렬' (큰 숫자 = 가장 최신 기사무더기가 앞으로 옴)
-            articleIds.sort((a, b) => Number(b) - Number(a));
+            // 1. 가장 최신 기사 (1위) -> 메인 리드 영역 배치
+            const lead = articlesData[0];
+            const leadThumbHtml = lead.image 
+                ? `<img src="${lead.image}" alt="대표 이미지">` 
+                : `이미지 없음`;
 
-            // 비동기로 모든 JSON 파일을 읽어옴
-            const fetchPromises = articleIds.map(id => {
-                return fetch(`articles/${id}.json`)
-                    .then(response => {
-                        if (!response.ok) throw new Error(`ID ${id} 데이터 로드 실패`);
-                        return response.json();
-                    })
-                    .catch(err => {
-                        console.warn(err);
-                        return null; // 에러 난 파일은 무시
-                    });
-            });
+            document.getElementById('mainLeadArea').innerHTML = `
+                <div class="main-lead-article">
+                    <a href="viewer.html?id=${lead.id}" style="text-decoration:none; color:inherit;">
+                        <div class="lead-thumb">${leadThumbHtml}</div>
+                    </a>
+                    <span class="article-category">${lead.category}</span>
+                    <h2 class="lead-title"><a href="viewer.html?id=${lead.id}">${lead.title}</a></h2>
+                    <p class="lead-summary">${lead.content[0] ? lead.content[0] : ''}</p>
+                    <div class="article-meta">기자 : ${lead.reporter} | 입력 : ${lead.date}</div>
+                </div>
+            `;
 
-            Promise.all(fetchPromises).then(results => {
-                // 정상적으로 불러와진 데이터만 필터링
-                const validArticles = results.filter(article => article !== null);
+            // 2. 2위 ~ 4위 기사 -> 우측 서브 리스트 배치
+            const subNewsArea = document.getElementById('subNewsArea');
+            subNewsArea.innerHTML = '';
+            
+            for (let i = 1; i < Math.min(articlesData.length, 4); i++) {
+                const sub = articlesData[i];
+                const subThumbHtml = sub.image 
+                    ? `<img src="${sub.image}" alt="썸네일">` 
+                    : `이미지 없음`;
 
-                if (validArticles.length === 0) {
-                    gridContainer.innerHTML = `<div class="status-message">불러올 수 있는 기사 데이터가 없습니다.</div>`;
-                    return;
-                }
-
-                gridContainer.innerHTML = ''; // 로딩 문구 초기화
-
-                // 각 기사 데이터를 반복 돌며 카드 생성 및 렌더링
-                validArticles.forEach(data => {
-                    const card = document.createElement('a');
-                    card.className = 'article-card';
-                    // 클릭하면 아까 만드신 viewer.html로 기사 ID를 들고 이동합니다!
-                    card.href = `viewer.html?id=${data.id}`;
-
-                    // 이미지가 있으면 이미지 태그, 없으면 '이미지 없음' 표시
-                    let thumbHtml = `<div class="card-thumb-wrap">이미지 없음</div>`;
-                    if (data.image) {
-                        thumbHtml = `<div class="card-thumb-wrap"><img src="${data.image}" alt="${data.title}"></div>`;
-                    }
-
-                    card.innerHTML = `
-                        ${thumbHtml}
-                        <div class="card-body">
-                            <span class="card-category">${data.category}</span>
-                            <h3 class="card-title">${data.title}</h3>
-                            <span class="card-date">${data.date}</span>
+                subNewsArea.innerHTML += `
+                    <a href="viewer.html?id=${sub.id}" class="sub-news-item">
+                        <div class="sub-thumb">${subThumbHtml}</div>
+                        <div class="sub-info">
+                            <span class="article-category" style="margin-bottom:4px;">${sub.category}</span>
+                            <h3 class="sub-title">${sub.title}</h3>
+                            <div class="article-meta">${sub.date}</div>
                         </div>
-                    `;
+                    </a>
+                `;
+            }
 
-                    gridContainer.appendChild(card);
-                });
-            });
+            // 3. 5위 이후 기사들 -> 하단 카드 그리드 섹션 배치
+            const gridNewsArea = document.getElementById('gridNewsArea');
+            gridNewsArea.innerHTML = '';
+
+            if (articlesData.length > 4) {
+                for (let i = 4; i < articlesData.length; i++) {
+                    const grid = articlesData[i];
+                    const gridThumbHtml = grid.image 
+                        ? `<img src="${grid.image}" alt="썸네일">` 
+                        : `이미지 없음`;
+
+                    gridNewsArea.innerHTML += `
+                        <a href="viewer.html?id=${grid.id}" class="grid-news-card">
+                            <div class="grid-thumb">${gridThumbHtml}</div>
+                            <div class="grid-text-wrap">
+                                <span class="article-category" style="margin-bottom:6px;">${grid.category}</span>
+                                <h3 class="grid-title">${grid.title}</h3>
+                                <div class="grid-meta">${grid.date}</div>
+                            </div>
+                        </a>
+                    `;
+                }
+            } else {
+                // 기사가 4개 이하일 경우 하단 섹션 안내 문구 또는 숨김 처리
+                document.querySelector('.grid-news-section').style.display = 'none';
+            }
         });
     </script>
 
