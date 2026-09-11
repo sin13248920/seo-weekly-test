@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>서오일보</title>
-    <!-- 브라우저 탭 아이콘 (파비콘) 설정 -->
     <link rel="icon" href="assets/favi.png" type="image/png">
     
     <style>
@@ -22,54 +21,8 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            padding-top: 60px; /* 고정 헤더 높이만큼 여백 */
-        }
-
-        /* 기사 뷰어와 100% 동일한 헤더 스타일 */
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 60px;
-            background-color: #ffffff;
-            z-index: 1000;
-            border-bottom: 1px solid #d1d8dd;
-            display: flex;
-            align-items: center;
-        }
-
-        .header-container {
-            max-width: 1100px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 100%;
-        }
-
-        .logo-img {
-            height: 28px;
-            width: auto;
-            display: block;
-        }
-
-        .header-nav {
-            display: flex;
-            gap: 24px;
-            font-size: 15px;
-            font-weight: 700;
-        }
-
-        .header-nav a {
-            text-decoration: none;
-            color: #111111;
-        }
-
-        .header-nav a:hover {
-            color: #C91C1C;
+            padding-top: 90px; /* 헤더 초기 높이에 맞춘 여백 */
+            transition: padding-top 0.3s ease;
         }
 
         /* 메인 콘텐츠 영역 */
@@ -81,7 +34,6 @@
             flex: 1;
         }
 
-        /* 섹션 타이틀 */
         .section-header {
             border-bottom: 2px solid #111111;
             padding-bottom: 10px;
@@ -103,8 +55,43 @@
             color: #777777;
         }
 
-        /* 뉴스 그리드 레이아웃 (주요 뉴스) */
         .news-layout {
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .main-content-column {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .side-banner-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .vertical-ad-banner {
+            width: 100%;
+            background-color: #f8f9fa;
+            border: 1px solid #e1e4e8;
+            text-decoration: none;
+            color: inherit;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .vertical-ad-banner img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: contain;
+        }
+
+        .inner-news-grid {
             display: grid;
             grid-template-columns: 2fr 1fr;
             gap: 30px;
@@ -131,7 +118,7 @@
         .lead-thumb img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* 데스크탑 기본 */
+            object-fit: cover;
             display: block;
         }
 
@@ -174,7 +161,6 @@
             color: #888888;
         }
 
-        /* 서브 뉴스 리스트 (우측) */
         .sub-news-list {
             display: flex;
             flex-direction: column;
@@ -232,7 +218,6 @@
             overflow: hidden;
         }
 
-        /* 동네소식 섹션 스타일 (3열 카드 그리드) */
         .local-news-section {
             margin-top: 60px;
         }
@@ -292,7 +277,6 @@
             overflow: hidden;
         }
 
-        /* 월간서오 보기 섹션 스타일 */
         .monthly-seo-section {
             margin-top: 60px;
         }
@@ -376,7 +360,6 @@
             opacity: 0.85;
         }
 
-        /* 푸터 스타일 */
         footer {
             background-color: #ffffff;
             border-top: 1px solid #d1d8dd;
@@ -434,12 +417,13 @@
             width: 200px;
         }
 
-        /* 모바일 화면 대응: 사진들이 강제로 잘리지 않고 원본 비율(또는 contain)을 유지하도록 설정 */
         @media (max-width: 768px) {
+            body { padding-top: 70px; }
             .news-layout { grid-template-columns: 1fr; }
+            .side-banner-column { display: none; }
+            .inner-news-grid { grid-template-columns: 1fr; }
             .local-news-grid { grid-template-columns: 1fr; }
             
-            /* 모바일에서 이미지 비율 유지 */
             .lead-thumb { height: auto; max-height: 300px; background-color: #f8f9fa; }
             .lead-thumb img { width: 100%; height: auto; object-fit: contain; }
 
@@ -461,17 +445,8 @@
 </head>
 <body>
 
-    <!-- 헤더 영역 -->
-    <header>
-        <div class="header-container">
-            <a href="index.html">
-                <img src="assets/seologo.png" alt="데일리 뉴스 로고" class="logo-img">
-            </a>
-            <nav class="header-nav">
-                <a href="index.html">홈</a>
-            </nav>
-        </div>
-    </header>
+    <!-- 동적으로 헤더를 불러올 위치 -->
+    <div id="header-placeholder"></div>
 
     <!-- 메인 콘텐츠 영역 -->
     <div class="main-container">
@@ -480,36 +455,36 @@
             <span class="section-desc">실시간 최신 기사 순으로 제공됩니다.</span>
         </div>
 
-        <!-- 주요 뉴스 레이아웃 -->
         <div class="news-layout">
-            <!-- 좌측: 가장 최신 기사 (1위) -->
-            <div id="mainLeadArea">
-                <div class="main-lead-article">
-                    <div class="lead-thumb">기사를 불러오는 중...</div>
-                    <span class="article-category">-</span>
-                    <h1 class="lead-title">최신 기사를 불러오는 중입니다.</h1>
-                    <p class="lead-summary">잠시만 기다려 주세요.</p>
+            <div class="main-content-column">
+                <div class="inner-news-grid">
+                    <div id="mainLeadArea">
+                        <div class="main-lead-article">
+                            <div class="lead-thumb">기사를 불러오는 중...</div>
+                            <span class="article-category">-</span>
+                            <h1 class="lead-title">최신 기사를 불러오는 중입니다.</h1>
+                            <p class="lead-summary">잠시만 기다려 주세요.</p>
+                        </div>
+                    </div>
+                    <div class="sub-news-list" id="subNewsArea"></div>
                 </div>
             </div>
 
-            <!-- 우측: 그 다음 최신 뉴스들 (2위 ~ 4위) -->
-            <div class="sub-news-list" id="subNewsArea">
-                <!-- 동적 생성 -->
+            <div class="side-banner-column">
+                <a href="#" class="vertical-ad-banner" target="_blank">
+                    <img src="assets/adb1.jpg" alt="세로 배너 광고" onerror="this.onerror=null; this.parentNode.style.display='none';">
+                </a>
             </div>
         </div>
 
-        <!-- 동네소식 섹션 -->
         <div class="local-news-section">
             <div class="section-header">
                 <h2 class="section-title">동네소식 &gt;</h2>
                 <span class="section-desc">우리 동네 생생한 소식을 전해드립니다.</span>
             </div>
-            <div class="local-news-grid" id="localNewsArea">
-                <!-- 동적 생성 -->
-            </div>
+            <div class="local-news-grid" id="localNewsArea"></div>
         </div>
 
-        <!-- 월간서오 보기 섹션 -->
         <div class="monthly-seo-section">
             <div class="section-header">
                 <h2 class="section-title">월간서오</h2>
@@ -531,7 +506,6 @@
         </div>
     </div>
 
-    <!-- 푸터 영역 -->
     <footer>
         <div class="footer-inner">
             <div class="footer-top">
@@ -555,15 +529,41 @@
         </div>
     </footer>
 
-    <!-- 자바스크립트 로직 -->
     <script>
-        window.addEventListener('DOMContentLoaded', async function() {
-            // ⭐ 작성하신 모든 기사 파일명(확장자 제외)을 여기에 정확히 적어주세요.
-            const articleIds = ["26091101", "26091102", "26091103", "260911loc01"]; 
+        // 공통 헤더 파일을 불러오는 함수
+        async function loadHeader() {
+            try {
+                const response = await fetch('components/header.html');
+                if (response.ok) {
+                    const html = await response.text();
+                    document.getElementById('header-placeholder').innerHTML = html;
 
+                    // 헤더가 로드된 후 스크롤 이벤트 연결
+                    initHeaderScroll();
+                }
+            } catch (e) {
+                console.error("헤더를 불러오지 못했습니다.", e);
+            }
+        }
+
+        function initHeaderScroll() {
+            const header = document.getElementById('mainHeader');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 30) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', async function() {
+            // 헤더 먼저 로드
+            await loadHeader();
+
+            const articleIds = ["26091101", "26091102", "26091103", "260911loc01"]; 
             let allArticles = [];
 
-            // 모든 JSON 파일 비동기 로드
             for (const id of articleIds) {
                 try {
                     const response = await fetch(`articles/${id}.json`);
@@ -576,7 +576,6 @@
                 }
             }
 
-            // 1. 전체 기사 최신순 정렬 (ID 숫자가 큰 순서)
             allArticles.sort((a, b) => {
                 const numA = Number(String(a.id).replace(/[^0-9]/g, '')) || 0;
                 const numB = Number(String(b.id).replace(/[^0-9]/g, '')) || 0;
@@ -588,7 +587,6 @@
                 return;
             }
 
-            // --- [주요 뉴스 렌더링: 전체 최신순 순서대로 배치] ---
             const lead = allArticles[0]; 
             const leadThumbHtml = lead.image ? `<img src="${lead.image}" alt="대표 이미지">` : `이미지 없음`;
 
@@ -621,7 +619,6 @@
                 `;
             }
 
-            // --- [동네소식 섹션 렌더링] ---
             const localArticles = allArticles.filter(item => {
                 const idStr = String(item.id || '').toLowerCase();
                 const catStr = String(item.category || '').toLowerCase();
@@ -653,6 +650,5 @@
             }
         });
     </script>
-
 </body>
 </html>
