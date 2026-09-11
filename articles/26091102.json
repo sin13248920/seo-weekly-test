@@ -1,14 +1,14 @@
 {
     "id": "26091102",
     "category": "사회",
-    "title": "사랑해~~",
-    "image": "images/sample.jpg", 
-    "reporter": "김서오 기자",
-    "date": "2026-09-11 14:00",
+    "title": "장안동의 대표아파트 장안현대홈타운",
+    "image": "images/hometownjang.jpg", 
+    "reporter": "서오일보",
+    "date": "2026-09-11 14:24",
     "content": [
-        "서오는 기니를 사랑한다고 밝혔습니다.",
-        "이에따라 기니도 서오를 사랑한다고 밝혔습니다.."
+        "서울특별시 동대문구 장안동에 위치한 장안현대홈타운 1차 아파트.",
+        "장안동 최대규모의 아파트로, 장안시영아파트1단지를 재건축하여 지어졌다."
     ],
-    "reporterAvatar": "assets/avatar.png",
-    "reporterBio": "기술과 세상을 바르게 전하는 기자입니다."
+    "reporterAvatar": "assets/favi.png",
+    "reporterBio": "서오일보는 신속하고 정확한 정보 전달을 할 수 있도록 노력하겠습니다."
 }
