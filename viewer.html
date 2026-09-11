@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle">서오일보</title>
+    <title id="pageTitle">데일리 뉴스</title>
     <!-- 브라우저 탭 아이콘 (파비콘) 설정 -->
     <link rel="icon" href="assets/favi.png" type="image/png">
     
@@ -125,7 +125,7 @@
         }
 
         /* 모바일 헤더용 유틸리티 바 (기본 숨김) */
-        .mobile-header-utils {
+        .mobile-utility-bar {
             display: none;
             width: 100%;
             height: 100%;
@@ -133,15 +133,22 @@
             align-items: center;
         }
 
-        .mobile-util-btn {
+        .mobile-utility-bar .util-btn {
+            flex: 1;
+            height: 100%;
             background: none;
             border: none;
+            border-right: 1px solid #e1e4e8;
             font-size: 13px;
             font-weight: 700;
             color: #555555;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             cursor: pointer;
-            padding: 4px 8px;
-            text-decoration: none;
+        }
+        .mobile-utility-bar .util-btn:last-child {
+            border-right: none;
         }
 
         /* 스크롤 프로세스바 */
@@ -164,7 +171,6 @@
             position: relative;
         }
 
-        /* PC용 유틸리티 사이드바 */
         .utility-sidebar {
             position: sticky;
             top: 90px;
@@ -501,30 +507,27 @@
             width: 200px;
         }
 
-        /* 미디어 쿼리: 모바일 환경 대응 */
+        /* 반응형 모바일 설정 (768px 이하) */
         @media (max-width: 768px) {
             .sub-info-bar { display: none; }
             .header-main-bar { height: 60px; }
             .logo-img-large { height: 32px; }
             
-            /* 2. 좁은 화면에서 좌측 유틸리티 바 숨김 */
-            .utility-sidebar { display: none !important; }
+            /* 2번 요구사항: 좁은 화면에서 옆의 유틸리티바 숨김 */
+            .utility-sidebar { display: none; }
+            
             .page-wrapper { padding: 0 15px; }
             .widget-ads-grid { grid-template-columns: 1fr; }
 
-            /* 3. 모바일 소형 헤더 설정: 로고 숨기고 유틸 버튼들을 꽉 차게 표시 */
-            .fixed-small-header .header-container .logo-link {
-                display: none !important;
-            }
-            .mobile-header-utils {
-                display: flex !important;
-            }
+            /* 3번 요구사항: 모바일 고정 헤더 설정 (로고 숨김, 유틸리티 바 꽉 채우기) */
+            .fixed-small-header .header-container { display: none; }
+            .fixed-small-header .mobile-utility-bar { display: flex; }
         }
     </style>
 </head>
 <body>
 
-    <!-- 1. 페이지와 함께 스크롤되어 올라가는 큰 헤더 (로고 정가운데) -->
+    <!-- 1. 페이지와 함께 스크롤되어 올라가는 큰 헤더 (로고 정가운데 배치) -->
     <div class="large-header" id="largeHeader">
         <div class="header-main-bar">
             <div class="header-container">
@@ -547,20 +550,19 @@
 
     <!-- 2. 일정 수준 이상 스크롤했을 때 위에서 스르륵 나타나는 고정 소형 헤더 -->
     <header class="fixed-small-header" id="fixedSmallHeader">
+        <!-- PC용 고정 헤더 (로고 정가운데) -->
         <div class="header-container">
-            <!-- PC 화면용 소형 로고 (정가운데) -->
             <a href="index.html" class="logo-link">
                 <img src="assets/seologo.png" alt="서오일보 로고" class="logo-img-small">
             </a>
-            <!-- 모바일 화면용 유틸리티 버튼 바 (헤더에 꽉 차게 배치) -->
-            <div class="mobile-header-utils">
-                <button class="mobile-util-btn" onclick="changeFontSize(1)">A+</button>
-                <button class="mobile-util-btn" onclick="changeFontSize(-1)">A-</button>
-                <button class="mobile-util-btn" onclick="openPrintWindow()">인쇄</button>
-                <button class="mobile-util-btn" onclick="alert('기사 링크가 복사되었습니다.')">공유</button>
-            </div>
         </div>
-        <!-- 프로세서 바 유지 -->
+        <!-- 모바일 스크롤 시 나타나는 유틸리티 바 (꽉 채움) -->
+        <div class="mobile-utility-bar">
+            <button class="util-btn" onclick="changeFontSize(1)">A+</button>
+            <button class="util-btn" onclick="changeFontSize(-1)">A-</button>
+            <button class="util-btn" onclick="openPrintWindow()">🖨️ 인쇄</button>
+            <button class="util-btn" onclick="alert('기사 링크가 복사되었습니다.')">🔗 공유</button>
+        </div>
         <div class="scroll-progress-bar" id="scrollProgressBar"></div>
     </header>
 
@@ -659,7 +661,7 @@
                 </div>
                 <div class="footer-family">
                     <select class="family-site-select" onchange="if(this.value) { window.open(this.value, '_blank'); this.value=''; }">
-                        <option value="">서오일보 관계사</option>
+                        <option value="">데일리뉴스 관계사</option>
                         <option value="https://sin13248920.github.io/Seo-Architecture/">서오건축</option>
                         <option value="https://sin13248920.github.io/weekly-seo-e-viewer/index.html">월간서오 e뷰어</option>
                     </select>
@@ -671,7 +673,6 @@
     <!-- 스크립트 영역 -->
     <script>
         window.addEventListener('DOMContentLoaded', function() {
-            // 날짜 자동 설정
             const dateEl = document.getElementById('headerDate');
             if(dateEl) {
                 const now = new Date();
@@ -757,7 +758,6 @@
             document.getElementById('errorContainer').style.display = 'block';
         }
 
-        // 스크롤 감지 및 고정 헤더, 스크롤바 제어
         window.addEventListener('scroll', function() {
             const fixedHeader = document.getElementById('fixedSmallHeader');
             const largeHeader = document.getElementById('largeHeader');
