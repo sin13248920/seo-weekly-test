@@ -483,21 +483,28 @@
                 dateEl.innerText = `${year}.${month}.${day} (${week})`;
             }
 
-            // 기사 데이터 로드 (예시로 1번부터 20번까지의 기사 번호를 역순으로 탐색하여 존재하는 기사 수집)
-            fetchAllArticles();
+            // 기사 데이터 로드 실행
+            fetchArticles();
         });
 
-        async function fetchAllArticles() {
+        async function fetchArticles() {
             let articles = [];
             
-            // 1번부터 30번까지 순회하며 파일 존재 여부 확인 (최신순 정렬을 위해 내림차순 또는 수집 후 정렬)
-            for (let i = 1; i <= 30; i++) {
+            // 예시: 2026년 9월 11일(260911) 기준으로 01부터 10번까지의 기사 파일을 탐색합니다.
+            // 필요에 따라 날짜 프리픽스(prefix)를 조정하거나 다른 날짜도 함께 탐색할 수 있습니다.
+            const datePrefix = "260911"; 
+            
+            for (let i = 1; i <= 10; i++) {
+                // 숫자를 두 자리 문자열로 변환 (예: 1 -> "01")
+                let seq = String(i).padStart(2, '0');
+                let fileName = `${datePrefix}${seq}`; // 예: 26091101
+                
                 try {
-                    let response = await fetch(`articles/${i}.json`);
+                    let response = await fetch(`articles/${fileName}.json`);
                     if (response.ok) {
                         let data = await response.json();
                         articles.push({
-                            id: i,
+                            id: fileName, // 뷰어 호출 시 사용할 id (예: 26091101)
                             ...data
                         });
                     }
@@ -506,8 +513,8 @@
                 }
             }
 
-            // 파일 이름 숫자 큰 순서(최신순)로 정렬
-            articles.sort((a, b) => b.id - a.id);
+            // 파일 이름 번호가 큰 순서(최신순)로 정렬
+            articles.sort((a, b) => b.id.localeCompare(a.id));
 
             renderMainNews(articles);
             renderCategoryNews(articles);
@@ -556,7 +563,6 @@
 
         // 카테고리별 뉴스 렌더링 (사회, 경제, 문화)
         function renderCategoryNews(articles) {
-            // 카테고리별 매칭 (JSON 내부의 category 필드 기준)
             const societyArticles = articles.filter(art => art.category && art.category.includes('사회'));
             const economyArticles = articles.filter(art => art.category && art.category.includes('경제'));
             const cultureArticles = articles.filter(art => art.category && (art.category.includes('문화') || art.category.includes('생활')));
@@ -576,7 +582,6 @@
             }
 
             let html = '';
-            // 각 카테고리별 최대 4개 정도 노출
             list.slice(0, 4).forEach(art => {
                 html += `
                     <a href="viewer.html?id=${art.id}" class="category-article-card">
@@ -588,7 +593,7 @@
             container.innerHTML = html;
         }
 
-        // 스크롤 시 고정 소형 헤더 토글 이벤트 개선
+        // 스크롤 시 고정 소형 헤더 토글 이벤트
         window.addEventListener('scroll', function() {
             const fixedHeader = document.getElementById('fixedSmallHeader');
             const largeHeader = document.getElementById('largeHeader');
