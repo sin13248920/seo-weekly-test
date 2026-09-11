@@ -381,7 +381,7 @@
 
         <!-- 중앙일보 스타일 레이아웃 (좌측 메인 + 우측 서브) -->
         <div class="news-layout">
-            <!-- 좌측: 가장 최신 일반 뉴스 (1위) -->
+            <!-- 좌측: 가장 최신 기사 (1위) - loc 포함 여부 상관없이 최신이면 무조건 메인 -->
             <div id="mainLeadArea">
                 <div class="main-lead-article">
                     <div class="lead-thumb">기사를 불러오는 중...</div>
@@ -398,7 +398,7 @@
             </div>
         </div>
 
-        <!-- 동네소식 섹션 -->
+        <!-- 동네소식 섹션 (ID에 'loc'가 포함된 기사들만 모여서 출력) -->
         <div class="local-news-section">
             <div class="section-header">
                 <h2 class="section-title">동네소식 &gt;</h2>
@@ -420,6 +420,7 @@
                     등록(발행)일자: 2026년 01월 01일 | 발행인: 홍길동 | 편집인: 김철수
                 </div>
             </div>
+            {
             <div class="footer-bottom">
                 <div class="footer-copyright">
                     Copyright &copy; Daily News All rights reserved. 무단 전재 및 재배포 금지.
@@ -435,7 +436,7 @@
         </div>
     </footer>
 
-    <!-- 자바스크립트: ID에 'loc' 포함 여부로 동네소식 분류 + 전체 최신순 정렬 -->
+    <!-- 자바스크립트 로직 수정 완료 -->
     <script>
         window.addEventListener('DOMContentLoaded', async function() {
             // 프로젝트에 존재하는 전체 기사 JSON ID 목록 (필요에 따라 추가하세요)
@@ -456,12 +457,11 @@
                 }
             }
 
-            // 1. 전체 기사 최신순 정렬 (ID에 숫자가 포함된 기준으로 최신순 판단, 혹은 등록된 순서)
-            // 숫자가 포함된 문자열 비교를 위해 정규식으로 숫자 추출 후 비교
+            // 1. 전체 기사 최신순 정렬 (ID 숫자가 큰 순서)
             allArticles.sort((a, b) => {
                 const numA = Number(String(a.id).replace(/[^0-9]/g, '')) || 0;
                 const numB = Number(String(b.id).replace(/[^0-9]/g, '')) || 0;
-                return numB - numA; // 내림차순 (최신순)
+                return numB - numA; 
             });
 
             if (allArticles.length === 0) {
@@ -469,50 +469,43 @@
                 return;
             }
 
-            // 2. 분류 조건 변경: ID에 'loc'가 포함되어 있으면 동네소식, 아니면 일반 뉴스
-            // (요청하신 대로 최신 기사라면 ID 규칙에 따라 주요 뉴스에도 갈 수 있게 전체 풀에서 유연하게 공유됩니다)
-            const localArticles = allArticles.filter(item => String(item.id).toLowerCase().includes('loc'));
-            const generalArticles = allArticles.filter(item => !String(item.id).toLowerCase().includes('loc'));
+            // --- [주요 뉴스 렌더링: 전체 최신 기사 순서대로 배치 (loc 포함 여부 상관없음)] ---
+            const lead = allArticles[0]; // 가장 최신 기사 (loc여도 메인 가능!)
+            const leadThumbHtml = lead.image ? `<img src="${lead.image}" alt="대표 이미지">` : `이미지 없음`;
 
-            // --- [주요 뉴스 렌더링 (최신순 일반 뉴스 기준)] ---
-            if (generalArticles.length > 0) {
-                const lead = generalArticles[0];
-                const leadThumbHtml = lead.image ? `<img src="${lead.image}" alt="대표 이미지">` : `이미지 없음`;
+            document.getElementById('mainLeadArea').innerHTML = `
+                <div class="main-lead-article">
+                    <a href="viewer.html?id=${lead.id}" style="text-decoration:none; color:inherit;">
+                        <div class="lead-thumb">${leadThumbHtml}</div>
+                    </a>
+                    <span class="article-category">${lead.category || '뉴스'}</span>
+                    <h2 class="lead-title"><a href="viewer.html?id=${lead.id}">${lead.title}</a></h2>
+                    <p class="lead-summary">${lead.content[0] ? lead.content[0] : ''}</p>
+                    <div class="article-meta">기자 : ${lead.reporter} | 입력 : ${lead.date}</div>
+                </div>
+            `;
 
-                document.getElementById('mainLeadArea').innerHTML = `
-                    <div class="main-lead-article">
-                        <a href="viewer.html?id=${lead.id}" style="text-decoration:none; color:inherit;">
-                            <div class="lead-thumb">${leadThumbHtml}</div>
-                        </a>
-                        <span class="article-category">${lead.category}</span>
-                        <h2 class="lead-title"><a href="viewer.html?id=${lead.id}">${lead.title}</a></h2>
-                        <p class="lead-summary">${lead.content[0] ? lead.content[0] : ''}</p>
-                        <div class="article-meta">기자 : ${lead.reporter} | 입력 : ${lead.date}</div>
-                    </div>
+            // 우측 서브 뉴스 (2위 ~ 4위)
+            const subNewsArea = document.getElementById('subNewsArea');
+            subNewsArea.innerHTML = '';
+            for (let i = 1; i < Math.min(allArticles.length, 4); i++) {
+                const sub = allArticles[i];
+                const subThumbHtml = sub.image ? `<img src="${sub.image}" alt="썸네일">` : `이미지 없음`;
+
+                subNewsArea.innerHTML += `
+                    <a href="viewer.html?id=${sub.id}" class="sub-news-item">
+                        <div class="sub-thumb">${subThumbHtml}</div>
+                        <div class="sub-info">
+                            <span class="article-category" style="margin-bottom:4px;">${sub.category || '뉴스'}</span>
+                            <h3 class="sub-title">${sub.title}</h3>
+                            <div class="article-meta">${sub.date}</div>
+                        </div>
+                    </a>
                 `;
-
-                const subNewsArea = document.getElementById('subNewsArea');
-                subNewsArea.innerHTML = '';
-                for (let i = 1; i < Math.min(generalArticles.length, 4); i++) {
-                    const sub = generalArticles[i];
-                    const subThumbHtml = sub.image ? `<img src="${sub.image}" alt="썸네일">` : `이미지 없음`;
-
-                    subNewsArea.innerHTML += `
-                        <a href="viewer.html?id=${sub.id}" class="sub-news-item">
-                            <div class="sub-thumb">${subThumbHtml}</div>
-                            <div class="sub-info">
-                                <span class="article-category" style="margin-bottom:4px;">${sub.category}</span>
-                                <h3 class="sub-title">${sub.title}</h3>
-                                <div class="article-meta">${sub.date}</div>
-                            </div>
-                        </a>
-                    `;
-                }
-            } else {
-                document.getElementById('mainLeadArea').innerHTML = "<p style='padding:20px;'>등록된 주요 뉴스가 없습니다.</p>";
             }
 
-            // --- ['동네소식 >' 섹션 렌더링 (ID에 'loc'가 포함된 기사들 최신순)] ---
+            // --- [동네소식 섹션 렌더링: ID에 'loc'가 포함된 기사들만 모아서 출력] ---
+            const localArticles = allArticles.filter(item => String(item.id).toLowerCase().includes('loc'));
             const localNewsArea = document.getElementById('localNewsArea');
             localNewsArea.innerHTML = '';
 
@@ -524,7 +517,7 @@
                         <a href="viewer.html?id=${local.id}" class="local-news-card">
                             <div class="local-thumb">${localThumbHtml}</div>
                             <div class="local-text-wrap">
-                                <span class="article-category" style="margin-bottom:6px;">${local.category}</span>
+                                <span class="article-category" style="margin-bottom:6px;">${local.category || '동네소식'}</span>
                                 <h3 class="local-title">${local.title}</h3>
                                 <div class="article-meta">${local.date}</div>
                             </div>
@@ -532,7 +525,7 @@
                     `;
                 });
             } else {
-                document.querySelector('.local-news-section').style.display = 'none'; // 동네소식이 없으면 섹션 숨김
+                document.querySelector('.local-news-section').style.display = 'none'; // loc 기사가 없으면 섹션 숨김
             }
         });
     </script>
