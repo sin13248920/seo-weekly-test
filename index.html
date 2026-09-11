@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle">데일리 뉴스 - 기사 상세</title>
+    <title id="pageTitle">데일리 뉴스</title>
     <!-- 브라우저 탭 아이콘 (파비콘) 설정 -->
     <link rel="icon" href="assets/favi.png" type="image/png">
     
@@ -327,6 +327,49 @@
             color: #111111;
         }
 
+        /* 에러 화면 스타일 */
+        .error-container {
+            display: none;
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .error-message {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333333;
+            line-height: 1.8;
+            margin-bottom: 35px;
+        }
+
+        .error-btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .error-btn {
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid #d1d8dd;
+            background-color: #ffffff;
+            color: #333333;
+            border-radius: 0;
+            text-decoration: none;
+        }
+
+        .error-btn.primary {
+            background-color: #111111;
+            color: #ffffff;
+            border-color: #111111;
+        }
+
+        .error-btn:hover {
+            opacity: 0.85;
+        }
+
         footer {
             background-color: #ffffff;
             border-top: 1px solid #d1d8dd;
@@ -400,10 +443,10 @@
     <!-- 고정된 헤더 영역 -->
     <header id="mainHeader">
         <div class="header-container">
-            <a href="#">
+            <a href="index.html">
                 <img src="assets/seologo.png" alt="데일리 뉴스 로고" class="logo-img">
             </a>
-            <div class="header-title" id="headerTitle">기사 제목</div>
+            <div class="header-title" id="headerTitle">데일리 뉴스</div>
         </div>
         <div class="scroll-progress-container">
             <div class="scroll-progress-bar" id="progressBar"></div>
@@ -412,7 +455,7 @@
 
     <!-- 메인 래퍼 -->
     <div class="page-wrapper">
-        <aside class="utility-sidebar">
+        <aside class="utility-sidebar" id="utilitySidebar">
             <div class="utility-container">
                 <button class="util-btn" title="글자 키우기" onclick="changeFontSize(1)">A+</button>
                 <button class="util-btn" title="글자 줄이기" onclick="changeFontSize(-1)">A-</button>
@@ -424,53 +467,65 @@
         </aside>
 
         <main>
-            <div class="article-header">
-                <span class="article-category" id="articleCategory">카테고리</span>
-                <h1 class="article-title" id="articleTitle">기사 제목이 로딩 중입니다...</h1>
-                <div class="article-info">
-                    <span id="articleReporter">기자 : -</span>
-                    <span id="articleDate">입력 : -</span>
+            <!-- 정상 기사 영역 -->
+            <div id="articleContainer">
+                <div class="article-header">
+                    <span class="article-category" id="articleCategory">카테고리</span>
+                    <h1 class="article-title" id="articleTitle"></h1>
+                    <div class="article-info">
+                        <span id="articleReporter"></span>
+                        <span id="articleDate"></span>
+                    </div>
+                </div>
+
+                <div class="no-image-box">
+                    이미지 없음
+                </div>
+
+                <div class="article-content" id="articleBody"></div>
+
+                <div class="reporter-section">
+                    <img id="reporterAvatar" src="" alt="기자 프로필 이미지" class="reporter-avatar">
+                    <div class="reporter-info">
+                        <h3 id="reporterName"></h3>
+                        <p id="reporterBio"></p>
+                    </div>
+                </div>
+
+                <div class="widget-ads-container">
+                    <div class="widget-ads-title">추천 광고 (Sponsored)</div>
+                    <div class="widget-ads-grid">
+                        <a href="#" class="widget-ad-item">
+                            <div class="widget-ad-thumb">이미지 없음</div>
+                            <div class="widget-ad-text">"이것 먹고 3주만에 15kg 감량..." 직장인들 난리난 비결</div>
+                        </a>
+                        <a href="#" class="widget-ad-item">
+                            <div class="widget-ad-thumb">이미지 없음</div>
+                            <div class="widget-ad-text">바르기만 해도 뱃살이 스르륵? 홈쇼핑 완판 대란의 정체</div>
+                        </a>
+                        <a href="#" class="widget-ad-item">
+                            <div class="widget-ad-thumb">이미지 없음</div>
+                            <div class="widget-ad-text">출처를 알 수 없는 탈모약, 의사들이 결국 폭발한 이유</div>
+                        </a>
+                        <a href="#" class="widget-ad-item">
+                            <div class="widget-ad-thumb">이미지 없음</div>
+                            <div class="widget-ad-text">하루 5분 이것만 했더니, 시력이 1.5로 기적의 부활?</div>
+                        </a>
+                    </div>
                 </div>
             </div>
 
-            <div class="no-image-box">
-                이미지 없음
-            </div>
-
-            <!-- 동적으로 본문이 채워질 공간 -->
-            <div class="article-content" id="articleBody">
-                <p>기사를 불러오는 중입니다...</p>
-            </div>
-
-            <!-- 기자 프로필 영역 -->
-            <div class="reporter-section">
-                <img id="reporterAvatar" src="" alt="기자 프로필 이미지" class="reporter-avatar">
-                <div class="reporter-info">
-                    <h3 id="reporterName">기자 이름</h3>
-                    <p id="reporterBio">기자 소개가 들어갑니다.</p>
+            <!-- 에러 화면 영역 (JSON이 없거나 잘못되었을 때 표시) -->
+            <div id="errorContainer" class="error-container">
+                <span class="article-category">[ 알림 ]</span>
+                <div class="error-message">
+                    요청하신 기사가 존재하지 않습니다.<br>
+                    요청한 기사가 올바른지 다시 한번 확인 해 주세요.<br>
+                    문제가 지속될 경우 고객센터로 문의해주세요.
                 </div>
-            </div>
-
-            <!-- 하단 위젯 광고 영역 -->
-            <div class="widget-ads-container">
-                <div class="widget-ads-title">추천 광고 (Sponsored)</div>
-                <div class="widget-ads-grid">
-                    <a href="#" class="widget-ad-item">
-                        <div class="widget-ad-thumb">이미지 없음</div>
-                        <div class="widget-ad-text">"이것 먹고 3주만에 15kg 감량..." 직장인들 난리난 비결</div>
-                    </a>
-                    <a href="#" class="widget-ad-item">
-                        <div class="widget-ad-thumb">이미지 없음</div>
-                        <div class="widget-ad-text">바르기만 해도 뱃살이 스르륵? 홈쇼핑 완판 대란의 정체</div>
-                    </a>
-                    <a href="#" class="widget-ad-item">
-                        <div class="widget-ad-thumb">이미지 없음</div>
-                        <div class="widget-ad-text">출처를 알 수 없는 탈모약, 의사들이 결국 폭발한 이유</div>
-                    </a>
-                    <a href="#" class="widget-ad-item">
-                        <div class="widget-ad-thumb">이미지 없음</div>
-                        <div class="widget-ad-text">하루 5분 이것만 했더니, 시력이 1.5로 기적의 부활?</div>
-                    </a>
+                <div class="error-btn-group">
+                    <button class="error-btn" onclick="history.back()">이전페이지로</button>
+                    <a href="index.html" class="error-btn primary">홈으로</a>
                 </div>
             </div>
         </main>
@@ -503,10 +558,15 @@
 
     <!-- 스크립트 영역 -->
     <script>
-        // 1. URL 파라미터에서 기사 ID를 읽어와 JSON 불러오기
         window.addEventListener('DOMContentLoaded', function() {
             const urlParams = new URLSearchParams(window.location.search);
-            const articleId = urlParams.get('id') || '26091101'; // ID가 없으면 기본값으로 26091101 로드
+            const articleId = urlParams.get('id');
+
+            // ID 파라미터가 아예 없거나 비어있으면 곧바로 에러 화면 표시
+            if (!articleId) {
+                showErrorState();
+                return;
+            }
 
             const jsonFilePath = `articles/${articleId}.json`;
 
@@ -518,7 +578,7 @@
                     return response.json();
                 })
                 .then(data => {
-                    // 데이터 매핑
+                    // 정상 데이터 매핑
                     document.getElementById('pageTitle').innerText = data.title + " - 데일리 뉴스";
                     document.getElementById('headerTitle').innerText = data.title;
                     document.getElementById('articleCategory').innerText = data.category;
@@ -526,21 +586,18 @@
                     document.getElementById('articleReporter').innerText = "기자 : " + data.reporter;
                     document.getElementById('articleDate').innerText = "입력 : " + data.date;
                     
-                    // 기자 프로필 매핑
                     document.getElementById('reporterAvatar').src = data.reporterAvatar;
                     document.getElementById('reporterName').innerText = data.reporter;
                     document.getElementById('reporterBio').innerText = data.reporterBio;
 
-                    // 본문 단락(Paragraph) 동적 생성
                     const contentContainer = document.getElementById('articleBody');
-                    contentContainer.innerHTML = ''; // 초기화
+                    contentContainer.innerHTML = '';
 
                     data.content.forEach((paragraph, index) => {
                         const p = document.createElement('p');
                         p.innerText = paragraph;
                         contentContainer.appendChild(p);
 
-                        // 본문 중간(예: 두 번째 단락 뒤)에 광고 박스 삽입
                         if (index === 1) {
                             const adBox = document.createElement('div');
                             adBox.className = 'ad-box';
@@ -550,20 +607,33 @@
                                 </a>
                             `;
                             contentContainer.appendChild(adBox);
-                            loadRandomAd(); // 광고 로드 함수 호출
+                            loadRandomAd();
                         }
                     });
+
+                    // 정상 기사 영역 노출, 에러 영역 숨김
+                    document.getElementById('articleContainer').style.display = 'block';
+                    document.getElementById('errorContainer').style.display = 'none';
+                    document.getElementById('utilitySidebar').style.display = 'flex';
                 })
                 .catch(error => {
                     console.error(error);
-                    document.getElementById('articleTitle').innerText = "기사를 불러오는 데 실패했습니다.";
-                    document.getElementById('articleBody').innerHTML = "<p>존재하지 않거나 잘못된 기사 경로입니다.</p>";
+                    showErrorState();
                 });
 
             loadRandomAd();
         });
 
-        // 2. 스크롤 프로그레스 바 및 헤더 상태 감지
+        // 에러 상태를 보여주는 함수
+        function showErrorState() {
+            document.getElementById('pageTitle').innerText = "페이지를 찾을 수 없습니다 - 데일리 뉴스";
+            document.getElementById('headerTitle').innerText = "페이지를 찾을 수 없습니다";
+            document.getElementById('articleContainer').style.display = 'none';
+            document.getElementById('utilitySidebar').style.display = 'none';
+            document.getElementById('errorContainer').style.display = 'block';
+        }
+
+        // 스크롤 프로그레스 바 및 헤더 상태 감지
         window.addEventListener('scroll', function() {
             const header = document.getElementById('mainHeader');
             const progressBar = document.getElementById('progressBar');
@@ -581,18 +651,19 @@
             }
         });
 
-        // 3. 글자 크기 조절 기능
+        // 글자 크기 조절 기능
         let currentFontSize = 18;
         function changeFontSize(step) {
             currentFontSize += step * 2;
             if (currentFontSize < 14) currentFontSize = 14;
             if (currentFontSize > 26) currentFontSize = 26;
-            document.getElementById('articleBody').style.fontSize = currentFontSize + 'px';
+            const bodyElem = document.getElementById('articleBody');
+            if (bodyElem) bodyElem.style.fontSize = currentFontSize + 'px';
         }
 
-        // 4. 새 창 인쇄 기능
+        // 새 창 인쇄 기능
         function openPrintWindow() {
-            const printContent = document.querySelector('main').innerHTML;
+            const printContent = document.getElementById('articleContainer').innerHTML;
             const printWindow = window.open('', '_blank', 'width=800,height=900');
             
             printWindow.document.write(`
@@ -683,7 +754,7 @@
             printWindow.focus();
         }
 
-        // 5. ad 폴더 이미지 무작위 출력 기능
+        // ad 폴더 이미지 무작위 출력 기능
         function loadRandomAd() {
             const adImages = [
                 "ad/ad1.jpg",
