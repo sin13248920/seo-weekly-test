@@ -513,13 +513,13 @@
             .header-main-bar { height: 60px; }
             .logo-img-large { height: 32px; }
             
-            /* 2번 요구사항: 좁은 화면에서 옆의 유틸리티바 숨김 */
-            .utility-sidebar { display: none; }
+            /* 좁은 화면에서 왼쪽 유틸리티 사이드바 확실하게 숨김 */
+            .utility-sidebar { display: none !important; }
             
             .page-wrapper { padding: 0 15px; }
             .widget-ads-grid { grid-template-columns: 1fr; }
 
-            /* 3번 요구사항: 모바일 고정 헤더 설정 (로고 숨김, 유틸리티 바 꽉 채우기) */
+            /* 모바일 고정 헤더 설정 (로고 숨김, 유틸리티 바 꽉 채우기) */
             .fixed-small-header .header-container { display: none; }
             .fixed-small-header .mobile-utility-bar { display: flex; }
         }
@@ -527,7 +527,7 @@
 </head>
 <body>
 
-    <!-- 1. 페이지와 함께 스크롤되어 올라가는 큰 헤더 (로고 정가운데 배치) -->
+    <!-- 1. 페이지와 함께 스크롤되어 올라가는 큰 헤더 -->
     <div class="large-header" id="largeHeader">
         <div class="header-main-bar">
             <div class="header-container">
@@ -741,7 +741,11 @@
 
                     document.getElementById('articleContainer').style.display = 'block';
                     document.getElementById('errorContainer').style.display = 'none';
-                    document.getElementById('utilitySidebar').style.display = 'flex';
+                    
+                    // 화면 크기에 따라 PC 사이드바 표시 제어
+                    if (window.innerWidth > 768) {
+                        document.getElementById('utilitySidebar').style.display = 'flex';
+                    }
                 })
                 .catch(error => {
                     console.error(error);
