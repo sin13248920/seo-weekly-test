@@ -21,7 +21,7 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            padding-top: 90px; /* 헤더 초기 높이에 맞춘 여백 */
+            padding-top: 102px; /* 2단 헤더의 초기 총 높이 (상단바 32px + 메인바 70px)에 맞춘 여백 */
             transition: padding-top 0.3s ease;
         }
 
@@ -418,7 +418,7 @@
         }
 
         @media (max-width: 768px) {
-            body { padding-top: 70px; }
+            body { padding-top: 60px; }
             .news-layout { grid-template-columns: 1fr; }
             .side-banner-column { display: none; }
             .inner-news-grid { grid-template-columns: 1fr; }
@@ -530,7 +530,7 @@
     </footer>
 
     <script>
-        // 공통 헤더 파일을 불러오는 함수
+        // 공통 헤더 파일을 불러오고 매일경제 스타일의 2단 스크롤 축소 효과를 적용하는 함수
         async function loadHeader() {
             try {
                 const response = await fetch('components/header.html');
@@ -538,23 +538,33 @@
                     const html = await response.text();
                     document.getElementById('header-placeholder').innerHTML = html;
 
-                    // 헤더가 로드된 후 스크롤 이벤트 연결
-                    initHeaderScroll();
+                    const header = document.getElementById('mainHeader');
+                    
+                    // 오늘 날짜 자동 표기
+                    const dateEl = document.getElementById('headerDate');
+                    if(dateEl) {
+                        const now = new Date();
+                        const year = now.getFullYear();
+                        const month = String(now.getMonth() + 1).padStart(2, '0');
+                        const day = String(now.getDate()).padStart(2, '0');
+                        const week = ['일', '월', '화', '수', '목', '금', '토'][now.getDay()];
+                        dateEl.innerText = `${year}.${month}.${day} (${week})`;
+                    }
+
+                    // 스크롤 이벤트에 따른 헤더 1단 숨김 및 상단 여백 조절
+                    window.addEventListener('scroll', function() {
+                        if (window.scrollY > 20) {
+                            header.classList.add('scrolled');
+                            document.body.style.paddingTop = '55px'; // 줄어든 헤더 높이에 맞춤
+                        } else {
+                            header.classList.remove('scrolled');
+                            document.body.style.paddingTop = '102px'; // 원래 2단 헤더 높이에 맞춤
+                        }
+                    });
                 }
             } catch (e) {
                 console.error("헤더를 불러오지 못했습니다.", e);
             }
-        }
-
-        function initHeaderScroll() {
-            const header = document.getElementById('mainHeader');
-            window.addEventListener('scroll', function() {
-                if (window.scrollY > 30) {
-                    header.classList.add('scrolled');
-                } else {
-                    header.classList.remove('scrolled');
-                }
-            });
         }
 
         window.addEventListener('DOMContentLoaded', async function() {
