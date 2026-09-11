@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="pageTitle">데일리 뉴스</title>
-    <!-- 브라우저 탭 아이콘 (파비콘) 설정 -->
     <link rel="icon" href="assets/favi.png" type="image/png">
     
     <style>
@@ -24,7 +23,7 @@
             min-height: 100vh;
         }
 
-        /* 1. 페이지와 함께 스크롤되어 올라가는 큰 헤더 */
+        /* 큰 헤더 영역 */
         .large-header {
             width: 100%;
             background-color: #ffffff;
@@ -64,7 +63,6 @@
             display: block;
         }
 
-        /* 날짜 및 주가 정보 바 */
         .sub-info-bar {
             background-color: #ffffff;
             border-top: 1px solid #f1f3f5;
@@ -96,7 +94,7 @@
         .market-item strong.down { color: #0055ff; }
         .market-divider { color: #cccccc; }
 
-        /* 2. 일정 수준 이상 스크롤했을 때 위에서 스르륵 나타나는 고정 소형 헤더 */
+        /* 고정 소형 헤더 */
         .fixed-small-header {
             position: fixed;
             top: 0;
@@ -118,28 +116,34 @@
             transform: translateY(0);
         }
 
+        .fixed-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
         .logo-img-small {
             height: 25px;
             width: auto;
             display: block;
         }
 
-        /* 헤더 중앙에 나타날 기사 제목 (스크롤 시) */
-        .fixed-header-title {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 14px;
-            font-weight: 600;
-            color: #111111;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 450px;
+        /* 모바일 헤더 유틸 버튼 영역 (PC에서는 숨김) */
+        .mobile-header-utils {
             display: none;
+            gap: 6px;
+            align-items: center;
         }
-        .fixed-small-header.active .fixed-header-title {
-            display: block;
+
+        .mobile-util-btn {
+            background: #f1f3f5;
+            border: 1px solid #d1d8dd;
+            padding: 4px 8px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #333;
         }
 
         /* 스크롤 프로세스바 */
@@ -162,6 +166,7 @@
             position: relative;
         }
 
+        /* PC용 측면 유틸리티 바 */
         .utility-sidebar {
             position: sticky;
             top: 90px;
@@ -502,15 +507,23 @@
             .sub-info-bar { display: none; }
             .header-main-bar { height: 60px; }
             .logo-img-large { height: 32px; }
+            
+            /* [요청반영] 모바일 환경에서 측면 유틸리티 바 숨김 */
             .utility-sidebar { display: none; }
+            
             .page-wrapper { padding: 0 15px; }
             .widget-ads-grid { grid-template-columns: 1fr; }
+
+            /* [요청반영] 모바일 환경에서 헤더 로고 숨김 및 유틸 버튼 노출 */
+            .pc-logo { display: none; }
+            .mobile-header-utils { display: flex; }
+            .fixed-small-header .header-container { justify-content: flex-end; }
         }
     </style>
 </head>
 <body>
 
-    <!-- 1. 페이지와 함께 스크롤되어 올라가는 큰 헤더 -->
+    <!-- 1. 큰 헤더 -->
     <div class="large-header" id="largeHeader">
         <div class="header-main-bar">
             <div class="header-container">
@@ -531,19 +544,28 @@
         </div>
     </div>
 
-    <!-- 2. 일정 수준 이상 스크롤했을 때 위에서 스르륵 나타나는 고정 소형 헤더 -->
+    <!-- 2. 고정 소형 헤더 -->
     <header class="fixed-small-header" id="fixedSmallHeader">
-        <div class="header-container" style="justify-content: flex-start;">
-            <a href="index.html" class="logo-link">
+        <div class="header-container fixed-header-flex">
+            <!-- PC용 로고 -->
+            <a href="index.html" class="logo-link pc-logo">
                 <img src="assets/seologo.png" alt="서오일보 로고" class="logo-img-small">
             </a>
-            <div class="fixed-header-title" id="headerTitle">데일리 뉴스</div>
+            <!-- 모바일 헤더 유틸 버튼 -->
+            <div class="mobile-header-utils">
+                <button class="mobile-util-btn" onclick="changeFontSize(1)" title="글자 키우기">A+</button>
+                <button class="mobile-util-btn" onclick="changeFontSize(-1)" title="글자 줄이기">A-</button>
+                <button class="mobile-util-btn" onclick="openPrintWindow()" title="인쇄">🖨️</button>
+                <button class="mobile-util-btn" onclick="alert('기사 링크가 복사되었습니다.')" title="공유">🔗</button>
+            </div>
         </div>
+        <!-- 프로세서 바 유지 -->
         <div class="scroll-progress-bar" id="scrollProgressBar"></div>
     </header>
 
     <!-- 메인 래퍼 -->
     <div class="page-wrapper">
+        <!-- PC용 측면 유틸리티 바 -->
         <aside class="utility-sidebar" id="utilitySidebar">
             <div class="utility-container">
                 <button class="util-btn" title="글자 키우기" onclick="changeFontSize(1)">A+</button>
@@ -636,7 +658,7 @@
                 </div>
                 <div class="footer-family">
                     <select class="family-site-select" onchange="if(this.value) { window.open(this.value, '_blank'); this.value=''; }">
-                        <option value="">데일리뉴스 관계사</option>
+                        <option value="">서오일보 관계사</option>
                         <option value="https://sin13248920.github.io/Seo-Architecture/">서오건축</option>
                         <option value="https://sin13248920.github.io/weekly-seo-e-viewer/index.html">월간서오 e뷰어</option>
                     </select>
@@ -677,12 +699,10 @@
                     return response.json();
                 })
                 .then(data => {
-                    // 정상 데이터 매핑 ('기자:' 문구 삭제 적용)
                     document.getElementById('pageTitle').innerText = data.title + " - 서오일보";
-                    document.getElementById('headerTitle').innerText = data.title;
                     document.getElementById('articleCategory').innerText = data.category;
                     document.getElementById('articleTitle').innerText = data.title;
-                    document.getElementById('articleReporter').innerText = data.reporter; // '기자 : ' 제거됨
+                    document.getElementById('articleReporter').innerText = data.reporter;
                     document.getElementById('articleDate').innerText = "입력 : " + data.date;
                     
                     const imageArea = document.getElementById('articleImageArea');
@@ -731,7 +751,6 @@
 
         function showErrorState() {
             document.getElementById('pageTitle').innerText = "페이지를 찾을 수 없습니다 - 서오일보";
-            document.getElementById('headerTitle').innerText = "페이지를 찾을 수 없습니다";
             document.getElementById('articleContainer').style.display = 'none';
             document.getElementById('utilitySidebar').style.display = 'none';
             document.getElementById('errorContainer').style.display = 'block';
