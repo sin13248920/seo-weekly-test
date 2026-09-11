@@ -193,6 +193,21 @@
             align-items: center;
         }
 
+        /* 기사 대표 이미지 스타일러스 */
+        .article-image-container {
+            width: 100%;
+            margin-bottom: 40px;
+        }
+
+        .article-image-container img {
+            width: 100%;
+            height: auto;
+            max-height: 500px;
+            object-fit: cover;
+            display: block;
+            border: 1px solid #e1e4e8;
+        }
+
         .no-image-box {
             width: 100%;
             height: 400px;
@@ -478,8 +493,9 @@
                     </div>
                 </div>
 
-                <div class="no-image-box">
-                    이미지 없음
+                <!-- 기사 사진이 들어갈 공간 (JSON에 image 값이 있으면 사진이, 없으면 '이미지 없음' 박스가 뜸) -->
+                <div id="articleImageArea">
+                    <div class="no-image-box">이미지 없음</div>
                 </div>
 
                 <div class="article-content" id="articleBody"></div>
@@ -515,7 +531,7 @@
                 </div>
             </div>
 
-            <!-- 에러 화면 영역 (JSON이 없거나 잘못되었을 때 표시) -->
+            <!-- 에러 화면 영역 -->
             <div id="errorContainer" class="error-container">
                 <span class="article-category">[ 알림 ]</span>
                 <div class="error-message">
@@ -562,7 +578,6 @@
             const urlParams = new URLSearchParams(window.location.search);
             const articleId = urlParams.get('id');
 
-            // ID 파라미터가 아예 없거나 비어있으면 곧바로 에러 화면 표시
             if (!articleId) {
                 showErrorState();
                 return;
@@ -586,6 +601,14 @@
                     document.getElementById('articleReporter').innerText = "기자 : " + data.reporter;
                     document.getElementById('articleDate').innerText = "입력 : " + data.date;
                     
+                    // 기사 대표 이미지 처리 (JSON에 image 필드가 있으면 이미지 출력, 없으면 '이미지 없음' 박스 유지)
+                    const imageArea = document.getElementById('articleImageArea');
+                    if (data.image) {
+                        imageArea.innerHTML = `<div class="article-image-container"><img src="${data.image}" alt="기사 대표 이미지"></div>`;
+                    } else {
+                        imageArea.innerHTML = `<div class="no-image-box">이미지 없음</div>`;
+                    }
+
                     document.getElementById('reporterAvatar').src = data.reporterAvatar;
                     document.getElementById('reporterName').innerText = data.reporter;
                     document.getElementById('reporterBio').innerText = data.reporterBio;
@@ -611,7 +634,6 @@
                         }
                     });
 
-                    // 정상 기사 영역 노출, 에러 영역 숨김
                     document.getElementById('articleContainer').style.display = 'block';
                     document.getElementById('errorContainer').style.display = 'none';
                     document.getElementById('utilitySidebar').style.display = 'flex';
@@ -624,7 +646,6 @@
             loadRandomAd();
         });
 
-        // 에러 상태를 보여주는 함수
         function showErrorState() {
             document.getElementById('pageTitle').innerText = "페이지를 찾을 수 없습니다 - 데일리 뉴스";
             document.getElementById('headerTitle').innerText = "페이지를 찾을 수 없습니다";
@@ -633,7 +654,6 @@
             document.getElementById('errorContainer').style.display = 'block';
         }
 
-        // 스크롤 프로그레스 바 및 헤더 상태 감지
         window.addEventListener('scroll', function() {
             const header = document.getElementById('mainHeader');
             const progressBar = document.getElementById('progressBar');
@@ -651,7 +671,6 @@
             }
         });
 
-        // 글자 크기 조절 기능
         let currentFontSize = 18;
         function changeFontSize(step) {
             currentFontSize += step * 2;
@@ -661,7 +680,6 @@
             if (bodyElem) bodyElem.style.fontSize = currentFontSize + 'px';
         }
 
-        // 새 창 인쇄 기능
         function openPrintWindow() {
             const printContent = document.getElementById('articleContainer').innerHTML;
             const printWindow = window.open('', '_blank', 'width=800,height=900');
@@ -724,6 +742,7 @@
                         }
                         h1 { font-size: 24pt; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
                         p { font-size: 12pt; margin-bottom: 15px; }
+                        .article-image-container img { width: 100%; height: auto; max-height: 500px; object-fit: cover; }
 
                         .ad-box, .reporter-section, .widget-ads-container {
                             display: none !important;
@@ -754,7 +773,6 @@
             printWindow.focus();
         }
 
-        // ad 폴더 이미지 무작위 출력 기능
         function loadRandomAd() {
             const adImages = [
                 "ad/ad1.jpg",
