@@ -1,23 +1,23 @@
 <!-- components/header.html -->
 <header id="mainHeader">
-    <!-- 1단: 최상단 부가 정보 바 (날짜 및 주가 종합지수) - 스크롤 내리면 사라짐 -->
-    <div class="top-bar">
-        <div class="top-bar-inner">
+    <!-- 1단: 로고 영역 (중앙 정렬) -->
+    <div class="header-main-bar">
+        <div class="header-container">
+            <a href="index.html" class="logo-link">
+                <img src="assets/seologo.png" alt="서오일보 로고" class="logo-img">
+            </a>
+        </div>
+    </div>
+
+    <!-- 2단: 로고 바로 아래에 위치하는 흰색 배경의 날짜/주가 정보 바 (스크롤 시 위로 사라짐) -->
+    <div class="sub-info-bar" id="subInfoBar">
+        <div class="sub-info-inner">
             <span class="current-date" id="headerDate">2026.09.11 (금)</span>
             <div class="stock-market-ticker">
                 <span class="market-item">KOSPI <strong class="up">2,780.50</strong> <span class="change">▲ 12.30 (+0.44%)</span></span>
                 <span class="market-divider">|</span>
                 <span class="market-item">KOSDAQ <strong class="down">850.20</strong> <span class="change">▼ 3.10 (-0.36%)</span></span>
             </div>
-        </div>
-    </div>
-
-    <!-- 2단: 로고 영역 (중앙 정렬) -->
-    <div class="header-main-bar">
-        <div class="header-container">
-            <a href="index.html" class="logo-link">
-                <img src="assets/seologo.png" alt="서오일보 로고" class="logo-img">
-            </a>
         </div>
     </div>
     
@@ -38,45 +38,13 @@
         transition: all 0.3s ease;
     }
 
-    /* 1단 탑바 스타일 */
-    .top-bar {
-        background-color: #f8f9fa;
-        border-bottom: 1px solid #e1e4e8;
-        font-size: 12px;
-        color: #555555;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        overflow: hidden;
-        transition: height 0.3s ease, opacity 0.3s ease;
-    }
-
-    .top-bar-inner {
-        max-width: 1100px;
-        width: 100%;
-        margin: 0 auto;
-        padding: 0 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .stock-market-ticker {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-    }
-
-    .market-item strong.up { color: #C91C1C; }
-    .market-item strong.down { color: #0055ff; }
-    .market-divider { color: #cccccc; }
-
-    /* 2단 로고 메인 바 스타일 */
+    /* 메인 로고 바 스타일 */
     .header-main-bar {
-        height: 70px;
+        height: 75px;
         display: flex;
         align-items: center;
         justify-content: center;
+        background-color: #ffffff;
         transition: height 0.3s ease;
     }
 
@@ -98,26 +66,62 @@
     }
 
     .logo-img {
-        height: 38px; 
+        height: 40px; 
         width: auto;
         display: block;
         transition: height 0.3s ease;
     }
 
+    /* 로고 바로 아래 흰색 배경의 날짜/주가 바 스타일 */
+    .sub-info-bar {
+        background-color: #ffffff;
+        border-top: 1px solid #f1f3f5;
+        border-bottom: 1px solid #e1e4e8;
+        font-size: 12px;
+        color: #555555;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        transition: height 0.3s ease, opacity 0.3s ease, border 0.3s ease;
+    }
+
+    .sub-info-inner {
+        max-width: 1100px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 0 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .stock-market-ticker {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .market-item strong.up { color: #C91C1C; }
+    .market-item strong.down { color: #0055ff; }
+    .market-divider { color: #cccccc; }
+
     /* --- 스크롤을 내렸을 때 적용될 클래스 (.scrolled) --- */
-    header.scrolled .top-bar {
+    /* 정보 바가 위로 스르륵 숨겨지고, 로고 바가 소형 헤더로 축소됨 */
+    header.scrolled .sub-info-bar {
         height: 0;
         opacity: 0;
+        border-top: none;
         border-bottom: none;
     }
 
     header.scrolled .header-main-bar {
-        height: 55px; /* 스크롤 내리면 더 콤팩트하게 줄어듦 */
+        height: 52px; 
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     }
 
     header.scrolled .logo-img {
-        height: 26px; /* 로고도 함께 축소 */
+        height: 25px; /* 소형 헤더에 맞춰 로고 축소 */
     }
 
     /* 스크롤 프로세스바 */
@@ -134,7 +138,7 @@
 
     /* 모바일 대응 */
     @media (max-width: 768px) {
-        .top-bar { display: none; /* 모바일에서는 공간 절약을 위해 상단 탑바 숨김 */ }
+        .sub-info-bar { display: none; /* 모바일에서는 공간 절약을 위해 하단 정보바 숨김 */ }
         .header-main-bar { height: 60px; }
         .logo-img { height: 30px; }
         header.scrolled .header-main-bar { height: 50px; }
