@@ -1,31 +1,83 @@
 <!-- components/header.html -->
 <header id="mainHeader">
-    <div class="header-container">
-        <!-- 홈(index.html)으로 이동하는 중앙 정렬된 로고 -->
-        <a href="index.html" class="logo-link">
-            <img src="assets/seologo.png" alt="서오일보 로고" class="logo-img">
-        </a>
+    <!-- 1단: 최상단 부가 정보 바 (날짜 및 주가 종합지수) - 스크롤 내리면 사라짐 -->
+    <div class="top-bar">
+        <div class="top-bar-inner">
+            <span class="current-date" id="headerDate">2026.09.11 (금)</span>
+            <div class="stock-market-ticker">
+                <span class="market-item">KOSPI <strong class="up">2,780.50</strong> <span class="change">▲ 12.30 (+0.44%)</span></span>
+                <span class="market-divider">|</span>
+                <span class="market-item">KOSDAQ <strong class="down">850.20</strong> <span class="change">▼ 3.10 (-0.36%)</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2단: 로고 영역 (중앙 정렬) -->
+    <div class="header-main-bar">
+        <div class="header-container">
+            <a href="index.html" class="logo-link">
+                <img src="assets/seologo.png" alt="서오일보 로고" class="logo-img">
+            </a>
+        </div>
     </div>
     
-    <!-- viewer.html에서만 동적으로 활성화될 스크롤 프로세스바 -->
+    <!-- viewer.html에서만 작동할 스크롤 프로세스바 -->
     <div class="scroll-progress-bar" id="scrollProgressBar"></div>
 </header>
 
 <style>
-    /* 공통 헤더 스타일 (최상단: 넓음) */
+    /* 전체 헤더 컨테이너 (고정) */
     header {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
-        height: 90px;
         background-color: #ffffff;
         z-index: 1000;
         border-bottom: 1px solid #d1d8dd;
+        transition: all 0.3s ease;
+    }
+
+    /* 1단 탑바 스타일 */
+    .top-bar {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #e1e4e8;
+        font-size: 12px;
+        color: #555555;
+        height: 32px;
         display: flex;
         align-items: center;
-        justify-content: center; /* 로고 중앙 정렬을 위한 설정 */
-        transition: all 0.3s ease;
+        overflow: hidden;
+        transition: height 0.3s ease, opacity 0.3s ease;
+    }
+
+    .top-bar-inner {
+        max-width: 1100px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 0 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .stock-market-ticker {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .market-item strong.up { color: #C91C1C; }
+    .market-item strong.down { color: #0055ff; }
+    .market-divider { color: #cccccc; }
+
+    /* 2단 로고 메인 바 스타일 */
+    .header-main-bar {
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: height 0.3s ease;
     }
 
     .header-container {
@@ -35,7 +87,7 @@
         padding: 0 20px;
         display: flex;
         align-items: center;
-        justify-content: center; /* 로고를 정중앙에 배치 */
+        justify-content: center;
         height: 100%;
         position: relative;
     }
@@ -46,23 +98,29 @@
     }
 
     .logo-img {
-        height: 40px; 
+        height: 38px; 
         width: auto;
         display: block;
         transition: height 0.3s ease;
     }
 
-    /* 스크롤을 내렸을 때 좁아지는 헤더 */
-    header.scrolled {
-        height: 60px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    /* --- 스크롤을 내렸을 때 적용될 클래스 (.scrolled) --- */
+    header.scrolled .top-bar {
+        height: 0;
+        opacity: 0;
+        border-bottom: none;
+    }
+
+    header.scrolled .header-main-bar {
+        height: 55px; /* 스크롤 내리면 더 콤팩트하게 줄어듦 */
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     }
 
     header.scrolled .logo-img {
-        height: 28px;
+        height: 26px; /* 로고도 함께 축소 */
     }
 
-    /* 스크롤 프로세스바 기본 스타일 (숨김 상태 또는 viewer 전용) */
+    /* 스크롤 프로세스바 */
     .scroll-progress-bar {
         position: absolute;
         bottom: 0;
@@ -71,14 +129,15 @@
         height: 3px;
         background-color: #C91C1C;
         transition: width 0.1s ease-out;
-        display: none; /* 기본적으로 숨김 (index.html 등에서는 안 보임) */
+        display: none; 
     }
 
     /* 모바일 대응 */
     @media (max-width: 768px) {
-        header { height: 70px; }
-        .logo-img { height: 32px; }
-        header.scrolled { height: 55px; }
-        header.scrolled .logo-img { height: 24px; }
+        .top-bar { display: none; /* 모바일에서는 공간 절약을 위해 상단 탑바 숨김 */ }
+        .header-main-bar { height: 60px; }
+        .logo-img { height: 30px; }
+        header.scrolled .header-main-bar { height: 50px; }
+        header.scrolled .logo-img { height: 22px; }
     }
 </style>
