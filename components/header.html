@@ -1,66 +1,113 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>주가종합지수 현황</title>
-    <style>
-        .stock-table {
-            width: 100%;
-            max-width: 500px;
-            border-collapse: collapse;
-            font-family: 'Malgun Gothic', sans-serif;
-            margin: 20px 0;
-        }
-        .stock-table th, .stock-table td {
-            padding: 12px 15px;
-            text-align: right;
-            border-bottom: 1px solid #dddddd;
-        }
-        .stock-table th {
-            background-color: #f8f9fa;
-            color: #333;
-            font-weight: bold;
-        }
-        .stock-table td:first-child, .stock-table th:first-child {
-            text-align: left;
-        }
-        .up { color: #d63031; font-weight: bold; }   /* 상승 (빨간색) */
-        .down { color: #0984e3; font-weight: bold; } /* 하락 (파란색) */
-    </style>
-</head>
-<body>
+<!-- header.html 또는 공통 헤더 영역 -->
+<header class="common-header" id="commonHeader">
+    <div class="header-main-bar">
+        <div class="header-container">
+            <a href="index.html" class="logo-link">
+                <!-- 로고 이미지가 항상 정가운데 오도록 설정 -->
+                <img src="assets/seologo.png" alt="서오일보 로고" class="logo-img">
+            </a>
+        </div>
+    </div>
+    <div class="sub-info-bar">
+        <div class="sub-info-inner">
+            <span class="current-date" id="headerDate">2026.09.11 (금)</span>
+            <div class="stock-market-ticker">
+                <span class="market-item">KOSPI <strong class="up">2,780.50</strong> <span class="change">▲ 12.30 (+0.44%)</span></span>
+                <span class="market-divider">|</span>
+                <span class="market-item">KOSDAQ <strong class="down">850.20</strong> <span class="change">▼ 3.10 (-0.36%)</span></span>
+            </div>
+        </div>
+    </div>
+</header>
 
-    <h3>📈 주요 주가종합지수</h3>
-    <table class="stock-table">
-        <thead>
-            <tr>
-                <th>지수명</th>
-                <th>현재 지수</th>
-                <th>변동량</th>
-                <th>등락률</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><strong>코스피 (KOSPI)</strong></td>
-                <td>6,909.91</td>
-                <td class="down">▼ 124.01</td>
-                <td class="down">-1.76%</td>
-            </tr>
-            <tr>
-                <td><strong>코스닥 (KOSDAQ)</strong></td>
-                <td>820.64</td>
-                <td class="down">▼ 9.72</td>
-                <td class="down">-1.17%</td>
-            </tr>
-            <tr>
-                <td><strong>S&P 500</strong></td>
-                <td>7,591.70</td>
-                <td class="down">▼ 44.66</td>
-                <td class="down">-0.58%</td>
-            </tr>
-        </tbody>
-    </table>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-</body>
-</html>
+    .common-header {
+        width: 100%;
+        background-color: #ffffff;
+        border-bottom: 1px solid #d1d8dd;
+        position: relative;
+        z-index: 10;
+    }
+
+    .header-main-bar {
+        height: 75px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #ffffff;
+    }
+
+    .header-container {
+        max-width: 1100px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 0 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center; /* 로고를 무조건 정가운데로 배치 */
+        height: 100%;
+        position: relative;
+    }
+
+    .logo-link {
+        display: block;
+        text-decoration: none;
+    }
+
+    .logo-img {
+        height: 40px; 
+        width: auto;
+        display: block;
+    }
+
+    /* 날짜 및 주가 정보 바 */
+    .sub-info-bar {
+        background-color: #ffffff;
+        border-top: 1px solid #f1f3f5;
+        border-bottom: 1px solid #e1e4e8;
+        font-size: 12px;
+        color: #555555;
+        height: 36px;
+        display: flex;
+        align-items: center;
+    }
+
+    .sub-info-inner {
+        max-width: 1100px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 0 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .stock-market-ticker {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .market-item strong.up { color: #C91C1C; }
+    .market-item strong.down { color: #0055ff; }
+    .market-divider { color: #cccccc; }
+
+    /* 반응형 모바일 설정 (768px 이하) */
+    @media (max-width: 768px) {
+        .sub-info-bar { 
+            display: none; 
+        }
+        .header-main-bar { 
+            height: 60px; 
+        }
+        .logo-img { 
+            height: 32px; 
+        }
+    }
+</style>
