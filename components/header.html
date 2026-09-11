@@ -1,6 +1,6 @@
 <!-- components/header.html -->
 
-<!-- 1. 페이지와 함께 스크롤되어 올라가는 큰 헤더 (일반 문서 흐름) -->
+<!-- 1. 페이지와 함께 스크롤되어 올라가는 큰 헤더 (고정 속성 없음) -->
 <div class="large-header" id="largeHeader">
     <div class="header-main-bar">
         <div class="header-container">
@@ -33,11 +33,13 @@
 </header>
 
 <style>
-    /* 큰 헤더 영역 (페이지와 함께 스크롤됨) */
+    /* 큰 헤더 영역 (문서 흐름에 따라 페이지와 함께 스크롤됨) */
     .large-header {
         width: 100%;
         background-color: #ffffff;
         border-bottom: 1px solid #d1d8dd;
+        position: relative; /* 고정되지 않고 흐름을 따름 */
+        z-index: 10;
     }
 
     .header-main-bar {
@@ -71,7 +73,7 @@
         display: block;
     }
 
-    /* 날짜 및 주가 정보 바 (흰색 배경) */
+    /* 날짜 및 주가 정보 바 */
     .sub-info-bar {
         background-color: #ffffff;
         border-top: 1px solid #f1f3f5;
@@ -145,7 +147,7 @@
 
     /* 모바일 대응 */
     @media (max-width: 768px) {
-        .sub-info-bar { display: none; } /* 모바일에서는 하단 정보바 숨김 */
+        .sub-info-bar { display: none; }
         .header-main-bar { height: 60px; }
         .logo-img-large { height: 32px; }
         .fixed-small-header { height: 48px; }
