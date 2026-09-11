@@ -1,16 +1,15 @@
 <!-- components/header.html -->
-<header id="mainHeader">
-    <!-- 1단: 로고 영역 (중앙 정렬) -->
+
+<!-- 1. 페이지와 함께 스크롤되어 올라가는 큰 헤더 (일반 문서 흐름) -->
+<div class="large-header" id="largeHeader">
     <div class="header-main-bar">
         <div class="header-container">
             <a href="index.html" class="logo-link">
-                <img src="assets/seologo.png" alt="서오일보 로고" class="logo-img">
+                <img src="assets/seologo.png" alt="서오일보 로고" class="logo-img-large">
             </a>
         </div>
     </div>
-
-    <!-- 2단: 로고 바로 아래에 위치하는 흰색 배경의 날짜/주가 정보 바 (스크롤 시 위로 사라짐) -->
-    <div class="sub-info-bar" id="subInfoBar">
+    <div class="sub-info-bar">
         <div class="sub-info-inner">
             <span class="current-date" id="headerDate">2026.09.11 (금)</span>
             <div class="stock-market-ticker">
@@ -20,32 +19,33 @@
             </div>
         </div>
     </div>
-    
+</div>
+
+<!-- 2. 일정 수준 이상 스크롤했을 때 위에서 스르륵 나타나는 고정 소형 헤더 -->
+<header class="fixed-small-header" id="fixedSmallHeader">
+    <div class="header-container">
+        <a href="index.html" class="logo-link">
+            <img src="assets/seologo.png" alt="서오일보 로고" class="logo-img-small">
+        </a>
+    </div>
     <!-- viewer.html에서만 작동할 스크롤 프로세스바 -->
     <div class="scroll-progress-bar" id="scrollProgressBar"></div>
 </header>
 
 <style>
-    /* 전체 헤더 컨테이너 (고정) */
-    header {
-        position: fixed;
-        top: 0;
-        left: 0;
+    /* 큰 헤더 영역 (페이지와 함께 스크롤됨) */
+    .large-header {
         width: 100%;
         background-color: #ffffff;
-        z-index: 1000;
         border-bottom: 1px solid #d1d8dd;
-        transition: all 0.3s ease;
     }
 
-    /* 메인 로고 바 스타일 */
     .header-main-bar {
         height: 75px;
         display: flex;
         align-items: center;
         justify-content: center;
         background-color: #ffffff;
-        transition: height 0.3s ease;
     }
 
     .header-container {
@@ -65,14 +65,13 @@
         text-decoration: none;
     }
 
-    .logo-img {
+    .logo-img-large {
         height: 40px; 
         width: auto;
         display: block;
-        transition: height 0.3s ease;
     }
 
-    /* 로고 바로 아래 흰색 배경의 날짜/주가 바 스타일 */
+    /* 날짜 및 주가 정보 바 (흰색 배경) */
     .sub-info-bar {
         background-color: #ffffff;
         border-top: 1px solid #f1f3f5;
@@ -82,8 +81,6 @@
         height: 36px;
         display: flex;
         align-items: center;
-        overflow: hidden;
-        transition: height 0.3s ease, opacity 0.3s ease, border 0.3s ease;
     }
 
     .sub-info-inner {
@@ -106,22 +103,32 @@
     .market-item strong.down { color: #0055ff; }
     .market-divider { color: #cccccc; }
 
-    /* --- 스크롤을 내렸을 때 적용될 클래스 (.scrolled) --- */
-    /* 정보 바가 위로 스르륵 숨겨지고, 로고 바가 소형 헤더로 축소됨 */
-    header.scrolled .sub-info-bar {
-        height: 0;
-        opacity: 0;
-        border-top: none;
-        border-bottom: none;
-    }
-
-    header.scrolled .header-main-bar {
-        height: 52px; 
+    /* 고정 소형 헤더 스타일 (기본에는 화면 위로 숨겨져 있음) */
+    .fixed-small-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 52px;
+        background-color: #ffffff;
+        border-bottom: 1px solid #d1d8dd;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        transform: translateY(-100%);
+        transition: transform 0.3s ease;
     }
 
-    header.scrolled .logo-img {
-        height: 25px; /* 소형 헤더에 맞춰 로고 축소 */
+    .fixed-small-header.active {
+        transform: translateY(0); /* 스크롤 내리면 화면 안으로 내려옴 */
+    }
+
+    .logo-img-small {
+        height: 25px;
+        width: auto;
+        display: block;
     }
 
     /* 스크롤 프로세스바 */
@@ -138,10 +145,10 @@
 
     /* 모바일 대응 */
     @media (max-width: 768px) {
-        .sub-info-bar { display: none; /* 모바일에서는 공간 절약을 위해 하단 정보바 숨김 */ }
+        .sub-info-bar { display: none; } /* 모바일에서는 하단 정보바 숨김 */
         .header-main-bar { height: 60px; }
-        .logo-img { height: 30px; }
-        header.scrolled .header-main-bar { height: 50px; }
-        header.scrolled .logo-img { height: 22px; }
+        .logo-img-large { height: 32px; }
+        .fixed-small-header { height: 48px; }
+        .logo-img-small { height: 22px; }
     }
 </style>
