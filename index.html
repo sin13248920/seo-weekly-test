@@ -381,7 +381,7 @@
 
         <!-- 중앙일보 스타일 레이아웃 (좌측 메인 + 우측 서브) -->
         <div class="news-layout">
-            <!-- 좌측: 가장 최신 기사 (1위) - loc 포함 여부 상관없이 최신이면 무조건 메인 -->
+            <!-- 좌측: 가장 최신 기사 (1위) -->
             <div id="mainLeadArea">
                 <div class="main-lead-article">
                     <div class="lead-thumb">기사를 불러오는 중...</div>
@@ -398,7 +398,7 @@
             </div>
         </div>
 
-        <!-- 동네소식 섹션 (ID에 'loc'가 포함된 기사들만 모여서 출력) -->
+        <!-- 동네소식 섹션 -->
         <div class="local-news-section">
             <div class="section-header">
                 <h2 class="section-title">동네소식 &gt;</h2>
@@ -420,7 +420,6 @@
                     등록(발행)일자: 2026년 01월 01일 | 발행인: 홍길동 | 편집인: 김철수
                 </div>
             </div>
-            {
             <div class="footer-bottom">
                 <div class="footer-copyright">
                     Copyright &copy; Daily News All rights reserved. 무단 전재 및 재배포 금지.
@@ -436,10 +435,11 @@
         </div>
     </footer>
 
-    <!-- 자바스크립트 로직 수정 완료 -->
+    <!-- 자바스크립트 로직 -->
     <script>
         window.addEventListener('DOMContentLoaded', async function() {
-            // 프로젝트에 존재하는 전체 기사 JSON ID 목록 (필요에 따라 추가하세요)
+            // ⭐ [매우 중요] 여기에 본인이 만드신 모든 기사 JSON 파일명(확장자 제외)을 빠짐없이 적어주셔야 합니다!
+            // 예시: "26091101", "26091102", "260911loc01" 등
             const articleIds = ["26091101", "26091102", "26091103", "260911loc01"]; 
 
             let allArticles = [];
@@ -457,7 +457,7 @@
                 }
             }
 
-            // 1. 전체 기사 최신순 정렬 (ID 숫자가 큰 순서)
+            // 1. 전체 기사 최신순 정렬 (ID 숫자 기준)
             allArticles.sort((a, b) => {
                 const numA = Number(String(a.id).replace(/[^0-9]/g, '')) || 0;
                 const numB = Number(String(b.id).replace(/[^0-9]/g, '')) || 0;
@@ -469,8 +469,8 @@
                 return;
             }
 
-            // --- [주요 뉴스 렌더링: 전체 최신 기사 순서대로 배치 (loc 포함 여부 상관없음)] ---
-            const lead = allArticles[0]; // 가장 최신 기사 (loc여도 메인 가능!)
+            // --- [주요 뉴스 렌더링: 최신순 순서대로 배치] ---
+            const lead = allArticles[0]; 
             const leadThumbHtml = lead.image ? `<img src="${lead.image}" alt="대표 이미지">` : `이미지 없음`;
 
             document.getElementById('mainLeadArea').innerHTML = `
@@ -485,7 +485,6 @@
                 </div>
             `;
 
-            // 우측 서브 뉴스 (2위 ~ 4위)
             const subNewsArea = document.getElementById('subNewsArea');
             subNewsArea.innerHTML = '';
             for (let i = 1; i < Math.min(allArticles.length, 4); i++) {
@@ -504,12 +503,14 @@
                 `;
             }
 
-            // --- [동네소식 섹션 렌더링: ID에 'loc'가 포함된 기사들만 모아서 출력] ---
+            // --- [동네소식 섹션 렌더링: ID에 'loc'가 포함된 기사들만 추출] ---
             const localArticles = allArticles.filter(item => String(item.id).toLowerCase().includes('loc'));
+            const localNewsSection = document.querySelector('.local-news-section');
             const localNewsArea = document.getElementById('localNewsArea');
             localNewsArea.innerHTML = '';
 
             if (localArticles.length > 0) {
+                localNewsSection.style.display = 'block'; // 동네소식이 있으면 확실히 보이게 처리
                 localArticles.forEach(local => {
                     const localThumbHtml = local.image ? `<img src="${local.image}" alt="썸네일">` : `이미지 없음`;
 
@@ -525,7 +526,7 @@
                     `;
                 });
             } else {
-                document.querySelector('.local-news-section').style.display = 'none'; // loc 기사가 없으면 섹션 숨김
+                localNewsSection.style.display = 'none'; // loc 기사가 없을 때만 숨김
             }
         });
     </script>
