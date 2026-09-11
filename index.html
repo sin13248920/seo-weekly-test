@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>데일리 뉴스 - 기사 상세</title>
+    <!-- 브라우저 탭 아이콘 (파비콘) 설정 -->
+    <link rel="icon" href="assets/favi.png" type="image/png">
+    
     <style>
         * {
             margin: 0;
@@ -22,7 +25,7 @@
             padding-top: 60px;
         }
 
-        /* 고정된 헤더 스타일 (흰색 배경으로 변경) */
+        /* 고정된 헤더 스타일 (흰색 배경) */
         header {
             position: fixed;
             top: 0;
@@ -48,7 +51,7 @@
             height: 100%;
         }
 
-        /* 로고 이미지 스타일 (크림슨 톤의 로고 반영) */
+        /* 로고 이미지 스타일 */
         .logo-img {
             height: 28px;
             width: auto;
@@ -90,7 +93,7 @@
         .scroll-progress-bar {
             height: 100%;
             width: 0%;
-            background-color: #C91C1C; /* 크림슨 포인트 컬러 */
+            background-color: #C91C1C;
             transition: width 0.1s ease-out; 
         }
 
@@ -171,7 +174,7 @@
 
         .article-category {
             font-size: 13px;
-            color: #C91C1C; /* 크림슨 포인트 컬러 */
+            color: #C91C1C;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -188,11 +191,13 @@
             letter-spacing: -0.5px;
         }
 
+        /* 기자명(왼쪽), 날짜(오른쪽) 수평 배치 */
         .article-info {
             font-size: 13px;
             color: #777777;
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
 
         /* 이미지 없음 박스 스타일 */
@@ -223,7 +228,7 @@
             margin-bottom: 28px;
         }
 
-        /* 본문 중간 광고 영역 (ad 폴더 랜덤 이미지용) */
+        /* 본문 중간 광고 영역 */
         .ad-box {
             width: 100%;
             max-width: 450px;
@@ -249,7 +254,7 @@
             display: block;
         }
 
-        /* 기자 프로필 영역 (단순 구분선 스타일) */
+        /* 기자 프로필 영역 */
         .reporter-section {
             border-top: 1px solid #d1d8dd;
             border-bottom: 1px solid #d1d8dd;
@@ -338,7 +343,7 @@
             color: #111111;
         }
 
-        /* 푸터 스타일 (흰색 배경) */
+        /* 푸터 스타일 */
         footer {
             background-color: #ffffff;
             border-top: 1px solid #d1d8dd;
@@ -437,7 +442,7 @@
 </head>
 <body>
 
-    <!-- 고정된 헤더 영역 (흰색 배경) -->
+    <!-- 고정된 헤더 영역 -->
     <header id="mainHeader">
         <div class="header-container">
             <a href="#">
@@ -450,7 +455,7 @@
         </div>
     </header>
 
-    <!-- 메인 래퍼 (좌측 유틸리티 바 + 본문) -->
+    <!-- 메인 래퍼 -->
     <div class="page-wrapper">
         <!-- 데스크톱 전용 왼쪽 유틸리티 바 -->
         <aside class="utility-sidebar">
@@ -469,9 +474,10 @@
             <div class="article-header">
                 <span class="article-category">IT / 기술</span>
                 <h1 class="article-title">인공지능 기술의 급격한 발전, 우리 일상의 미래는 어떻게 바뀔 것인가</h1>
+                <!-- 기자명 왼쪽, 날짜 오른쪽 수평 배치 -->
                 <div class="article-info">
-                    <span>입력 : 2026-06-07 14:30</span>
                     <span>기자 : 김데일리 기자</span>
+                    <span>입력 : 2026-06-07 14:30</span>
                 </div>
             </div>
 
@@ -484,7 +490,7 @@
                 
                 <p>전문가들은 이러한 기술 혁신이 업무 효율성을 극대화하는 동시에, 새로운 일자리 창출과 산업 구조의 재편을 가져올 것이라고 분석합니다. 하지만 동시에 데이터 프라이버시 문제나 일자리 대체에 대한 우려의 목소리도 적지 않게 나오고 있습니다.</p>
                 
-                <!-- 기사 중간 광고 영역 (ad 폴더 무작위 이미지 출력) -->
+                <!-- 기사 중간 광고 영역 -->
                 <div class="ad-box">
                     <a href="#" id="adLink" target="_blank" style="width:100%; height:100%;">
                         <img id="randomAdImage" src="" alt="추천 광고">
@@ -494,7 +500,7 @@
                 <p>이에 대해 정부와 관련 업계는 AI 윤리 가이드라인을 강화하고, 기술 부작용을 최소화하기 위한 법적·제도적 장치 마련에 서두르고 있습니다. 앞으로 기술 발전과 인간의 삶이 조화를 이루는 지속 가능한 방향성을 찾는 것이 가장 중요한 과제로 남겨져 있습니다.</p>
             </div>
 
-            <!-- 기자 프로필 영역 (단순 구분선 스타일) -->
+            <!-- 기자 프로필 영역 -->
             <div class="reporter-section">
                 <img src="https://i.pravatar.cc/150?img=68" alt="기자 프로필 이미지" class="reporter-avatar">
                 <div class="reporter-info">
@@ -528,7 +534,7 @@
         </main>
     </div>
 
-    <!-- 푸터 영역 (흰색 배경) -->
+    <!-- 푸터 영역 -->
     <footer>
         <div class="footer-inner">
             <div class="footer-top">
@@ -553,7 +559,7 @@
         </div>
     </footer>
 
-    <!-- 스크롤 및 기능 스크립트 -->
+    <!-- 스크립트 영역 -->
     <script>
         // 1. 스크롤 프로그레스 바 및 헤더 상태 감지
         window.addEventListener('scroll', function() {
@@ -582,7 +588,7 @@
             document.getElementById('articleBody').style.fontSize = currentFontSize + 'px';
         }
 
-        // 3. 새 창 인쇄 기능
+        // 3. 새 창 인쇄 기능 (새 창 내부 상단 헤더, 인쇄/취소 버튼 추가 및 광고/프로필 제외)
         function openPrintWindow() {
             const printContent = document.querySelector('main').innerHTML;
             const printWindow = window.open('', '_blank', 'width=800,height=900');
@@ -594,46 +600,114 @@
                     <meta charset="UTF-8">
                     <title>인쇄 미리보기</title>
                     <style>
+                        * { margin: 0; padding: 0; box-sizing: border-box; }
                         body {
                             font-family: 'Pretendard', "Malgun Gothic", sans-serif;
                             color: #000;
                             line-height: 1.6;
-                            padding: 40px;
+                            background-color: #fff;
+                            padding-top: 60px; /* 고정 헤더 공간 확보 */
+                        }
+                        /* 새 창 전용 상단 고정 헤더 */
+                        .print-header {
+                            position: fixed;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 60px;
+                            background-color: #ffffff;
+                            border-bottom: 1px solid #d1d8dd;
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+                            padding: 0 30px;
+                            z-index: 1000;
+                        }
+                        .print-logo {
+                            height: 24px;
+                            width: auto;
+                            display: block;
+                        }
+                        .print-btn-group {
+                            display: flex;
+                            gap: 10px;
+                        }
+                        .p-btn {
+                            padding: 6px 14px;
+                            font-size: 13px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            border: 1px solid #d1d8dd;
+                            background-color: #fff;
+                            border-radius: 0;
+                        }
+                        .p-btn.print-action {
+                            background-color: #111;
+                            color: #fff;
+                            border-color: #111;
+                        }
+                        .p-btn:hover {
+                            opacity: 0.8;
+                        }
+
+                        /* 본문 래퍼 */
+                        .print-body-wrap {
                             max-width: 800px;
-                            margin: 0 auto;
+                            margin: 40px auto;
+                            padding: 0 20px;
                         }
                         h1 { font-size: 24pt; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
                         p { font-size: 12pt; margin-bottom: 15px; }
-                        .ad-box, .widget-ads-container {
+
+                        /* 인쇄 시 숨길 요소 (광고, 기자 프로필, 하단 위젯 등) */
+                        .ad-box, .reporter-section, .widget-ads-container {
                             display: none !important;
+                        }
+
+                        /* 인쇄 실제 실행 시 헤더와 버튼 영역 숨기기 */
+                        @media print {
+                            .print-header {
+                                display: none !important;
+                            }
+                            body {
+                                padding-top: 0;
+                            }
                         }
                     </style>
                 </head>
                 <body>
-                    ${printContent}
+                    <!-- 새 창 상단 헤더 (로고 및 인쇄/취소 버튼) -->
+                    <div class="print-header">
+                        <img src="assets/seologo.png" alt="데일리 뉴스 로고" class="print-logo">
+                        <div class="print-btn-group">
+                            <button class="p-btn print-action" onclick="window.print()">인쇄하기</button>
+                            <button class="p-btn" onclick="window.close()">취소하기</button>
+                        </div>
+                    </div>
+
+                    <!-- 기사 본문 영역 -->
+                    <div class="print-body-wrap">
+                        ${printContent}
+                    </div>
                 </body>
                 </html>
             `);
             
             printWindow.document.close();
             printWindow.focus();
-            
-            setTimeout(function() {
-                printWindow.print();
-            }, 200);
         }
 
         // 4. ad 폴더 이미지 무작위 출력 기능
         function loadRandomAd() {
             const adImages = [
-                "ad/jijack.jpg",
+                "ad/ad1.jpg",
                 "ad/ad2.jpg",
                 "ad/ad3.jpg",
                 "ad/ad4.jpg"
             ];
             
             const adLinks = [
-                "https://www.army.mil.kr/sites/army/index.do",
+                "https://example.com/ad1",
                 "https://example.com/ad2",
                 "https://example.com/ad3",
                 "https://example.com/ad4"
