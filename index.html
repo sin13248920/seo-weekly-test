@@ -22,16 +22,16 @@
             padding-top: 60px;
         }
 
-        /* 고정된 헤더 스타일 */
+        /* 고정된 헤더 스타일 (흰색 배경으로 변경) */
         header {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 60px;
-            background-color: #111111;
+            background-color: #ffffff;
             z-index: 1000;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-bottom: 1px solid #d1d8dd;
             display: flex;
             align-items: center;
         }
@@ -48,12 +48,11 @@
             height: 100%;
         }
 
-        .logo {
-            font-size: 17px;
-            font-weight: 800;
-            color: #ffffff;
-            text-decoration: none;
-            letter-spacing: 1px;
+        /* 로고 이미지 스타일 (크림슨 톤의 로고 반영) */
+        .logo-img {
+            height: 28px;
+            width: auto;
+            display: block;
         }
 
         .header-title {
@@ -62,7 +61,7 @@
             transform: translateX(-50%);
             font-size: 14px;
             font-weight: 600;
-            color: #ffffff;
+            color: #111111;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -79,8 +78,8 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 6px; 
-            background-color: rgba(255, 255, 255, 0.1);
+            height: 4px; 
+            background-color: #f1f3f5;
             opacity: 0;
         }
 
@@ -91,11 +90,11 @@
         .scroll-progress-bar {
             height: 100%;
             width: 0%;
-            background-color: #0066cc;
+            background-color: #C91C1C; /* 크림슨 포인트 컬러 */
             transition: width 0.1s ease-out; 
         }
 
-        /* 메인 래퍼 */
+        /* 메인 래퍼 (좌측 유틸리티 바 + 본문 배치용) */
         .page-wrapper {
             max-width: 900px;
             width: 100%;
@@ -163,6 +162,7 @@
             min-width: 0;
         }
 
+        /* 기사 헤더 */
         .article-header {
             margin-bottom: 30px;
             border-bottom: 2px solid #111111;
@@ -171,7 +171,7 @@
 
         .article-category {
             font-size: 13px;
-            color: #0066cc;
+            color: #C91C1C; /* 크림슨 포인트 컬러 */
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -195,6 +195,7 @@
             justify-content: space-between;
         }
 
+        /* 이미지 없음 박스 스타일 */
         .no-image-box {
             width: 100%;
             height: 400px;
@@ -207,8 +208,10 @@
             font-weight: 600;
             margin-bottom: 40px;
             border: 1px solid #e1e4e8;
+            border-radius: 0;
         }
 
+        /* 기사 본문 내용 */
         .article-content {
             font-size: 18px;
             color: #2c3e50;
@@ -220,38 +223,33 @@
             margin-bottom: 28px;
         }
 
-        /* 🖼️ 본문 중간 광고 영역 (이미지 비율 유지 및 잘림 방지 설정) */
+        /* 본문 중간 광고 영역 (ad 폴더 랜덤 이미지용) */
         .ad-box {
             width: 100%;
-            max-width: 600px; /* 광고 최대 너비 설정 */
-            height: 280px;   /* 광고 고정 높이 설정 */
-            background-color: #f1f3f5; /* 이미지가 작을 경우 채워질 배경색 */
-            margin: 45px auto;
-            border: 1px solid #d1d8dd;
+            max-width: 450px;
+            height: 220px;
+            background-color: #fdfdfe;
+            color: #868e96;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+            margin: 45px auto;
+            font-size: 14px;
+            font-weight: 600;
+            border: 1px solid #d1d8dd;
+            border-radius: 0;
             overflow: hidden;
         }
 
-        .ad-box a {
+        .ad-box img {
             width: 100%;
             height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .ad-box img {
-            max-width: 100%;
-            max-height: 100%;
-            width: auto;
-            height: auto;
-            object-fit: contain; /* 핵심: 이미지가 잘리지 않고 비율을 유지하도록 설정 */
+            object-fit: cover;
             display: block;
         }
 
-        /* 기자 프로필 영역 */
+        /* 기자 프로필 영역 (단순 구분선 스타일) */
         .reporter-section {
             border-top: 1px solid #d1d8dd;
             border-bottom: 1px solid #d1d8dd;
@@ -284,7 +282,7 @@
             line-height: 1.5;
         }
 
-        /* 하단 위젯 광고 영역 */
+        /* 하단 위젯 광고 영역 스타일 */
         .widget-ads-container {
             margin-top: 60px;
             border-top: 2px solid #111111;
@@ -312,6 +310,7 @@
             flex-direction: column;
             text-decoration: none;
             color: #333333;
+            border-radius: 0;
         }
 
         .widget-ad-item:hover {
@@ -328,6 +327,7 @@
             font-size: 12px;
             color: #adb5bd;
             border-bottom: 1px solid #e1e4e8;
+            border-radius: 0;
         }
 
         .widget-ad-text {
@@ -338,7 +338,7 @@
             color: #111111;
         }
 
-        /* 푸터 영역 */
+        /* 푸터 스타일 (흰색 배경) */
         footer {
             background-color: #ffffff;
             border-top: 1px solid #d1d8dd;
@@ -361,12 +361,10 @@
             border-bottom: 1px solid #d1d8dd;
         }
 
-        .footer-logo {
-            font-size: 18px;
-            font-weight: 800;
-            color: #111111;
-            line-height: 1.2;
-            letter-spacing: 0.5px;
+        .footer-logo-img {
+            height: 24px;
+            width: auto;
+            display: block;
         }
 
         .footer-info {
@@ -396,9 +394,10 @@
             color: #333333;
             cursor: pointer;
             width: 200px;
+            border-radius: 0;
         }
 
-        /* 모바일 반응형 */
+        /* 모바일 반응형 설정 */
         @media (max-width: 768px) {
             .utility-sidebar {
                 display: none;
@@ -418,9 +417,8 @@
                 padding: 6px 15px;
             }
 
-            header.scrolled .logo {
-                font-size: 16px;
-                margin-bottom: 2px;
+            header.scrolled .logo-img {
+                margin-bottom: 4px;
             }
 
             header.scrolled .header-title {
@@ -439,10 +437,12 @@
 </head>
 <body>
 
-    <!-- 고정된 헤더 영역 -->
+    <!-- 고정된 헤더 영역 (흰색 배경) -->
     <header id="mainHeader">
         <div class="header-container">
-            <a href="#" class="logo">DAILY NEWS</a>
+            <a href="#">
+                <img src="assets/seologo.png" alt="데일리 뉴스 로고" class="logo-img">
+            </a>
             <div class="header-title">인공지능 기술의 급격한 발전, 우리 일상의 미래는 어떻게 바뀔 것인가</div>
         </div>
         <div class="scroll-progress-container">
@@ -450,7 +450,7 @@
         </div>
     </header>
 
-    <!-- 메인 래퍼 -->
+    <!-- 메인 래퍼 (좌측 유틸리티 바 + 본문) -->
     <div class="page-wrapper">
         <!-- 데스크톱 전용 왼쪽 유틸리티 바 -->
         <aside class="utility-sidebar">
@@ -484,9 +484,9 @@
                 
                 <p>전문가들은 이러한 기술 혁신이 업무 효율성을 극대화하는 동시에, 새로운 일자리 창출과 산업 구조의 재편을 가져올 것이라고 분석합니다. 하지만 동시에 데이터 프라이버시 문제나 일자리 대체에 대한 우려의 목소리도 적지 않게 나오고 있습니다.</p>
                 
-                <!-- 기사 중간 광고 영역 (비율 유지 및 컨테이너 포함) -->
+                <!-- 기사 중간 광고 영역 (ad 폴더 무작위 이미지 출력) -->
                 <div class="ad-box">
-                    <a href="#" id="adLink" target="_blank">
+                    <a href="#" id="adLink" target="_blank" style="width:100%; height:100%;">
                         <img id="randomAdImage" src="" alt="추천 광고">
                     </a>
                 </div>
@@ -494,7 +494,7 @@
                 <p>이에 대해 정부와 관련 업계는 AI 윤리 가이드라인을 강화하고, 기술 부작용을 최소화하기 위한 법적·제도적 장치 마련에 서두르고 있습니다. 앞으로 기술 발전과 인간의 삶이 조화를 이루는 지속 가능한 방향성을 찾는 것이 가장 중요한 과제로 남겨져 있습니다.</p>
             </div>
 
-            <!-- 기자 프로필 영역 -->
+            <!-- 기자 프로필 영역 (단순 구분선 스타일) -->
             <div class="reporter-section">
                 <img src="https://i.pravatar.cc/150?img=68" alt="기자 프로필 이미지" class="reporter-avatar">
                 <div class="reporter-info">
@@ -528,11 +528,11 @@
         </main>
     </div>
 
-    <!-- 푸터 영역 -->
+    <!-- 푸터 영역 (흰색 배경) -->
     <footer>
         <div class="footer-inner">
             <div class="footer-top">
-                <div class="footer-logo">DAILY NEWS</div>
+                <img src="assets/seologo.png" alt="데일리 뉴스 로고" class="footer-logo-img">
                 <div class="footer-info">
                     주소: 서울특별시 중구 세종대로 123, 4층 | 대표번호: 02-123-4567 | 인터넷신문등록번호: 서울 아 00000<br>
                     등록(발행)일자: 2026년 01월 01일 | 발행인: 홍길동 | 편집인: 김철수
@@ -553,7 +553,7 @@
         </div>
     </footer>
 
-    <!-- 스크립트 영역 -->
+    <!-- 스크롤 및 기능 스크립트 -->
     <script>
         // 1. 스크롤 프로그레스 바 및 헤더 상태 감지
         window.addEventListener('scroll', function() {
@@ -623,17 +623,17 @@
             }, 200);
         }
 
-        // 4. ad 폴더 이미지 무작위 출력 기능 (jijak.jpg 및 육군본부 링크 적용)
+        // 4. ad 폴더 이미지 무작위 출력 기능
         function loadRandomAd() {
             const adImages = [
-                "ad/jijak.jpg", // 수정된 첫 번째 광고 이미지
+                "ad/jijack.jpg",
                 "ad/ad2.jpg",
                 "ad/ad3.jpg",
                 "ad/ad4.jpg"
             ];
             
             const adLinks = [
-                "https://www.army.mil.kr/sites/army/index.do", // 수정된 첫 번째 광고 링크
+                "https://www.army.mil.kr/sites/army/index.do",
                 "https://example.com/ad2",
                 "https://example.com/ad3",
                 "https://example.com/ad4"
