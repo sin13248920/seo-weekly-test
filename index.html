@@ -21,7 +21,7 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            padding-top: 102px; /* 2단 헤더의 초기 총 높이 (상단바 32px + 메인바 70px)에 맞춘 여백 */
+            padding-top: 111px; /* 초기 헤더 전체 높이 (로고바 75px + 정보바 36px) */
             transition: padding-top 0.3s ease;
         }
 
@@ -530,7 +530,7 @@
     </footer>
 
     <script>
-        // 공통 헤더 파일을 불러오고 매일경제 스타일의 2단 스크롤 축소 효과를 적용하는 함수
+        // 공통 헤더 로드 및 날짜/주가 정보바 하단 배치 스크롤 축소 효과 제어
         async function loadHeader() {
             try {
                 const response = await fetch('components/header.html');
@@ -551,14 +551,14 @@
                         dateEl.innerText = `${year}.${month}.${day} (${week})`;
                     }
 
-                    // 스크롤 이벤트에 따른 헤더 1단 숨김 및 상단 여백 조절
+                    // 스크롤 이벤트에 따른 하단 정보바 숨김 및 소형 헤더 전환
                     window.addEventListener('scroll', function() {
                         if (window.scrollY > 20) {
                             header.classList.add('scrolled');
-                            document.body.style.paddingTop = '55px'; // 줄어든 헤더 높이에 맞춤
+                            document.body.style.paddingTop = '52px'; // 소형 헤더 높이에 맞춤
                         } else {
                             header.classList.remove('scrolled');
-                            document.body.style.paddingTop = '102px'; // 원래 2단 헤더 높이에 맞춤
+                            document.body.style.paddingTop = '111px'; // 원래 전체 헤더 높이에 맞춤
                         }
                     });
                 }
