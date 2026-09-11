@@ -21,8 +21,7 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            padding-top: 111px; /* 초기 헤더 전체 높이 (로고바 75px + 정보바 36px) */
-            transition: padding-top 0.3s ease;
+            /* 큰 헤더가 문서 흐름에 포함되므로 상단 고정 여백 불필요 */
         }
 
         /* 메인 콘텐츠 영역 */
@@ -418,7 +417,6 @@
         }
 
         @media (max-width: 768px) {
-            body { padding-top: 60px; }
             .news-layout { grid-template-columns: 1fr; }
             .side-banner-column { display: none; }
             .inner-news-grid { grid-template-columns: 1fr; }
@@ -530,7 +528,7 @@
     </footer>
 
     <script>
-        // 공통 헤더 로드 및 날짜/주가 정보바 하단 배치 스크롤 축소 효과 제어
+        // 공통 헤더 로드 및 실시간 날짜 설정, 스크롤에 따른 소형 헤더 등장 제어
         async function loadHeader() {
             try {
                 const response = await fetch('components/header.html');
@@ -538,9 +536,7 @@
                     const html = await response.text();
                     document.getElementById('header-placeholder').innerHTML = html;
 
-                    const header = document.getElementById('mainHeader');
-                    
-                    // 오늘 날짜 자동 표기
+                    // 1. 실시간 날짜 및 요일 자동 표기
                     const dateEl = document.getElementById('headerDate');
                     if(dateEl) {
                         const now = new Date();
@@ -551,14 +547,18 @@
                         dateEl.innerText = `${year}.${month}.${day} (${week})`;
                     }
 
-                    // 스크롤 이벤트에 따른 하단 정보바 숨김 및 소형 헤더 전환
+                    // 2. 스크롤 위치에 따른 소형 고정 헤더 등장 제어
+                    const fixedHeader = document.getElementById('fixedSmallHeader');
+                    const largeHeader = document.getElementById('largeHeader');
+
                     window.addEventListener('scroll', function() {
-                        if (window.scrollY > 20) {
-                            header.classList.add('scrolled');
-                            document.body.style.paddingTop = '52px'; // 소형 헤더 높이에 맞춤
+                        // 큰 헤더의 대략적인 높이(약 111px)를 지나치면 소형 헤더 등장
+                        const threshold = largeHeader ? largeHeader.offsetHeight : 111;
+
+                        if (window.scrollY > threshold) {
+                            fixedHeader.classList.add('active');
                         } else {
-                            header.classList.remove('scrolled');
-                            document.body.style.paddingTop = '111px'; // 원래 전체 헤더 높이에 맞춤
+                            fixedHeader.classList.remove('active');
                         }
                     });
                 }
