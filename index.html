@@ -25,7 +25,7 @@
             padding-top: 60px; /* 고정 헤더 높이만큼 여백 */
         }
 
-        /* 기사 뷰어와 100% 동일한 헤더 스타일 (스크롤 프로세서 바 없음) */
+        /* 기사 뷰어와 100% 동일한 헤더 스타일 */
         header {
             position: fixed;
             top: 0;
@@ -292,7 +292,7 @@
             overflow: hidden;
         }
 
-        /* 기사 뷰어와 100% 동일한 푸터 스타일 */
+        /* 푸터 스타일 */
         footer {
             background-color: #ffffff;
             border-top: 1px solid #d1d8dd;
@@ -360,7 +360,7 @@
 </head>
 <body>
 
-    <!-- 헤더 영역 (기사 뷰어와 100% 일치, 스크롤 바 없음) -->
+    <!-- 헤더 영역 -->
     <header>
         <div class="header-container">
             <a href="index.html">
@@ -379,7 +379,7 @@
             <span class="section-desc">실시간 최신 기사 순으로 제공됩니다.</span>
         </div>
 
-        <!-- 중앙일보 스타일 레이아웃 (좌측 메인 + 우측 서브) -->
+        <!-- 주요 뉴스 레이아웃 -->
         <div class="news-layout">
             <!-- 좌측: 가장 최신 기사 (1위) -->
             <div id="mainLeadArea">
@@ -410,7 +410,7 @@
         </div>
     </div>
 
-    <!-- 푸터 영역 (기사 뷰어와 100% 일치) -->
+    <!-- 푸터 영역 -->
     <footer>
         <div class="footer-inner">
             <div class="footer-top">
@@ -438,8 +438,7 @@
     <!-- 자바스크립트 로직 -->
     <script>
         window.addEventListener('DOMContentLoaded', async function() {
-            // ⭐ [매우 중요] 여기에 본인이 만드신 모든 기사 JSON 파일명(확장자 제외)을 빠짐없이 적어주셔야 합니다!
-            // 예시: "26091101", "26091102", "260911loc01" 등
+            // ⭐ 작성하신 모든 기사 파일명(확장자 제외)을 여기에 정확히 적어주세요.
             const articleIds = ["26091101", "26091102", "26091103", "260911loc01"]; 
 
             let allArticles = [];
@@ -457,7 +456,7 @@
                 }
             }
 
-            // 1. 전체 기사 최신순 정렬 (ID 숫자 기준)
+            // 1. 전체 기사 최신순 정렬 (ID 숫자가 큰 순서)
             allArticles.sort((a, b) => {
                 const numA = Number(String(a.id).replace(/[^0-9]/g, '')) || 0;
                 const numB = Number(String(b.id).replace(/[^0-9]/g, '')) || 0;
@@ -469,7 +468,7 @@
                 return;
             }
 
-            // --- [주요 뉴스 렌더링: 최신순 순서대로 배치] ---
+            // --- [주요 뉴스 렌더링: 전체 최신순 순서대로 배치 (loc든 아니든 최신이면 무조건 메인/서브)] ---
             const lead = allArticles[0]; 
             const leadThumbHtml = lead.image ? `<img src="${lead.image}" alt="대표 이미지">` : `이미지 없음`;
 
@@ -503,14 +502,19 @@
                 `;
             }
 
-            // --- [동네소식 섹션 렌더링: ID에 'loc'가 포함된 기사들만 추출] ---
-            const localArticles = allArticles.filter(item => String(item.id).toLowerCase().includes('loc'));
+            // --- [동네소식 섹션 렌더링: ID 또는 카테고리에 'loc'가 포함된 경우 모두 동네소식으로 인정] ---
+            const localArticles = allArticles.filter(item => {
+                const idStr = String(item.id || '').toLowerCase();
+                const catStr = String(item.category || '').toLowerCase();
+                return idStr.includes('loc') || catStr.includes('loc');
+            });
+
             const localNewsSection = document.querySelector('.local-news-section');
             const localNewsArea = document.getElementById('localNewsArea');
             localNewsArea.innerHTML = '';
 
             if (localArticles.length > 0) {
-                localNewsSection.style.display = 'block'; // 동네소식이 있으면 확실히 보이게 처리
+                localNewsSection.style.display = 'block'; 
                 localArticles.forEach(local => {
                     const localThumbHtml = local.image ? `<img src="${local.image}" alt="썸네일">` : `이미지 없음`;
 
@@ -526,7 +530,7 @@
                     `;
                 });
             } else {
-                localNewsSection.style.display = 'none'; // loc 기사가 없을 때만 숨김
+                localNewsSection.style.display = 'none'; // loc가 정말 단 하나도 없을 때만 숨김
             }
         });
     </script>
