@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>서오일보</title>
+    <title>서오일보 - 대한민국 대표 뉴스</title>
+    <!-- 브라우저 탭 아이콘 (파비콘) 설정 -->
     <link rel="icon" href="assets/favi.png" type="image/png">
     
     <style>
@@ -23,6 +24,106 @@
             min-height: 100vh;
         }
 
+        /* 1. 페이지와 함께 스크롤되어 올라가는 큰 헤더 */
+        .large-header {
+            width: 100%;
+            background-color: #ffffff;
+            border-bottom: 1px solid #d1d8dd;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header-main-bar {
+            height: 75px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ffffff;
+        }
+
+        .header-container {
+            max-width: 1100px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center; /* 로고 정가운데 배치 */
+            height: 100%;
+            position: relative;
+        }
+
+        .logo-link {
+            display: block;
+            text-decoration: none;
+        }
+
+        .logo-img-large {
+            height: 40px; 
+            width: auto;
+            display: block;
+        }
+
+        /* 날짜 및 주가 정보 바 */
+        .sub-info-bar {
+            background-color: #ffffff;
+            border-top: 1px solid #f1f3f5;
+            border-bottom: 1px solid #e1e4e8;
+            font-size: 12px;
+            color: #555555;
+            height: 36px;
+            display: flex;
+            align-items: center;
+        }
+
+        .sub-info-inner {
+            max-width: 1100px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stock-market-ticker {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .market-item strong.up { color: #C91C1C; }
+        .market-item strong.down { color: #0055ff; }
+        .market-divider { color: #cccccc; }
+
+        /* 2. 일정 수준 이상 스크롤했을 때 위에서 스르륵 나타나는 고정 소형 헤더 */
+        .fixed-small-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 52px;
+            background-color: #ffffff;
+            border-bottom: 1px solid #d1d8dd;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .fixed-small-header.active {
+            transform: translateY(0);
+        }
+
+        .logo-img-small {
+            height: 25px;
+            width: auto;
+            display: block;
+        }
+
         /* 메인 콘텐츠 영역 */
         .main-container {
             max-width: 1100px;
@@ -32,344 +133,179 @@
             flex: 1;
         }
 
-        .section-header {
-            border-bottom: 2px solid #111111;
-            padding-bottom: 10px;
-            margin-bottom: 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
+        /* 섹션 공통 스타일 */
+        .section-box {
+            margin-bottom: 50px;
         }
 
         .section-title {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 800;
             color: #111111;
-            letter-spacing: -0.5px;
+            border-bottom: 2px solid #111111;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .section-desc {
-            font-size: 13px;
+        .section-title span {
+            font-size: 12px;
+            font-weight: 500;
             color: #777777;
         }
 
-        .news-layout {
+        /* 주요뉴스 (상단 메인 배치) */
+        .main-headline {
             display: grid;
-            grid-template-columns: 1fr 280px;
-            gap: 30px;
-            align-items: start;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            margin-bottom: 50px;
         }
 
-        .main-content-column {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .side-banner-column {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .vertical-ad-banner {
-            width: 100%;
-            background-color: #f8f9fa;
-            border: 1px solid #e1e4e8;
+        .headline-main-item {
             text-decoration: none;
             color: inherit;
-            overflow: hidden;
             display: flex;
             flex-direction: column;
         }
 
-        .vertical-ad-banner img {
+        .headline-main-thumb {
             width: 100%;
-            height: auto;
-            display: block;
-            object-fit: contain;
-        }
-
-        /* [비율 변경] 메인 리드와 서브 기사 영역이 대칭적으로 보이도록 격자 비율 최적화 (1.3fr : 1fr) */
-        .inner-news-grid {
-            display: grid;
-            grid-template-columns: 1.3fr 1fr;
-            gap: 25px;
-            align-items: start;
-        }
-
-        .main-lead-article {
-            margin-bottom: 30px;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        .lead-thumb {
-            width: 100%;
-            height: 280px;
+            height: 320px;
             background-color: #f8f9fa;
             border: 1px solid #e1e4e8;
+            margin-bottom: 15px;
             overflow: hidden;
-            margin-bottom: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #adb5bd;
-            font-size: 14px;
         }
 
-        .lead-thumb img {
+        .headline-main-thumb img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: block;
         }
 
-        .article-category {
-            font-size: 12px;
-            color: #C91C1C;
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-            display: inline-block;
-        }
-
-        .lead-title {
-            font-size: 22px;
+        .headline-main-title {
+            font-size: 24px;
             font-weight: 800;
             color: #111111;
             line-height: 1.35;
             margin-bottom: 10px;
-            letter-spacing: -0.5px;
         }
 
-        .lead-title a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .lead-title a:hover {
-            color: #C91C1C;
-        }
-
-        .lead-summary {
+        .headline-main-desc {
             font-size: 14px;
             color: #555555;
-            line-height: 1.6;
-            margin-bottom: 12px;
+            line-height: 1.5;
         }
 
-        .article-meta {
-            font-size: 12px;
-            color: #888888;
-        }
-
-        /* 우측 2~4위 서브 기사 영역 (잘림 방지 및 여유 확보) */
-        .sub-news-list {
+        .headline-sub-list {
             display: flex;
             flex-direction: column;
             gap: 15px;
-            border-left: 1px solid #f1f3f5;
-            padding-left: 20px;
+            justify-content: space-between;
         }
 
-        .sub-news-item {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #f1f3f5;
+        .headline-sub-item {
             text-decoration: none;
             color: inherit;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f1f3f5;
+            display: flex;
+            flex-direction: column;
         }
 
-        .sub-news-item:last-child {
+        .headline-sub-item:last-child {
             border-bottom: none;
             padding-bottom: 0;
         }
 
-        .sub-news-item:hover .sub-title {
-            color: #C91C1C;
-        }
-
-        .sub-thumb {
-            width: 100%;
-            height: 130px;
-            background-color: #f8f9fa;
-            border: 1px solid #e1e4e8;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #adb5bd;
-            font-size: 11px;
-            overflow: hidden;
-        }
-
-        .sub-thumb img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .sub-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .sub-title {
-            font-size: 14px;
+        .headline-sub-title {
+            font-size: 15px;
             font-weight: 700;
             color: #111111;
             line-height: 1.4;
-            margin-bottom: 4px;
+            margin-bottom: 5px;
+        }
+
+        .headline-sub-desc {
+            font-size: 13px;
+            color: #666666;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
 
-        .local-news-section {
-            margin-top: 60px;
-        }
-
-        .local-news-grid {
+        /* 카테고리별 섹션 그리드 (사회, 경제, 문화) */
+        .category-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 25px;
+            gap: 20px;
         }
 
-        .local-news-card {
+        .category-card {
+            background-color: #ffffff;
+            border: 1px solid #d1d8dd;
             text-decoration: none;
             color: inherit;
             display: flex;
             flex-direction: column;
-            border: 1px solid #e1e4e8;
-            background-color: #ffffff;
+            overflow: hidden;
             transition: border-color 0.2s;
         }
 
-        .local-news-card:hover {
+        .category-card:hover {
             border-color: #111111;
         }
 
-        .local-thumb {
+        .card-thumb {
             width: 100%;
             height: 160px;
             background-color: #f8f9fa;
+            border-bottom: 1px solid #e1e4e8;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #adb5bd;
-            font-size: 12px;
-            border-bottom: 1px solid #e1e4e8;
             overflow: hidden;
         }
 
-        .local-thumb img {
+        .card-thumb img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        .local-text-wrap {
-            padding: 16px;
+        .card-content {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
-        .local-title {
-            font-size: 16px;
+        .card-title {
+            font-size: 15px;
             font-weight: 700;
             color: #111111;
             line-height: 1.4;
-            margin-bottom: 8px;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
 
-        .monthly-seo-section {
-            margin-top: 60px;
-        }
-
-        .monthly-seo-card {
-            display: flex;
-            background-color: #f8f9fa;
-            border: 1px solid #e1e4e8;
-            padding: 24px;
-            gap: 25px;
-            align-items: center;
-        }
-
-        .monthly-seo-thumb {
-            width: 180px;
-            height: 240px;
-            background-color: #ffffff;
-            border: 1px solid #cbd5e1;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #888888;
-            font-size: 13px;
-            font-weight: 600;
-            text-align: center;
-            overflow: hidden;
-        }
-
-        .monthly-seo-thumb img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        .monthly-seo-info {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .monthly-seo-badge {
+        .card-date {
             font-size: 12px;
-            color: #C91C1C;
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-bottom: 8px;
+            color: #888888;
         }
 
-        .monthly-seo-title {
-            font-size: 22px;
-            font-weight: 800;
-            color: #111111;
-            margin-bottom: 10px;
-            letter-spacing: -0.5px;
-        }
-
-        .monthly-seo-desc {
-            font-size: 14px;
-            color: #555555;
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-
-        .monthly-seo-btn {
-            display: inline-block;
-            width: fit-content;
-            padding: 10px 24px;
-            background-color: #111111;
-            color: #ffffff;
-            font-size: 14px;
-            font-weight: 700;
-            text-decoration: none;
-            border-radius: 0;
-            transition: opacity 0.2s;
-        }
-
-        .monthly-seo-btn:hover {
-            opacity: 0.85;
-        }
-
+        /* 푸터 영역 */
         footer {
             background-color: #ffffff;
             border-top: 1px solid #d1d8dd;
@@ -427,88 +363,173 @@
             width: 200px;
         }
 
+        /* 반응형 모바일 설정 (768px 이하) */
         @media (max-width: 768px) {
-            .news-layout { grid-template-columns: 1fr; }
-            .side-banner-column { display: none; }
-            .inner-news-grid { grid-template-columns: 1fr; gap: 20px; }
-            .sub-news-list { border-left: none; padding-left: 0; border-top: 1px solid #f1f3f5; padding-top: 20px; }
-            .local-news-grid { grid-template-columns: 1fr; }
+            .sub-info-bar { display: none; }
+            .header-main-bar { height: 60px; }
+            .logo-img-large { height: 32px; }
             
-            .lead-thumb { height: 220px; }
-            .local-thumb { height: 180px; }
-
-            .monthly-seo-card { flex-direction: column; text-align: center; }
-            .monthly-seo-thumb { width: 140px; height: 180px; margin: 0 auto; }
-            .monthly-seo-btn { margin: 0 auto; }
-
-            .footer-top { flex-direction: column; gap: 15px; }
-            .footer-info { padding-left: 0; }
+            .main-headline {
+                grid-template-columns: 1fr;
+            }
+            .headline-main-thumb {
+                height: 220px;
+            }
+            .category-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- 동적으로 헤더를 불러올 위치 -->
-    <div id="header-placeholder"></div>
-
-    <!-- 메인 콘텐츠 영역 -->
-    <div class="main-container">
-        <div class="section-header">
-            <h2 class="section-title">주요 뉴스</h2>
-            <span class="section-desc">실시간 최신 기사 순으로 제공됩니다.</span>
-        </div>
-
-        <div class="news-layout">
-            <div class="main-content-column">
-                <div class="inner-news-grid">
-                    <div id="mainLeadArea">
-                        <div class="main-lead-article">
-                            <div class="lead-thumb">기사를 불러오는 중...</div>
-                            <span class="article-category">-</span>
-                            <h1 class="lead-title">최신 기사를 불러오는 중입니다.</h1>
-                            <p class="lead-summary">잠시만 기다려 주세요.</p>
-                        </div>
-                    </div>
-                    <div class="sub-news-list" id="subNewsArea"></div>
-                </div>
-            </div>
-
-            <div class="side-banner-column">
-                <a href="#" class="vertical-ad-banner" target="_blank">
-                    <img src="assets/adb1.jpg" alt="세로 배너 광고" onerror="this.onerror=null; this.parentNode.style.display='none';">
+    <!-- 1. 페이지와 함께 스크롤되어 올라가는 큰 헤더 -->
+    <div class="large-header" id="largeHeader">
+        <div class="header-main-bar">
+            <div class="header-container">
+                <a href="index.html" class="logo-link">
+                    <img src="assets/seologo.png" alt="서오일보 로고" class="logo-img-large">
                 </a>
             </div>
         </div>
-
-        <div class="local-news-section">
-            <div class="section-header">
-                <h2 class="section-title">동네소식 &gt;</h2>
-                <span class="section-desc">우리 동네 생생한 소식을 전해드립니다.</span>
-            </div>
-            <div class="local-news-grid" id="localNewsArea"></div>
-        </div>
-
-        <div class="monthly-seo-section">
-            <div class="section-header">
-                <h2 class="section-title">월간서오</h2>
-            </div>
-            <div class="monthly-seo-card">
-                <div class="monthly-seo-thumb">
-                    <img src="images/weekly05.png" alt="월간서오 2026년 5월호 표지" onerror="this.onerror=null; this.parentNode.innerHTML='2026년 5월호 표지';">
-                </div>
-                <div class="monthly-seo-info">
-                    <span class="monthly-seo-badge">최신호 안내</span>
-                    <h3 class="monthly-seo-title">월간서오 2026년 5월호</h3>
-                    <p class="monthly-seo-desc">
-                        2026년 5월, 첫 출간된 이 의미있는 월간지는 2026년 5월을 맞이해 서비스를 종료하게 되었습니다.<br>
-                        월간서오는 군대에 간 기니를 위해 동네의 소식을 전달하고자 출간하게 된 월간지였습니다.
-                    </p>
-                    <a href="weekly.html" class="monthly-seo-btn" target="_blank">보러가기</a>
+        <div class="sub-info-bar">
+            <div class="sub-info-inner">
+                <span class="current-date" id="headerDate">2026.09.11 (금)</span>
+                <div class="stock-market-ticker">
+                    <span class="market-item">KOSPI <strong class="up">2,780.50</strong> <span class="change">▲ 12.30 (+0.44%)</span></span>
+                    <span class="market-divider">|</span>
+                    <span class="market-item">KOSDAQ <strong class="down">850.20</strong> <span class="change">▼ 3.10 (-0.36%)</span></span>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- 2. 일정 수준 이상 스크롤했을 때 위에서 스르륵 나타나는 고정 소형 헤더 -->
+    <header class="fixed-small-header" id="fixedSmallHeader">
+        <div class="header-container">
+            <a href="index.html" class="logo-link">
+                <img src="assets/seologo.png" alt="서오일보 로고" class="logo-img-small">
+            </a>
+        </div>
+    </header>
+
+    <!-- 메인 콘텐츠 -->
+    <div class="main-container">
+        
+        <!-- 주요 뉴스 섹션 -->
+        <section class="section-box">
+            <div class="section-title">주요뉴스 <span>HEADLINE NEWS</span></div>
+            <div class="main-headline">
+                <!-- 메인 대형 뉴스 (예: article1.json) -->
+                <a href="viewer.html?id=article1" class="headline-main-item">
+                    <div class="headline-main-thumb">
+                        <img src="assets/news1.jpg" alt="메인 뉴스 이미지" onerror="this.style.display='none';">
+                    </div>
+                    <h2 class="headline-main-title">AI 반도체 주도권 경쟁 격화... 국내 기업 대책마련 시급</h2>
+                    <p class="headline-main-desc">글로벌 기술 패권 다툼이 심화되는 가운데, 국내 주요 반도체 기업들이 새로운 돌파구를 찾기 위해 총력전을 펼치고 있다. 전문가들은 정부 차원의 지원이 뒷받침되어야 한다고 입을 모은다.</p>
+                </a>
+                
+                <!-- 서브 뉴스 목록 (예: article2.json, article3.json) -->
+                <div class="headline-sub-list">
+                    <a href="viewer.html?id=article2" class="headline-sub-item">
+                        <h3 class="headline-sub-title">서울시, 대중교통 무제한 정액권 도입 본격화</h3>
+                        <p class="headline-sub-desc">시민들의 교통비 부담을 획기적으로 낮추기 위한 새로운 통합 정액권 제도가 다음 달부터 시범 운영된다.</p>
+                    </a>
+                    <a href="viewer.html?id=article3" class="headline-sub-item">
+                        <h3 class="headline-sub-title">주말 전국 대체로 맑고 포근... 일교차 주의</h3>
+                        <p class="headline-sub-desc">완연한 봄 날씨가 이어지는 가운데 주말 동안 야외활동하기 좋겠지만, 큰 일교차로 인한 건강관리가 요구된다.</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 사회 섹션 -->
+        <section class="section-box">
+            <div class="section-title">사회 <span>SOCIETY</span></div>
+            <div class="category-grid">
+                <a href="viewer.html?id=article2" class="category-card">
+                    <div class="card-thumb">이미지 없음</div>
+                    <div class="card-content">
+                        <h3 class="card-title">서울시, 대중교통 무제한 정액권 도입 본격화</h3>
+                        <span class="card-date">2026.09.11</span>
+                    </div>
+                </a>
+                <a href="viewer.html?id=article4" class="category-card">
+                    <div class="card-thumb">이미지 없음</div>
+                    <div class="card-content">
+                        <h3 class="card-title">도심 속 친환경 공원 확대 조성 사업 발표</h3>
+                        <span class="card-date">2026.09.11</span>
+                    </div>
+                </a>
+                <a href="viewer.html?id=article5" class="category-card">
+                    <div class="card-thumb">이미지 없음</div>
+                    <div class="card-content">
+                        <h3 class="card-title">수도권 광역급행철도(GTX) 추가 노선 착공</h3>
+                        <span class="card-date">2026.09.10</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- 경제 섹션 -->
+        <section class="section-box">
+            <div class="section-title">경제 <span>ECONOMY</span></div>
+            <div class="category-grid">
+                <a href="viewer.html?id=article1" class="category-card">
+                    <div class="card-thumb"><img src="assets/news1.jpg" alt="" onerror="this.style.display='none';"></div>
+                    <div class="card-content">
+                        <h3 class="card-title">AI 반도체 주도권 경쟁 격화... 국내 기업 대책마련 시급</h3>
+                        <span class="card-date">2026.09.11</span>
+                    </div>
+                </a>
+                <a href="viewer.html?id=article6" class="category-card">
+                    <div class="card-thumb">이미지 없음</div>
+                    <div class="card-content">
+                        <h3 class="card-title">기준금리 동결 여파에 따른 부동산 시장 반응</h3>
+                        <span class="card-date">2026.09.10</span>
+                    </div>
+                </a>
+                <a href="viewer.html?id=article7" class="category-card">
+                    <div class="card-thumb">이미지 없음</div>
+                    <div class="card-content">
+                        <h3 class="card-title">스타트업 투자 심리 회복세 진입하나</h3>
+                        <span class="card-date">2026.09.09</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- 문화 섹션 -->
+        <section class="section-box">
+            <div class="section-title">문화 <span>CULTURE</span></div>
+            <div class="category-grid">
+                <a href="viewer.html?id=article3" class="category-card">
+                    <div class="card-thumb">이미지 없음</div>
+                    <div class="card-content">
+                        <h3 class="card-title">주말 전국 대체로 맑고 포근... 일교차 주의</h3>
+                        <span class="card-date">2026.09.11</span>
+                    </div>
+                </a>
+                <a href="viewer.html?id=article8" class="category-card">
+                    <div class="card-thumb">이미지 없음</div>
+                    <div class="card-content">
+                        <h3 class="card-title">국립현대미술관 특별 기획전 개막</h3>
+                        <span class="card-date">2026.09.08</span>
+                    </div>
+                </a>
+                <a href="viewer.html?id=article9" class="category-card">
+                    <div class="card-thumb">이미지 없음</div>
+                    <div class="card-content">
+                        <h3 class="card-title">독립영화 전용관 활성화 방안 토론회 개최</h3>
+                        <span class="card-date">2026.09.07</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- 푸터 영역 -->
     <footer>
         <div class="footer-inner">
             <div class="footer-top">
@@ -522,146 +543,47 @@
                 <div class="footer-copyright">
                     Copyright &copy; Daily News All rights reserved. 무단 전재 및 재배포 금지.
                 </div>
-                <div class="family-site-select-wrap">
+                <div class="footer-family">
                     <select class="family-site-select" onchange="if(this.value) { window.open(this.value, '_blank'); this.value=''; }">
-                        <option value="">서오일보 관계사</option>
+                        <option value="">데일리뉴스 관계사</option>
                         <option value="https://sin13248920.github.io/Seo-Architecture/">서오건축</option>
+                        <option value="https://sin13248920.github.io/weekly-seo-e-viewer/index.html">월간서오 e뷰어</option>
                     </select>
                 </div>
             </div>
         </div>
     </footer>
 
+    <!-- 스크립트 영역 -->
     <script>
-        // 공통 헤더 로드 및 실시간 날짜 설정, 스크롤에 따른 소형 헤더 등장 제어
-        async function loadHeader() {
-            try {
-                const response = await fetch('components/header.html');
-                if (response.ok) {
-                    const html = await response.text();
-                    document.getElementById('header-placeholder').innerHTML = html;
-
-                    // 1. 실시간 날짜 및 요일 자동 표기
-                    const dateEl = document.getElementById('headerDate');
-                    if(dateEl) {
-                        const now = new Date();
-                        const year = now.getFullYear();
-                        const month = String(now.getMonth() + 1).padStart(2, '0');
-                        const day = String(now.getDate()).padStart(2, '0');
-                        const week = ['일', '월', '화', '수', '목', '금', '토'][now.getDay()];
-                        dateEl.innerText = `${year}.${month}.${day} (${week})`;
-                    }
-
-                    // 2. 스크롤 위치에 따른 소형 고정 헤더 등장 제어
-                    const fixedHeader = document.getElementById('fixedSmallHeader');
-                    const largeHeader = document.getElementById('largeHeader');
-
-                    window.addEventListener('scroll', function() {
-                        const threshold = largeHeader ? largeHeader.offsetHeight : 111;
-
-                        if (window.scrollY > threshold) {
-                            fixedHeader.classList.add('active');
-                        } else {
-                            fixedHeader.classList.remove('active');
-                        }
-                    });
-                }
-            } catch (e) {
-                console.error("헤더를 불러오지 못했습니다.", e);
+        // 현재 날짜 표시
+        window.addEventListener('DOMContentLoaded', function() {
+            const dateEl = document.getElementById('headerDate');
+            if(dateEl) {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const week = ['일', '월', '화', '수', '목', '금', '토'][now.getDay()];
+                dateEl.innerText = `${year}.${month}.${day} (${week})`;
             }
-        }
+        });
 
-        window.addEventListener('DOMContentLoaded', async function() {
-            await loadHeader();
+        // 스크롤 시 상단 고정 헤더 토글
+        window.addEventListener('scroll', function() {
+            const fixedHeader = document.getElementById('fixedSmallHeader');
+            const largeHeader = document.getElementById('largeHeader');
+            
+            const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
+            const threshold = largeHeader ? largeHeader.offsetHeight : 111;
 
-            const articleIds = ["26091101", "26091102", "26091103", "260911loc01"]; 
-            let allArticles = [];
-
-            for (const id of articleIds) {
-                try {
-                    const response = await fetch(`articles/${id}.json`);
-                    if (response.ok) {
-                        const data = await response.json();
-                        allArticles.push(data);
-                    }
-                } catch (e) {
-                    console.error(`${id}.json 파일을 불러오지 못했습니다.`, e);
-                }
-            }
-
-            allArticles.sort((a, b) => {
-                const numA = Number(String(a.id).replace(/[^0-9]/g, '')) || 0;
-                const numB = Number(String(b.id).replace(/[^0-9]/g, '')) || 0;
-                return numB - numA; 
-            });
-
-            if (allArticles.length === 0) {
-                document.getElementById('mainLeadArea').innerHTML = "<p style='padding:40px; text-align:center;'>등록된 기사가 없습니다.</p>";
-                return;
-            }
-
-            const lead = allArticles[0]; 
-            const leadThumbHtml = lead.image ? `<img src="${lead.image}" alt="대표 이미지">` : `이미지 없음`;
-
-            document.getElementById('mainLeadArea').innerHTML = `
-                <div class="main-lead-article">
-                    <a href="viewer.html?id=${lead.id}" style="text-decoration:none; color:inherit;">
-                        <div class="lead-thumb">${leadThumbHtml}</div>
-                    </a>
-                    <span class="article-category">${lead.category || '뉴스'}</span>
-                    <h2 class="lead-title"><a href="viewer.html?id=${lead.id}">${lead.title}</a></h2>
-                    <p class="lead-summary">${lead.content[0] ? lead.content[0] : ''}</p>
-                </div>
-            `;
-
-            const subNewsArea = document.getElementById('subNewsArea');
-            subNewsArea.innerHTML = '';
-            for (let i = 1; i < Math.min(allArticles.length, 4); i++) {
-                const sub = allArticles[i];
-                const subThumbHtml = sub.image ? `<img src="${sub.image}" alt="썸네일">` : `이미지 없음`;
-
-                subNewsArea.innerHTML += `
-                    <a href="viewer.html?id=${sub.id}" class="sub-news-item">
-                        <div class="sub-thumb">${subThumbHtml}</div>
-                        <div class="sub-info">
-                            <span class="article-category" style="margin-bottom:2px;">${sub.category || '뉴스'}</span>
-                            <h3 class="sub-title">${sub.title}</h3>
-                            <div class="article-meta">${sub.date}</div>
-                        </div>
-                    </a>
-                `;
-            }
-
-            const localArticles = allArticles.filter(item => {
-                const idStr = String(item.id || '').toLowerCase();
-                const catStr = String(item.category || '').toLowerCase();
-                return idStr.includes('loc') || catStr.includes('loc');
-            });
-
-            const localNewsSection = document.querySelector('.local-news-section');
-            const localNewsArea = document.getElementById('localNewsArea');
-            localNewsArea.innerHTML = '';
-
-            if (localArticles.length > 0) {
-                localNewsSection.style.display = 'block'; 
-                localArticles.forEach(local => {
-                    const localThumbHtml = local.image ? `<img src="${local.image}" alt="썸네일">` : `이미지 없음`;
-
-                    localNewsArea.innerHTML += `
-                        <a href="viewer.html?id=${local.id}" class="local-news-card">
-                            <div class="local-thumb">${localThumbHtml}</div>
-                            <div class="local-text-wrap">
-                                <span class="article-category" style="margin-bottom:6px;">${local.category || '동네소식'}</li>
-                                <h3 class="local-title">${local.title}</h3>
-                                <div class="article-meta">${local.date}</div>
-                            </div>
-                        </a>
-                    `;
-                });
+            if (winScroll > threshold) {
+                fixedHeader.classList.add('active');
             } else {
-                localNewsSection.style.display = 'none'; 
+                fixedHeader.classList.remove('active');
             }
         });
     </script>
+
 </body>
 </html>
