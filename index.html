@@ -131,7 +131,7 @@
         .lead-thumb img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: cover; /* 데스크탑 기본 */
             display: block;
         }
 
@@ -292,6 +292,90 @@
             overflow: hidden;
         }
 
+        /* 월간서오 보기 섹션 스타일 */
+        .monthly-seo-section {
+            margin-top: 60px;
+        }
+
+        .monthly-seo-card {
+            display: flex;
+            background-color: #f8f9fa;
+            border: 1px solid #e1e4e8;
+            padding: 24px;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .monthly-seo-thumb {
+            width: 180px;
+            height: 240px;
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888888;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .monthly-seo-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .monthly-seo-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .monthly-seo-badge {
+            font-size: 12px;
+            color: #C91C1C;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .monthly-seo-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #111111;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .monthly-seo-desc {
+            font-size: 14px;
+            color: #555555;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .monthly-seo-btn {
+            display: inline-block;
+            width: fit-content;
+            padding: 10px 24px;
+            background-color: #111111;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 0;
+            transition: opacity 0.2s;
+        }
+
+        .monthly-seo-btn:hover {
+            opacity: 0.85;
+        }
+
         /* 푸터 스타일 */
         footer {
             background-color: #ffffff;
@@ -350,9 +434,26 @@
             width: 200px;
         }
 
+        /* 모바일 화면 대응: 사진들이 강제로 잘리지 않고 원본 비율(또는 contain)을 유지하도록 설정 */
         @media (max-width: 768px) {
             .news-layout { grid-template-columns: 1fr; }
             .local-news-grid { grid-template-columns: 1fr; }
+            
+            /* 모바일에서 이미지 비율 유지 */
+            .lead-thumb { height: auto; max-height: 300px; background-color: #f8f9fa; }
+            .lead-thumb img { width: 100%; height: auto; object-fit: contain; }
+
+            .sub-thumb { height: 80px; }
+            .sub-thumb img { object-fit: contain; }
+
+            .local-thumb { height: auto; max-height: 200px; }
+            .local-thumb img { width: 100%; height: auto; object-fit: contain; }
+
+            .monthly-seo-card { flex-direction: column; text-align: center; }
+            .monthly-seo-thumb { width: 140px; height: 180px; margin: 0 auto; }
+            .monthly-seo-thumb img { width: 100%; height: 100%; object-fit: contain; background-color: #fff; }
+            .monthly-seo-btn { margin: 0 auto; }
+
             .footer-top { flex-direction: column; gap: 15px; }
             .footer-info { padding-left: 0; }
         }
@@ -406,6 +507,28 @@
             </div>
             <div class="local-news-grid" id="localNewsArea">
                 <!-- 동적 생성 -->
+            </div>
+        </div>
+
+        <!-- 월간서오 보기 섹션 -->
+        <div class="monthly-seo-section">
+            <div class="section-header">
+                <h2 class="section-title">월간서오 보기 &gt;</h2>
+                <span class="section-desc">매달 발행되는 깊이 있는 건축·생활 매거진을 만나보세요.</span>
+            </div>
+            <div class="monthly-seo-card">
+                <div class="monthly-seo-thumb">
+                    <img src="images/weekly05.png" alt="월간서오 2026년 5월호 표지" onerror="this.onerror=null; this.parentNode.innerHTML='2026년 5월호 표지';">
+                </div>
+                <div class="monthly-seo-info">
+                    <span class="monthly-seo-badge">최신호 안내</span>
+                    <h3 class="monthly-seo-title">월간서오 2026년 5월호 (통권 제 5호)</h3>
+                    <p class="monthly-seo-desc">
+                        봄의 기운을 담은 최신 건축 트렌드와 친환경 주거 공간 기획특집.<br>
+                        도시와 자연이 공존하는 공간 디자인을 지금 바로 e뷰어로 확인해 보세요.
+                    </p>
+                    <a href="weekly.html" class="monthly-seo-btn" target="_blank">보러가기</a>
+                </div>
             </div>
         </div>
     </div>
@@ -468,7 +591,7 @@
                 return;
             }
 
-            // --- [주요 뉴스 렌더링: 전체 최신순 순서대로 배치 (loc든 아니든 최신이면 무조건 메인/서브)] ---
+            // --- [주요 뉴스 렌더링: 전체 최신순 순서대로 배치] ---
             const lead = allArticles[0]; 
             const leadThumbHtml = lead.image ? `<img src="${lead.image}" alt="대표 이미지">` : `이미지 없음`;
 
@@ -502,7 +625,7 @@
                 `;
             }
 
-            // --- [동네소식 섹션 렌더링: ID 또는 카테고리에 'loc'가 포함된 경우 모두 동네소식으로 인정] ---
+            // --- [동네소식 섹션 렌더링] ---
             const localArticles = allArticles.filter(item => {
                 const idStr = String(item.id || '').toLowerCase();
                 const catStr = String(item.category || '').toLowerCase();
@@ -530,7 +653,7 @@
                     `;
                 });
             } else {
-                localNewsSection.style.display = 'none'; // loc가 정말 단 하나도 없을 때만 숨김
+                localNewsSection.style.display = 'none'; 
             }
         });
     </script>
