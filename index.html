@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>데일리 뉴스 - 기사 상세</title>
+    <title id="pageTitle">데일리 뉴스 - 기사 상세</title>
     <!-- 브라우저 탭 아이콘 (파비콘) 설정 -->
     <link rel="icon" href="assets/favi.png" type="image/png">
     
@@ -25,7 +25,7 @@
             padding-top: 60px;
         }
 
-        /* 고정된 헤더 스타일 (흰색 배경) */
+        /* 고정된 헤더 스타일 */
         header {
             position: fixed;
             top: 0;
@@ -51,7 +51,6 @@
             height: 100%;
         }
 
-        /* 로고 이미지 스타일 */
         .logo-img {
             height: 28px;
             width: auto;
@@ -97,7 +96,6 @@
             transition: width 0.1s ease-out; 
         }
 
-        /* 메인 래퍼 (좌측 유틸리티 바 + 본문 배치용) */
         .page-wrapper {
             max-width: 900px;
             width: 100%;
@@ -107,7 +105,6 @@
             position: relative;
         }
 
-        /* 데스크톱 전용 왼쪽 유틸리티 바 */
         .utility-sidebar {
             position: sticky;
             top: 90px;
@@ -123,7 +120,6 @@
         .utility-container {
             background-color: #ffffff;
             border: 1px solid #d1d8dd;
-            border-radius: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -159,13 +155,11 @@
             margin: 4px 0;
         }
 
-        /* 메인 콘텐츠 영역 */
         main {
             flex: 1;
             min-width: 0;
         }
 
-        /* 기사 헤더 */
         .article-header {
             margin-bottom: 30px;
             border-bottom: 2px solid #111111;
@@ -191,7 +185,6 @@
             letter-spacing: -0.5px;
         }
 
-        /* 기자명(왼쪽), 날짜(오른쪽) 수평 배치 */
         .article-info {
             font-size: 13px;
             color: #777777;
@@ -200,7 +193,6 @@
             align-items: center;
         }
 
-        /* 이미지 없음 박스 스타일 */
         .no-image-box {
             width: 100%;
             height: 400px;
@@ -213,10 +205,8 @@
             font-weight: 600;
             margin-bottom: 40px;
             border: 1px solid #e1e4e8;
-            border-radius: 0;
         }
 
-        /* 기사 본문 내용 */
         .article-content {
             font-size: 18px;
             color: #2c3e50;
@@ -228,7 +218,6 @@
             margin-bottom: 28px;
         }
 
-        /* 본문 중간 광고 영역 */
         .ad-box {
             width: 100%;
             max-width: 450px;
@@ -243,18 +232,16 @@
             font-size: 14px;
             font-weight: 600;
             border: 1px solid #d1d8dd;
-            border-radius: 0;
             overflow: hidden;
         }
 
         .ad-box img {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            object-fit: cover;
             display: block;
         }
 
-        /* 기자 프로필 영역 */
         .reporter-section {
             border-top: 1px solid #d1d8dd;
             border-bottom: 1px solid #d1d8dd;
@@ -287,7 +274,6 @@
             line-height: 1.5;
         }
 
-        /* 하단 위젯 광고 영역 스타일 */
         .widget-ads-container {
             margin-top: 60px;
             border-top: 2px solid #111111;
@@ -315,7 +301,6 @@
             flex-direction: column;
             text-decoration: none;
             color: #333333;
-            border-radius: 0;
         }
 
         .widget-ad-item:hover {
@@ -332,7 +317,6 @@
             font-size: 12px;
             color: #adb5bd;
             border-bottom: 1px solid #e1e4e8;
-            border-radius: 0;
         }
 
         .widget-ad-text {
@@ -343,7 +327,6 @@
             color: #111111;
         }
 
-        /* 푸터 스타일 */
         footer {
             background-color: #ffffff;
             border-top: 1px solid #d1d8dd;
@@ -399,44 +382,16 @@
             color: #333333;
             cursor: pointer;
             width: 200px;
-            border-radius: 0;
         }
 
-        /* 모바일 반응형 설정 */
         @media (max-width: 768px) {
-            .utility-sidebar {
-                display: none;
-            }
-
-            .page-wrapper {
-                padding: 0 15px;
-            }
-
-            header.scrolled {
-                height: 95px;
-            }
-
-            header.scrolled .header-container {
-                flex-direction: column;
-                justify-content: center !important;
-                padding: 6px 15px;
-            }
-
-            header.scrolled .logo-img {
-                margin-bottom: 4px;
-            }
-
-            header.scrolled .header-title {
-                position: static;
-                transform: none;
-                font-size: 12px;
-                max-width: 100%;
-                text-align: center;
-            }
-            
-            .widget-ads-grid {
-                grid-template-columns: 1fr;
-            }
+            .utility-sidebar { display: none; }
+            .page-wrapper { padding: 0 15px; }
+            header.scrolled { height: 95px; }
+            header.scrolled .header-container { flex-direction: column; justify-content: center !important; padding: 6px 15px; }
+            header.scrolled .logo-img { margin-bottom: 4px; }
+            header.scrolled .header-title { position: static; transform: none; font-size: 12px; max-width: 100%; text-align: center; }
+            .widget-ads-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -448,7 +403,7 @@
             <a href="#">
                 <img src="assets/seologo.png" alt="데일리 뉴스 로고" class="logo-img">
             </a>
-            <div class="header-title">인공지능 기술의 급격한 발전, 우리 일상의 미래는 어떻게 바뀔 것인가</div>
+            <div class="header-title" id="headerTitle">기사 제목</div>
         </div>
         <div class="scroll-progress-container">
             <div class="scroll-progress-bar" id="progressBar"></div>
@@ -457,7 +412,6 @@
 
     <!-- 메인 래퍼 -->
     <div class="page-wrapper">
-        <!-- 데스크톱 전용 왼쪽 유틸리티 바 -->
         <aside class="utility-sidebar">
             <div class="utility-container">
                 <button class="util-btn" title="글자 키우기" onclick="changeFontSize(1)">A+</button>
@@ -469,15 +423,13 @@
             </div>
         </aside>
 
-        <!-- 기사 본문 메인 영역 -->
         <main>
             <div class="article-header">
-                <span class="article-category">IT / 기술</span>
-                <h1 class="article-title">인공지능 기술의 급격한 발전, 우리 일상의 미래는 어떻게 바뀔 것인가</h1>
-                <!-- 기자명 왼쪽, 날짜 오른쪽 수평 배치 -->
+                <span class="article-category" id="articleCategory">카테고리</span>
+                <h1 class="article-title" id="articleTitle">기사 제목이 로딩 중입니다...</h1>
                 <div class="article-info">
-                    <span>기자 : 김데일리 기자</span>
-                    <span>입력 : 2026-06-07 14:30</span>
+                    <span id="articleReporter">기자 : -</span>
+                    <span id="articleDate">입력 : -</span>
                 </div>
             </div>
 
@@ -485,27 +437,17 @@
                 이미지 없음
             </div>
 
+            <!-- 동적으로 본문이 채워질 공간 -->
             <div class="article-content" id="articleBody">
-                <p>최근 인공지능(AI) 기술이 전례 없는 속도로 발전하면서 사회 각 분야에서 큰 변화를 이끌어내고 있습니다. 단순한 텍스트 생성을 넘어 이제는 복잡한 데이터 분석과 실시간 의사결정까지 AI가 깊숙이 관여하는 시대가 도래했습니다.</p>
-                
-                <p>전문가들은 이러한 기술 혁신이 업무 효율성을 극대화하는 동시에, 새로운 일자리 창출과 산업 구조의 재편을 가져올 것이라고 분석합니다. 하지만 동시에 데이터 프라이버시 문제나 일자리 대체에 대한 우려의 목소리도 적지 않게 나오고 있습니다.</p>
-                
-                <!-- 기사 중간 광고 영역 -->
-                <div class="ad-box">
-                    <a href="#" id="adLink" target="_blank" style="width:100%; height:100%;">
-                        <img id="randomAdImage" src="" alt="추천 광고">
-                    </a>
-                </div>
-
-                <p>이에 대해 정부와 관련 업계는 AI 윤리 가이드라인을 강화하고, 기술 부작용을 최소화하기 위한 법적·제도적 장치 마련에 서두르고 있습니다. 앞으로 기술 발전과 인간의 삶이 조화를 이루는 지속 가능한 방향성을 찾는 것이 가장 중요한 과제로 남겨져 있습니다.</p>
+                <p>기사를 불러오는 중입니다...</p>
             </div>
 
             <!-- 기자 프로필 영역 -->
             <div class="reporter-section">
-                <img src="https://i.pravatar.cc/150?img=68" alt="기자 프로필 이미지" class="reporter-avatar">
+                <img id="reporterAvatar" src="" alt="기자 프로필 이미지" class="reporter-avatar">
                 <div class="reporter-info">
-                    <h3>김데일리 기자</h3>
-                    <p>IT 및 테크 산업 전반의 트렌드를 심층적으로 취재합니다. 정확하고 깊이 있는 정보 전달을 위해 늘 고민합니다.</p>
+                    <h3 id="reporterName">기자 이름</h3>
+                    <p id="reporterBio">기자 소개가 들어갑니다.</p>
                 </div>
             </div>
 
@@ -561,7 +503,67 @@
 
     <!-- 스크립트 영역 -->
     <script>
-        // 1. 스크롤 프로그레스 바 및 헤더 상태 감지
+        // 1. URL 파라미터에서 기사 ID를 읽어와 JSON 불러오기
+        window.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const articleId = urlParams.get('id') || '26091101'; // ID가 없으면 기본값으로 26091101 로드
+
+            const jsonFilePath = `articles/${articleId}.json`;
+
+            fetch(jsonFilePath)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('기사 데이터를 찾을 수 없습니다.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // 데이터 매핑
+                    document.getElementById('pageTitle').innerText = data.title + " - 데일리 뉴스";
+                    document.getElementById('headerTitle').innerText = data.title;
+                    document.getElementById('articleCategory').innerText = data.category;
+                    document.getElementById('articleTitle').innerText = data.title;
+                    document.getElementById('articleReporter').innerText = "기자 : " + data.reporter;
+                    document.getElementById('articleDate').innerText = "입력 : " + data.date;
+                    
+                    // 기자 프로필 매핑
+                    document.getElementById('reporterAvatar').src = data.reporterAvatar;
+                    document.getElementById('reporterName').innerText = data.reporter;
+                    document.getElementById('reporterBio').innerText = data.reporterBio;
+
+                    // 본문 단락(Paragraph) 동적 생성
+                    const contentContainer = document.getElementById('articleBody');
+                    contentContainer.innerHTML = ''; // 초기화
+
+                    data.content.forEach((paragraph, index) => {
+                        const p = document.createElement('p');
+                        p.innerText = paragraph;
+                        contentContainer.appendChild(p);
+
+                        // 본문 중간(예: 두 번째 단락 뒤)에 광고 박스 삽입
+                        if (index === 1) {
+                            const adBox = document.createElement('div');
+                            adBox.className = 'ad-box';
+                            adBox.innerHTML = `
+                                <a href="#" id="adLink" target="_blank" style="width:100%; height:100%;">
+                                    <img id="randomAdImage" src="" alt="추천 광고">
+                                </a>
+                            `;
+                            contentContainer.appendChild(adBox);
+                            loadRandomAd(); // 광고 로드 함수 호출
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error(error);
+                    document.getElementById('articleTitle').innerText = "기사를 불러오는 데 실패했습니다.";
+                    document.getElementById('articleBody').innerHTML = "<p>존재하지 않거나 잘못된 기사 경로입니다.</p>";
+                });
+
+            loadRandomAd();
+        });
+
+        // 2. 스크롤 프로그레스 바 및 헤더 상태 감지
         window.addEventListener('scroll', function() {
             const header = document.getElementById('mainHeader');
             const progressBar = document.getElementById('progressBar');
@@ -579,7 +581,7 @@
             }
         });
 
-        // 2. 글자 크기 조절 기능
+        // 3. 글자 크기 조절 기능
         let currentFontSize = 18;
         function changeFontSize(step) {
             currentFontSize += step * 2;
@@ -588,7 +590,7 @@
             document.getElementById('articleBody').style.fontSize = currentFontSize + 'px';
         }
 
-        // 3. 새 창 인쇄 기능 (새 창 내부 상단 헤더, 인쇄/취소 버튼 추가 및 광고/프로필 제외)
+        // 4. 새 창 인쇄 기능
         function openPrintWindow() {
             const printContent = document.querySelector('main').innerHTML;
             const printWindow = window.open('', '_blank', 'width=800,height=900');
@@ -606,9 +608,8 @@
                             color: #000;
                             line-height: 1.6;
                             background-color: #fff;
-                            padding-top: 60px; /* 고정 헤더 공간 확보 */
+                            padding-top: 60px;
                         }
-                        /* 새 창 전용 상단 고정 헤더 */
                         .print-header {
                             position: fixed;
                             top: 0;
@@ -639,18 +640,12 @@
                             cursor: pointer;
                             border: 1px solid #d1d8dd;
                             background-color: #fff;
-                            border-radius: 0;
                         }
                         .p-btn.print-action {
                             background-color: #111;
                             color: #fff;
                             border-color: #111;
                         }
-                        .p-btn:hover {
-                            opacity: 0.8;
-                        }
-
-                        /* 본문 래퍼 */
                         .print-body-wrap {
                             max-width: 800px;
                             margin: 40px auto;
@@ -659,24 +654,17 @@
                         h1 { font-size: 24pt; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
                         p { font-size: 12pt; margin-bottom: 15px; }
 
-                        /* 인쇄 시 숨길 요소 (광고, 기자 프로필, 하단 위젯 등) */
                         .ad-box, .reporter-section, .widget-ads-container {
                             display: none !important;
                         }
 
-                        /* 인쇄 실제 실행 시 헤더와 버튼 영역 숨기기 */
                         @media print {
-                            .print-header {
-                                display: none !important;
-                            }
-                            body {
-                                padding-top: 0;
-                            }
+                            .print-header { display: none !important; }
+                            body { padding-top: 0; }
                         }
                     </style>
                 </head>
                 <body>
-                    <!-- 새 창 상단 헤더 (로고 및 인쇄/취소 버튼) -->
                     <div class="print-header">
                         <img src="assets/seologo.png" alt="데일리 뉴스 로고" class="print-logo">
                         <div class="print-btn-group">
@@ -684,8 +672,6 @@
                             <button class="p-btn" onclick="window.close()">취소하기</button>
                         </div>
                     </div>
-
-                    <!-- 기사 본문 영역 -->
                     <div class="print-body-wrap">
                         ${printContent}
                     </div>
@@ -697,24 +683,23 @@
             printWindow.focus();
         }
 
-        // 4. ad 폴더 이미지 무작위 출력 기능
+        // 5. ad 폴더 이미지 무작위 출력 기능
         function loadRandomAd() {
             const adImages = [
-                "ad/jijak.jpg",
-                "ad/xigreat.jpg",
+                "ad/ad1.jpg",
+                "ad/ad2.jpg",
                 "ad/ad3.jpg",
                 "ad/ad4.jpg"
             ];
             
             const adLinks = [
-                "https://www.army.mil.kr/sites/army/index.do",
-                "https://www.xi.co.kr/maple",
+                "https://example.com/ad1",
+                "https://example.com/ad2",
                 "https://example.com/ad3",
                 "https://example.com/ad4"
             ];
 
             const randomIndex = Math.floor(Math.random() * adImages.length);
-
             const imgElement = document.getElementById('randomAdImage');
             const linkElement = document.getElementById('adLink');
 
@@ -723,11 +708,6 @@
                 linkElement.href = adLinks[randomIndex];
             }
         }
-
-        // 페이지 로딩 시 랜덤 광고 실행
-        window.addEventListener('DOMContentLoaded', function() {
-            loadRandomAd();
-        });
     </script>
 
 </body>
