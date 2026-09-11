@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>데일리 뉴스 - 홈</title>
+    <title>서오일보</title>
     <!-- 브라우저 탭 아이콘 (파비콘) 설정 -->
     <link rel="icon" href="assets/favi.png" type="image/png">
     
@@ -489,7 +489,6 @@
                     <span class="article-category">-</span>
                     <h1 class="lead-title">최신 기사를 불러오는 중입니다.</h1>
                     <p class="lead-summary">잠시만 기다려 주세요.</p>
-                    <div class="article-meta">-</div>
                 </div>
             </div>
 
@@ -513,8 +512,7 @@
         <!-- 월간서오 보기 섹션 -->
         <div class="monthly-seo-section">
             <div class="section-header">
-                <h2 class="section-title">월간서오 보기 &gt;</h2>
-                <span class="section-desc">매달 발행되는 깊이 있는 건축·생활 매거진을 만나보세요.</span>
+                <h2 class="section-title">월간서오</h2>
             </div>
             <div class="monthly-seo-card">
                 <div class="monthly-seo-thumb">
@@ -522,10 +520,10 @@
                 </div>
                 <div class="monthly-seo-info">
                     <span class="monthly-seo-badge">최신호 안내</span>
-                    <h3 class="monthly-seo-title">월간서오 2026년 5월호 (통권 제 5호)</h3>
+                    <h3 class="monthly-seo-title">월간서오 2026년 5월호</h3>
                     <p class="monthly-seo-desc">
-                        봄의 기운을 담은 최신 건축 트렌드와 친환경 주거 공간 기획특집.<br>
-                        도시와 자연이 공존하는 공간 디자인을 지금 바로 e뷰어로 확인해 보세요.
+                        2026년 5월, 첫 출간된 이 의미있는 월간지는 2026년 5월을 맞이해 서비스를 종료하게 되었습니다.<br>
+                        월간서오는 군대에 간 기니를 위해 동네의 소식을 전달하고자 출간하게 된 월간지였습니다.
                     </p>
                     <a href="weekly.html" class="monthly-seo-btn" target="_blank">보러가기</a>
                 </div>
@@ -549,9 +547,8 @@
                 </div>
                 <div class="family-site-select-wrap">
                     <select class="family-site-select" onchange="if(this.value) { window.open(this.value, '_blank'); this.value=''; }">
-                        <option value="">데일리뉴스 관계사</option>
+                        <option value="">서오일보 관계사</option>
                         <option value="https://sin13248920.github.io/Seo-Architecture/">서오건축</option>
-                        <option value="https://sin13248920.github.io/weekly-seo-e-viewer/index.html">월간서오 e뷰어</option>
                     </select>
                 </div>
             </div>
@@ -603,7 +600,6 @@
                     <span class="article-category">${lead.category || '뉴스'}</span>
                     <h2 class="lead-title"><a href="viewer.html?id=${lead.id}">${lead.title}</a></h2>
                     <p class="lead-summary">${lead.content[0] ? lead.content[0] : ''}</p>
-                    <div class="article-meta">기자 : ${lead.reporter} | 입력 : ${lead.date}</div>
                 </div>
             `;
 
