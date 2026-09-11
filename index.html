@@ -435,11 +435,11 @@
         </div>
     </footer>
 
-    <!-- 자바스크립트: JSON 파일들을 불러와서 파일 이름 숫자가 큰 순(최신순)으로 정렬 및 분류 -->
+    <!-- 자바스크립트: ID에 'loc' 포함 여부로 동네소식 분류 + 전체 최신순 정렬 -->
     <script>
         window.addEventListener('DOMContentLoaded', async function() {
-            // 프로젝트에 존재하는 전체 기사 JSON ID 목록 (파일명 숫자)
-            const articleIds = ["26091101", "26091102", "26091103", "26091104"]; // 필요에 따라 추가하세요
+            // 프로젝트에 존재하는 전체 기사 JSON ID 목록 (필요에 따라 추가하세요)
+            const articleIds = ["26091101", "26091102", "26091103", "260911loc01"]; 
 
             let allArticles = [];
 
@@ -456,19 +456,25 @@
                 }
             }
 
-            // 조건 1: 파일 이름의 숫자가 가장 큰 순(최신순)으로 정렬
-            allArticles.sort((a, b) => Number(b.id) - Number(a.id));
+            // 1. 전체 기사 최신순 정렬 (ID에 숫자가 포함된 기준으로 최신순 판단, 혹은 등록된 순서)
+            // 숫자가 포함된 문자열 비교를 위해 정규식으로 숫자 추출 후 비교
+            allArticles.sort((a, b) => {
+                const numA = Number(String(a.id).replace(/[^0-9]/g, '')) || 0;
+                const numB = Number(String(b.id).replace(/[^0-9]/g, '')) || 0;
+                return numB - numA; // 내림차순 (최신순)
+            });
 
             if (allArticles.length === 0) {
                 document.getElementById('mainLeadArea').innerHTML = "<p style='padding:40px; text-align:center;'>등록된 기사가 없습니다.</p>";
                 return;
             }
 
-            // 조건 2: 카테고리 값으로 일반 뉴스와 동네소식 분류
-            const generalArticles = allArticles.filter(item => item.category !== "동네소식");
-            const localArticles = allArticles.filter(item => item.category === "동네소식");
+            // 2. 분류 조건 변경: ID에 'loc'가 포함되어 있으면 동네소식, 아니면 일반 뉴스
+            // (요청하신 대로 최신 기사라면 ID 규칙에 따라 주요 뉴스에도 갈 수 있게 전체 풀에서 유연하게 공유됩니다)
+            const localArticles = allArticles.filter(item => String(item.id).toLowerCase().includes('loc'));
+            const generalArticles = allArticles.filter(item => !String(item.id).toLowerCase().includes('loc'));
 
-            // --- [주요 뉴스 렌더링 (최신순)] ---
+            // --- [주요 뉴스 렌더링 (최신순 일반 뉴스 기준)] ---
             if (generalArticles.length > 0) {
                 const lead = generalArticles[0];
                 const leadThumbHtml = lead.image ? `<img src="${lead.image}" alt="대표 이미지">` : `이미지 없음`;
@@ -506,7 +512,7 @@
                 document.getElementById('mainLeadArea').innerHTML = "<p style='padding:20px;'>등록된 주요 뉴스가 없습니다.</p>";
             }
 
-            // --- ['동네소식 >' 섹션 렌더링 (최신순)] ---
+            // --- ['동네소식 >' 섹션 렌더링 (ID에 'loc'가 포함된 기사들 최신순)] ---
             const localNewsArea = document.getElementById('localNewsArea');
             localNewsArea.innerHTML = '';
 
