@@ -22,42 +22,110 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            padding-top: 60px;
         }
 
-        /* 고정된 헤더 스타일 */
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
+        /* 1. 페이지와 함께 스크롤되어 올라가는 큰 헤더 */
+        .large-header {
             width: 100%;
-            height: 60px;
             background-color: #ffffff;
-            z-index: 1000;
             border-bottom: 1px solid #d1d8dd;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header-main-bar {
+            height: 75px;
             display: flex;
             align-items: center;
+            justify-content: center;
+            background-color: #ffffff;
         }
 
         .header-container {
-            max-width: 900px;
+            max-width: 1100px;
             width: 100%;
             margin: 0 auto;
             padding: 0 20px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            position: relative;
+            justify-content: center;
             height: 100%;
+            position: relative;
         }
 
-        .logo-img {
-            height: 28px;
+        .logo-link {
+            display: block;
+            text-decoration: none;
+        }
+
+        .logo-img-large {
+            height: 40px; 
             width: auto;
             display: block;
         }
 
-        .header-title {
+        /* 날짜 및 주가 정보 바 */
+        .sub-info-bar {
+            background-color: #ffffff;
+            border-top: 1px solid #f1f3f5;
+            border-bottom: 1px solid #e1e4e8;
+            font-size: 12px;
+            color: #555555;
+            height: 36px;
+            display: flex;
+            align-items: center;
+        }
+
+        .sub-info-inner {
+            max-width: 1100px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stock-market-ticker {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .market-item strong.up { color: #C91C1C; }
+        .market-item strong.down { color: #0055ff; }
+        .market-divider { color: #cccccc; }
+
+        /* 2. 일정 수준 이상 스크롤했을 때 위에서 스르륵 나타나는 고정 소형 헤더 */
+        .fixed-small-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 52px;
+            background-color: #ffffff;
+            border-bottom: 1px solid #d1d8dd;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .fixed-small-header.active {
+            transform: translateY(0);
+        }
+
+        .logo-img-small {
+            height: 25px;
+            width: auto;
+            display: block;
+        }
+
+        /* 헤더 중앙에 나타날 기사 제목 (스크롤 시) */
+        .fixed-header-title {
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
@@ -68,32 +136,21 @@
             overflow: hidden;
             text-overflow: ellipsis;
             max-width: 450px;
-            opacity: 0;
+            display: none;
+        }
+        .fixed-small-header.active .fixed-header-title {
+            display: block;
         }
 
-        header.scrolled .header-title {
-            opacity: 1;
-        }
-
-        .scroll-progress-container {
+        /* 스크롤 프로세스바 */
+        .scroll-progress-bar {
             position: absolute;
             bottom: 0;
             left: 0;
-            width: 100%;
-            height: 4px; 
-            background-color: #f1f3f5;
-            opacity: 0;
-        }
-
-        header.scrolled .scroll-progress-container {
-            opacity: 1;
-        }
-
-        .scroll-progress-bar {
-            height: 100%;
             width: 0%;
+            height: 3px;
             background-color: #C91C1C;
-            transition: width 0.1s ease-out; 
+            transition: width 0.1s ease-out;
         }
 
         .page-wrapper {
@@ -193,7 +250,6 @@
             align-items: center;
         }
 
-        /* 기사 대표 이미지 스타일러스 */
         .article-image-container {
             width: 100%;
             margin-bottom: 40px;
@@ -253,8 +309,8 @@
         .ad-box img {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* 수정 완료: 이미지가 잘리지 않고 전체가 다 보이도록 설정 */
-            background-color: #f8f9fa; /* 여백이 생길 경우를 대비한 배경색 */
+            object-fit: contain;
+            background-color: #f8f9fa;
             display: block;
         }
 
@@ -343,7 +399,6 @@
             color: #111111;
         }
 
-        /* 에러 화면 스타일 */
         .error-container {
             display: none;
             text-align: center;
@@ -444,29 +499,47 @@
         }
 
         @media (max-width: 768px) {
+            .sub-info-bar { display: none; }
+            .header-main-bar { height: 60px; }
+            .logo-img-large { height: 32px; }
             .utility-sidebar { display: none; }
             .page-wrapper { padding: 0 15px; }
-            header.scrolled { height: 95px; }
-            header.scrolled .header-container { flex-direction: column; justify-content: center !important; padding: 6px 15px; }
-            header.scrolled .logo-img { margin-bottom: 4px; }
-            header.scrolled .header-title { position: static; transform: none; font-size: 12px; max-width: 100%; text-align: center; }
             .widget-ads-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <!-- 고정된 헤더 영역 -->
-    <header id="mainHeader">
-        <div class="header-container">
-            <a href="index.html">
-                <img src="assets/seologo.png" alt="데일리 뉴스 로고" class="logo-img">
+    <!-- 1. 페이지와 함께 스크롤되어 올라가는 큰 헤더 -->
+    <div class="large-header" id="largeHeader">
+        <div class="header-main-bar">
+            <div class="header-container">
+                <a href="index.html" class="logo-link">
+                    <img src="assets/seologo.png" alt="서오일보 로고" class="logo-img-large">
+                </a>
+            </div>
+        </div>
+        <div class="sub-info-bar">
+            <div class="sub-info-inner">
+                <span class="current-date" id="headerDate">2026.09.11 (금)</span>
+                <div class="stock-market-ticker">
+                    <span class="market-item">KOSPI <strong class="up">2,780.50</strong> <span class="change">▲ 12.30 (+0.44%)</span></span>
+                    <span class="market-divider">|</span>
+                    <span class="market-item">KOSDAQ <strong class="down">850.20</strong> <span class="change">▼ 3.10 (-0.36%)</span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. 일정 수준 이상 스크롤했을 때 위에서 스르륵 나타나는 고정 소형 헤더 -->
+    <header class="fixed-small-header" id="fixedSmallHeader">
+        <div class="header-container" style="justify-content: flex-start;">
+            <a href="index.html" class="logo-link">
+                <img src="assets/seologo.png" alt="서오일보 로고" class="logo-img-small">
             </a>
-            <div class="header-title" id="headerTitle">데일리 뉴스</div>
+            <div class="fixed-header-title" id="headerTitle">데일리 뉴스</div>
         </div>
-        <div class="scroll-progress-container">
-            <div class="scroll-progress-bar" id="progressBar"></div>
-        </div>
+        <div class="scroll-progress-bar" id="scrollProgressBar"></div>
     </header>
 
     <!-- 메인 래퍼 -->
@@ -494,7 +567,6 @@
                     </div>
                 </div>
 
-                <!-- 기사 사진이 들어갈 공간 (JSON에 image 값이 있으면 사진이, 없으면 '이미지 없음' 박스가 뜸) -->
                 <div id="articleImageArea">
                     <div class="no-image-box">이미지 없음</div>
                 </div>
@@ -576,6 +648,17 @@
     <!-- 스크립트 영역 -->
     <script>
         window.addEventListener('DOMContentLoaded', function() {
+            // 날짜 자동 설정
+            const dateEl = document.getElementById('headerDate');
+            if(dateEl) {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const week = ['일', '월', '화', '수', '목', '금', '토'][now.getDay()];
+                dateEl.innerText = `${year}.${month}.${day} (${week})`;
+            }
+
             const urlParams = new URLSearchParams(window.location.search);
             const articleId = urlParams.get('id');
 
@@ -594,15 +677,14 @@
                     return response.json();
                 })
                 .then(data => {
-                    // 정상 데이터 매핑
-                    document.getElementById('pageTitle').innerText = data.title + " - 데일리 뉴스";
+                    // 정상 데이터 매핑 ('기자:' 문구 삭제 적용)
+                    document.getElementById('pageTitle').innerText = data.title + " - 서오일보";
                     document.getElementById('headerTitle').innerText = data.title;
                     document.getElementById('articleCategory').innerText = data.category;
                     document.getElementById('articleTitle').innerText = data.title;
-                    document.getElementById('articleReporter').innerText = "기자 : " + data.reporter;
+                    document.getElementById('articleReporter').innerText = data.reporter; // '기자 : ' 제거됨
                     document.getElementById('articleDate').innerText = "입력 : " + data.date;
                     
-                    // 기사 대표 이미지 처리 (JSON에 image 필드가 있으면 이미지 출력, 없으면 '이미지 없음' 박스 유지)
                     const imageArea = document.getElementById('articleImageArea');
                     if (data.image) {
                         imageArea.innerHTML = `<div class="article-image-container"><img src="${data.image}" alt="기사 대표 이미지"></div>`;
@@ -648,27 +730,33 @@
         });
 
         function showErrorState() {
-            document.getElementById('pageTitle').innerText = "페이지를 찾을 수 없습니다 - 데일리 뉴스";
+            document.getElementById('pageTitle').innerText = "페이지를 찾을 수 없습니다 - 서오일보";
             document.getElementById('headerTitle').innerText = "페이지를 찾을 수 없습니다";
             document.getElementById('articleContainer').style.display = 'none';
             document.getElementById('utilitySidebar').style.display = 'none';
             document.getElementById('errorContainer').style.display = 'block';
         }
 
+        // 스크롤 감지 및 고정 헤더, 스크롤바 제어
         window.addEventListener('scroll', function() {
-            const header = document.getElementById('mainHeader');
-            const progressBar = document.getElementById('progressBar');
+            const fixedHeader = document.getElementById('fixedSmallHeader');
+            const largeHeader = document.getElementById('largeHeader');
+            const progressBar = document.getElementById('scrollProgressBar');
             
             const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
             const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
             const scrolled = (winScroll / height) * 100;
             
-            progressBar.style.width = scrolled + '%';
+            if(progressBar) {
+                progressBar.style.width = scrolled + '%';
+            }
 
-            if (winScroll > 150) {
-                header.classList.add('scrolled');
+            const threshold = largeHeader ? largeHeader.offsetHeight : 111;
+
+            if (winScroll > threshold) {
+                fixedHeader.classList.add('active');
             } else {
-                header.classList.remove('scrolled');
+                fixedHeader.classList.remove('active');
             }
         });
 
@@ -757,7 +845,7 @@
                 </head>
                 <body>
                     <div class="print-header">
-                        <img src="assets/seologo.png" alt="데일리 뉴스 로고" class="print-logo">
+                        <img src="assets/seologo.png" alt="서오일보 로고" class="print-logo">
                         <div class="print-btn-group">
                             <button class="p-btn print-action" onclick="window.print()">인쇄하기</button>
                             <button class="p-btn" onclick="window.close()">취소하기</button>
