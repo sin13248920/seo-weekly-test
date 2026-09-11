@@ -22,10 +22,10 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            padding-top: 60px;
+            padding-top: 60px; /* 고정 헤더 높이만큼 여백 */
         }
 
-        /* 고정된 헤더 스타일 (스크롤 프로세서 제외, 뷰어와 동일) */
+        /* 기사 뷰어와 100% 동일한 헤더 스타일 (스크롤 프로세서 바 없음) */
         header {
             position: fixed;
             top: 0;
@@ -72,7 +72,7 @@
             color: #C91C1C;
         }
 
-        /* 메인 콘텐츠 영역 (중앙일보 스타일 그리드) */
+        /* 메인 콘텐츠 영역 */
         .main-container {
             max-width: 1100px;
             width: 100%;
@@ -103,18 +103,15 @@
             color: #777777;
         }
 
-        /* 뉴스 그리드 레이아웃 */
+        /* 뉴스 그리드 레이아웃 (주요 뉴스) */
         .news-layout {
             display: grid;
             grid-template-columns: 2fr 1fr;
             gap: 30px;
         }
 
-        /* 주요 뉴스 (좌측 메인) */
         .main-lead-article {
             margin-bottom: 30px;
-            padding-bottom: 30px;
-            border-bottom: 1px solid #e1e4e8;
         }
 
         .lead-thumb {
@@ -177,7 +174,7 @@
             color: #888888;
         }
 
-        /* 서브 뉴스 리스트 (우측 및 하단) */
+        /* 서브 뉴스 리스트 (우측) */
         .sub-news-list {
             display: flex;
             flex-direction: column;
@@ -235,18 +232,18 @@
             overflow: hidden;
         }
 
-        /* 하단 카드 뉴스 그리드 섹션 */
-        .grid-news-section {
-            margin-top: 50px;
+        /* 동네소식 섹션 스타일 (3열 카드 그리드) */
+        .local-news-section {
+            margin-top: 60px;
         }
 
-        .grid-news-grid {
+        .local-news-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 25px;
         }
 
-        .grid-news-card {
+        .local-news-card {
             text-decoration: none;
             color: inherit;
             display: flex;
@@ -256,11 +253,11 @@
             transition: border-color 0.2s;
         }
 
-        .grid-news-card:hover {
+        .local-news-card:hover {
             border-color: #111111;
         }
 
-        .grid-thumb {
+        .local-thumb {
             width: 100%;
             height: 160px;
             background-color: #f8f9fa;
@@ -273,17 +270,17 @@
             overflow: hidden;
         }
 
-        .grid-thumb img {
+        .local-thumb img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        .grid-text-wrap {
+        .local-text-wrap {
             padding: 16px;
         }
 
-        .grid-title {
+        .local-title {
             font-size: 16px;
             font-weight: 700;
             color: #111111;
@@ -295,12 +292,7 @@
             overflow: hidden;
         }
 
-        .grid-meta {
-            font-size: 12px;
-            color: #888888;
-        }
-
-        /* 푸터 영역 (뷰어와 100% 동일) */
+        /* 기사 뷰어와 100% 동일한 푸터 스타일 */
         footer {
             background-color: #ffffff;
             border-top: 1px solid #d1d8dd;
@@ -360,7 +352,7 @@
 
         @media (max-width: 768px) {
             .news-layout { grid-template-columns: 1fr; }
-            .grid-news-grid { grid-template-columns: 1fr; }
+            .local-news-grid { grid-template-columns: 1fr; }
             .footer-top { flex-direction: column; gap: 15px; }
             .footer-info { padding-left: 0; }
         }
@@ -368,7 +360,7 @@
 </head>
 <body>
 
-    <!-- 헤더 영역 (뷰어와 동일, 스크롤 프로세서 없음) -->
+    <!-- 헤더 영역 (기사 뷰어와 100% 일치, 스크롤 바 없음) -->
     <header>
         <div class="header-container">
             <a href="index.html">
@@ -376,13 +368,12 @@
             </a>
             <nav class="header-nav">
                 <a href="index.html">홈</a>
-                <a href="#latestSection">전체기사</a>
             </nav>
         </div>
     </header>
 
     <!-- 메인 콘텐츠 영역 -->
-    <div class="main-container" id="latestSection">
+    <div class="main-container">
         <div class="section-header">
             <h2 class="section-title">주요 뉴스</h2>
             <span class="section-desc">실시간 최신 기사 순으로 제공됩니다.</span>
@@ -390,7 +381,7 @@
 
         <!-- 중앙일보 스타일 레이아웃 (좌측 메인 + 우측 서브) -->
         <div class="news-layout">
-            <!-- 좌측: 가장 최신 기사 (메인 리드) -->
+            <!-- 좌측: 가장 최신 일반 뉴스 (1위) -->
             <div id="mainLeadArea">
                 <div class="main-lead-article">
                     <div class="lead-thumb">기사를 불러오는 중...</div>
@@ -401,24 +392,25 @@
                 </div>
             </div>
 
-            <!-- 우측: 그 다음 최신 기사들 (서브 리스트) -->
+            <!-- 우측: 그 다음 최신 뉴스들 (2위 ~ 4위) -->
             <div class="sub-news-list" id="subNewsArea">
                 <!-- 동적 생성 -->
             </div>
         </div>
 
-        <!-- 하단: 카드형 뉴스 섹션 -->
-        <div class="grid-news-section">
+        <!-- 동네소식 섹션 -->
+        <div class="local-news-section">
             <div class="section-header">
-                <h2 class="section-title">많이 본 뉴스 & 추가 기사</h2>
+                <h2 class="section-title">동네소식 &gt;</h2>
+                <span class="section-desc">우리 동네 생생한 소식을 전해드립니다.</span>
             </div>
-            <div class="grid-news-grid" id="gridNewsArea">
+            <div class="local-news-grid" id="localNewsArea">
                 <!-- 동적 생성 -->
             </div>
         </div>
     </div>
 
-    <!-- 푸터 영역 (뷰어와 1도 안 건드리고 완벽히 일치) -->
+    <!-- 푸터 영역 (기사 뷰어와 100% 일치) -->
     <footer>
         <div class="footer-inner">
             <div class="footer-top">
@@ -443,102 +435,98 @@
         </div>
     </footer>
 
-    <!-- 자바스크립트: 기사 JSON들을 불러와서 파일 이름 숫자가 큰 순(최신순)으로 정렬 후 배치 -->
+    <!-- 자바스크립트: JSON 파일들을 불러와서 파일 이름 숫자가 큰 순(최신순)으로 정렬 및 분류 -->
     <script>
         window.addEventListener('DOMContentLoaded', async function() {
-            // 프로젝트에 존재하는 기사 JSON ID 목록들을 관리하는 배열입니다.
-            // 새로운 기사 JSON을 추가하면 여기 목록에 ID(파일명 숫자)만 추가해 주시면 홈 화면에 자동 반영됩니다!
-            const articleIds = ["26091101", "26091102", "26091103"]; // 예시 ID 목록 (실제 파일명에 맞게 수정/추가하세요)
+            // 프로젝트에 존재하는 전체 기사 JSON ID 목록 (파일명 숫자)
+            const articleIds = ["26091101", "26091102", "26091103", "26091104"]; // 필요에 따라 추가하세요
 
-            let articlesData = [];
+            let allArticles = [];
 
-            // 각 JSON 파일을 비동기로 불러와 배열에 저장
+            // 모든 JSON 파일 비동기 로드
             for (const id of articleIds) {
                 try {
                     const response = await fetch(`articles/${id}.json`);
                     if (response.ok) {
                         const data = await response.json();
-                        articlesData.push(data);
+                        allArticles.push(data);
                     }
                 } catch (e) {
                     console.error(`${id}.json 파일을 불러오지 못했습니다.`, e);
                 }
             }
 
-            // 요청하신 핵심 조건: JSON 파일 이름의 숫자가 가장 큰 순(최신순)으로 정렬
-            // (예: 26091102.json 이 26091101.json 보다 크므로 앞으로 정렬됨)
-            articlesData.sort((a, b) => Number(b.id) - Number(a.id));
+            // 조건 1: 파일 이름의 숫자가 가장 큰 순(최신순)으로 정렬
+            allArticles.sort((a, b) => Number(b.id) - Number(a.id));
 
-            if (articlesData.length === 0) {
+            if (allArticles.length === 0) {
                 document.getElementById('mainLeadArea').innerHTML = "<p style='padding:40px; text-align:center;'>등록된 기사가 없습니다.</p>";
                 return;
             }
 
-            // 1. 가장 최신 기사 (1위) -> 메인 리드 영역 배치
-            const lead = articlesData[0];
-            const leadThumbHtml = lead.image 
-                ? `<img src="${lead.image}" alt="대표 이미지">` 
-                : `이미지 없음`;
+            // 조건 2: 카테고리 값으로 일반 뉴스와 동네소식 분류
+            const generalArticles = allArticles.filter(item => item.category !== "동네소식");
+            const localArticles = allArticles.filter(item => item.category === "동네소식");
 
-            document.getElementById('mainLeadArea').innerHTML = `
-                <div class="main-lead-article">
-                    <a href="viewer.html?id=${lead.id}" style="text-decoration:none; color:inherit;">
-                        <div class="lead-thumb">${leadThumbHtml}</div>
-                    </a>
-                    <span class="article-category">${lead.category}</span>
-                    <h2 class="lead-title"><a href="viewer.html?id=${lead.id}">${lead.title}</a></h2>
-                    <p class="lead-summary">${lead.content[0] ? lead.content[0] : ''}</p>
-                    <div class="article-meta">기자 : ${lead.reporter} | 입력 : ${lead.date}</div>
-                </div>
-            `;
+            // --- [주요 뉴스 렌더링 (최신순)] ---
+            if (generalArticles.length > 0) {
+                const lead = generalArticles[0];
+                const leadThumbHtml = lead.image ? `<img src="${lead.image}" alt="대표 이미지">` : `이미지 없음`;
 
-            // 2. 2위 ~ 4위 기사 -> 우측 서브 리스트 배치
-            const subNewsArea = document.getElementById('subNewsArea');
-            subNewsArea.innerHTML = '';
-            
-            for (let i = 1; i < Math.min(articlesData.length, 4); i++) {
-                const sub = articlesData[i];
-                const subThumbHtml = sub.image 
-                    ? `<img src="${sub.image}" alt="썸네일">` 
-                    : `이미지 없음`;
-
-                subNewsArea.innerHTML += `
-                    <a href="viewer.html?id=${sub.id}" class="sub-news-item">
-                        <div class="sub-thumb">${subThumbHtml}</div>
-                        <div class="sub-info">
-                            <span class="article-category" style="margin-bottom:4px;">${sub.category}</span>
-                            <h3 class="sub-title">${sub.title}</h3>
-                            <div class="article-meta">${sub.date}</div>
-                        </div>
-                    </a>
+                document.getElementById('mainLeadArea').innerHTML = `
+                    <div class="main-lead-article">
+                        <a href="viewer.html?id=${lead.id}" style="text-decoration:none; color:inherit;">
+                            <div class="lead-thumb">${leadThumbHtml}</div>
+                        </a>
+                        <span class="article-category">${lead.category}</span>
+                        <h2 class="lead-title"><a href="viewer.html?id=${lead.id}">${lead.title}</a></h2>
+                        <p class="lead-summary">${lead.content[0] ? lead.content[0] : ''}</p>
+                        <div class="article-meta">기자 : ${lead.reporter} | 입력 : ${lead.date}</div>
+                    </div>
                 `;
-            }
 
-            // 3. 5위 이후 기사들 -> 하단 카드 그리드 섹션 배치
-            const gridNewsArea = document.getElementById('gridNewsArea');
-            gridNewsArea.innerHTML = '';
+                const subNewsArea = document.getElementById('subNewsArea');
+                subNewsArea.innerHTML = '';
+                for (let i = 1; i < Math.min(generalArticles.length, 4); i++) {
+                    const sub = generalArticles[i];
+                    const subThumbHtml = sub.image ? `<img src="${sub.image}" alt="썸네일">` : `이미지 없음`;
 
-            if (articlesData.length > 4) {
-                for (let i = 4; i < articlesData.length; i++) {
-                    const grid = articlesData[i];
-                    const gridThumbHtml = grid.image 
-                        ? `<img src="${grid.image}" alt="썸네일">` 
-                        : `이미지 없음`;
-
-                    gridNewsArea.innerHTML += `
-                        <a href="viewer.html?id=${grid.id}" class="grid-news-card">
-                            <div class="grid-thumb">${gridThumbHtml}</div>
-                            <div class="grid-text-wrap">
-                                <span class="article-category" style="margin-bottom:6px;">${grid.category}</span>
-                                <h3 class="grid-title">${grid.title}</h3>
-                                <div class="grid-meta">${grid.date}</div>
+                    subNewsArea.innerHTML += `
+                        <a href="viewer.html?id=${sub.id}" class="sub-news-item">
+                            <div class="sub-thumb">${subThumbHtml}</div>
+                            <div class="sub-info">
+                                <span class="article-category" style="margin-bottom:4px;">${sub.category}</span>
+                                <h3 class="sub-title">${sub.title}</h3>
+                                <div class="article-meta">${sub.date}</div>
                             </div>
                         </a>
                     `;
                 }
             } else {
-                // 기사가 4개 이하일 경우 하단 섹션 안내 문구 또는 숨김 처리
-                document.querySelector('.grid-news-section').style.display = 'none';
+                document.getElementById('mainLeadArea').innerHTML = "<p style='padding:20px;'>등록된 주요 뉴스가 없습니다.</p>";
+            }
+
+            // --- ['동네소식 >' 섹션 렌더링 (최신순)] ---
+            const localNewsArea = document.getElementById('localNewsArea');
+            localNewsArea.innerHTML = '';
+
+            if (localArticles.length > 0) {
+                localArticles.forEach(local => {
+                    const localThumbHtml = local.image ? `<img src="${local.image}" alt="썸네일">` : `이미지 없음`;
+
+                    localNewsArea.innerHTML += `
+                        <a href="viewer.html?id=${local.id}" class="local-news-card">
+                            <div class="local-thumb">${localThumbHtml}</div>
+                            <div class="local-text-wrap">
+                                <span class="article-category" style="margin-bottom:6px;">${local.category}</span>
+                                <h3 class="local-title">${local.title}</h3>
+                                <div class="article-meta">${local.date}</div>
+                            </div>
+                        </a>
+                    `;
+                });
+            } else {
+                document.querySelector('.local-news-section').style.display = 'none'; // 동네소식이 없으면 섹션 숨김
             }
         });
     </script>
