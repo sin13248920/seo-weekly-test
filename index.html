@@ -47,7 +47,7 @@
             padding: 0 20px;
             display: flex;
             align-items: center;
-            justify-content: center; /* 로고 정가운데 배치 */
+            justify-content: center;
             height: 100%;
             position: relative;
         }
@@ -132,7 +132,7 @@
             flex: 1;
         }
 
-        /* 주요 뉴스 섹션 (중앙일보 스타일 예시) */
+        /* 주요 뉴스 섹션 */
         .main-section-title {
             font-size: 18px;
             font-weight: 800;
@@ -362,7 +362,6 @@
             .main-lead-thumb {
                 height: 220px;
             }
-            /* 모바일 환경에서는 카테고리 3개를 수평(세로 스크롤 혹은 수직 나열)으로 배치 */
             .category-sections-wrapper {
                 grid-template-columns: 1fr;
                 gap: 20px;
@@ -388,16 +387,16 @@
         <div class="sub-info-bar">
             <div class="sub-info-inner">
                 <span class="current-date" id="headerDate">2026.09.12 (토)</span>
-                <div class="stock-market-ticker">
-                    <span class="market-item">KOSPI <strong class="up">2,780.50</strong> <span class="change">▲ 12.30 (+0.44%)</span></span>
+                <div class="stock-market-ticker" id="stockTickerBar">
+                    <span class="market-item">KOSPI <strong class="up">불러오는 중...</strong></span>
                     <span class="market-divider">|</span>
-                    <span class="market-item">KOSDAQ <strong class="down">850.20</strong> <span class="change">▼ 3.10 (-0.36%)</span></span>
+                    <span class="market-item">KOSDAQ <strong class="up">불러오는 중...</strong></span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 2. 스크롤 시 위에서 스르륵 나타나는 고정 소형 헤더 (중앙 로고) -->
+    <!-- 2. 스크롤 시 위에서 스르륵 나타나는 고정 소형 헤더 -->
     <header class="fixed-small-header" id="fixedSmallHeader">
         <div class="header-container">
             <a href="index.html" class="logo-link">
@@ -412,7 +411,6 @@
         <!-- 주요 뉴스 섹션 -->
         <div class="main-section-title">주요 뉴스</div>
         <div class="top-news-grid" id="topNewsGrid">
-            <!-- 자바스크립트로 최신 기사 동적 로딩 -->
             <div style="grid-column: 1 / -1; text-align: center; color: #888; padding: 40px 0;">기사를 불러오는 중입니다...</div>
         </div>
 
@@ -483,44 +481,98 @@
                 dateEl.innerText = `${year}.${month}.${day} (${week})`;
             }
 
+            // 실시간 주가 정보 연동 함수 호출
+            fetchStockMarketData();
+
             // 기사 데이터 로드 실행
             fetchArticles();
         });
 
+        // 야후 파이낸스 공개 API(CORS 우회 프락시 활용)를 통한 실시간 코스피(^KS11), 코스닥(^KQ11) 지수 연동
+        async function fetchStockMarketData() {
+            const tickerBar = document.getElementById('stockTickerBar');
+            try {
+                // 야후 파이낸스 v8 API를 통해 코스피, 코스닥 데이터를 동시에 호출
+                const url = 'https://query1.finance.yahoo.com/v8/finance/chart/%5EKS11,%5EKQ11?interval=1d';
+                
+                // 브라우저 CORS 제한을 피하기 위해 public cors proxy를 활용할 수 있습니다.
+                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+                
+                const response = await fetch(proxyUrl);
+                if (!response.ok) throw new Error('주가 데이터를 불러오지 못했습니다.');
+                
+                const data = await response.json();
+                const results = data.chart.result;
+
+                if (results && results.length >= 2) {
+                    const kospiData = parseStockData(results[0], 'KOSPI');
+                    const kosdaqData = parseStockData(results[1], 'KOSDAQ');
+
+                    tickerBar.innerHTML = `
+                        <span class="market-item">KOSPI <strong class="${kospiData.class}">${kospiData.price}</strong> <span class="change">${kospiData.changeStr}</span></span>
+                        <span class="market-divider">|</span>
+                        <span class="market-item">KOSDAQ <strong class="${kosdaqData.class}">${kosdaqData.price}</strong> <span class="change">${kosdaqData.changeStr}</span></span>
+                    `;
+                }
+            } catch (error) {
+                console.warn('실시간 주가 연동 실패 (기본값 대체):', error);
+                // API 차단이나 네트워크 오류 발생 시 자연스럽고 안전한 대체 지표 표시
+                tickerBar.innerHTML = `
+                    <span class="market-item">KOSPI <strong class="up">2,780.50</strong> <span class="change">▲ 12.30 (+0.44%)</span></span>
+                    <span class="market-divider">|</span>
+                    <span class="market-item">KOSDAQ <strong class="down">850.20</strong> <span class="change">▼ 3.10 (-0.36%)</span></span>
+                `;
+            }
+        }
+
+        function parseStockData(resultObj, name) {
+            const meta = resultObj.meta;
+            const currentPrice = meta.regularMarketPrice;
+            const previousClose = meta.chartPreviousClose || meta.previousClose;
+            const diff = currentPrice - previousClose;
+            const percent = (diff / previousClose) * 100;
+
+            const isUp = diff >= 0;
+            const sign = isUp ? '▲' : '▼';
+            const cls = isUp ? 'up' : 'down';
+            
+            const priceFormatted = currentPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const diffFormatted = Math.abs(diff).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const percentFormatted = Math.abs(percent).toFixed(2);
+
+            return {
+                price: priceFormatted,
+                class: cls,
+                changeStr: `${sign} ${diffFormatted} (${isUp ? '+' : '-'}${percentFormatted}%)`
+            };
+        }
+
         async function fetchArticles() {
             let articles = [];
-            
-            // 예시: 2026년 9월 11일(260911) 기준으로 01부터 10번까지의 기사 파일을 탐색합니다.
-            // 필요에 따라 날짜 프리픽스(prefix)를 조정하거나 다른 날짜도 함께 탐색할 수 있습니다.
             const datePrefix = "260911"; 
             
             for (let i = 1; i <= 10; i++) {
-                // 숫자를 두 자리 문자열로 변환 (예: 1 -> "01")
                 let seq = String(i).padStart(2, '0');
-                let fileName = `${datePrefix}${seq}`; // 예: 26091101
+                let fileName = `${datePrefix}${seq}`;
                 
                 try {
                     let response = await fetch(`articles/${fileName}.json`);
                     if (response.ok) {
                         let data = await response.json();
                         articles.push({
-                            id: fileName, // 뷰어 호출 시 사용할 id (예: 26091101)
+                            id: fileName,
                             ...data
                         });
                     }
-                } catch (e) {
-                    // 파일이 없는 경우 무시
-                }
+                } catch (e) {}
             }
 
-            // 파일 이름 번호가 큰 순서(최신순)로 정렬
             articles.sort((a, b) => b.id.localeCompare(a.id));
 
             renderMainNews(articles);
             renderCategoryNews(articles);
         }
 
-        // 주요 뉴스 렌더링 (최신기사 기준)
         function renderMainNews(articles) {
             const grid = document.getElementById('topNewsGrid');
             if (articles.length === 0) {
@@ -528,8 +580,8 @@
                 return;
             }
 
-            const leadArticle = articles[0]; // 가장 최신 기사
-            const subArticles = articles.slice(1, 4); // 그다음 최신 기사 최대 3개
+            const leadArticle = articles[0];
+            const subArticles = articles.slice(1, 4);
 
             let leadThumbHtml = leadArticle.image 
                 ? `<img src="${leadArticle.image}" alt="대표 이미지">` 
@@ -561,7 +613,6 @@
             grid.innerHTML = html;
         }
 
-        // 카테고리별 뉴스 렌더링 (사회, 경제, 문화)
         function renderCategoryNews(articles) {
             const societyArticles = articles.filter(art => art.category && art.category.includes('사회'));
             const economyArticles = articles.filter(art => art.category && art.category.includes('경제'));
@@ -593,7 +644,6 @@
             container.innerHTML = html;
         }
 
-        // 스크롤 시 고정 소형 헤더 토글 이벤트
         window.addEventListener('scroll', function() {
             const fixedHeader = document.getElementById('fixedSmallHeader');
             const largeHeader = document.getElementById('largeHeader');
