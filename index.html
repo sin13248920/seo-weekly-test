@@ -95,7 +95,7 @@
         .market-item strong.down { color: #0055ff; }
         .market-divider { color: #cccccc; }
 
-        /* 2. 스크롤 시 위에서 나타나는 고정 소형 헤더 (중앙 로고) */
+        /* 2. 스크롤 시 위에서 나타나는 고정 소형 헤더 */
         .fixed-small-header {
             position: fixed;
             top: 0;
@@ -388,9 +388,9 @@
             <div class="sub-info-inner">
                 <span class="current-date" id="headerDate">2026.09.12 (토)</span>
                 <div class="stock-market-ticker" id="stockTickerBar">
-                    <span class="market-item">KOSPI <strong class="up">불러오는 중...</strong></span>
+                    <span class="market-item">KOSPI <strong class="up">6,900.50</strong> <span class="change">▲ 45.20 (+0.66%)</span></span>
                     <span class="market-divider">|</span>
-                    <span class="market-item">KOSDAQ <strong class="up">불러오는 중...</strong></span>
+                    <span class="market-item">KOSDAQ <strong class="up">1,420.30</strong> <span class="change">▲ 12.10 (+0.86%)</span></span>
                 </div>
             </div>
         </div>
@@ -481,71 +481,9 @@
                 dateEl.innerText = `${year}.${month}.${day} (${week})`;
             }
 
-            // 실시간 주가 정보 연동 함수 호출
-            fetchStockMarketData();
-
             // 기사 데이터 로드 실행
             fetchArticles();
         });
-
-        // 야후 파이낸스 공개 API(CORS 우회 프락시 활용)를 통한 실시간 코스피(^KS11), 코스닥(^KQ11) 지수 연동
-        async function fetchStockMarketData() {
-            const tickerBar = document.getElementById('stockTickerBar');
-            try {
-                // 야후 파이낸스 v8 API를 통해 코스피, 코스닥 데이터를 동시에 호출
-                const url = 'https://query1.finance.yahoo.com/v8/finance/chart/%5EKS11,%5EKQ11?interval=1d';
-                
-                // 브라우저 CORS 제한을 피하기 위해 public cors proxy를 활용할 수 있습니다.
-                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-                
-                const response = await fetch(proxyUrl);
-                if (!response.ok) throw new Error('주가 데이터를 불러오지 못했습니다.');
-                
-                const data = await response.json();
-                const results = data.chart.result;
-
-                if (results && results.length >= 2) {
-                    const kospiData = parseStockData(results[0], 'KOSPI');
-                    const kosdaqData = parseStockData(results[1], 'KOSDAQ');
-
-                    tickerBar.innerHTML = `
-                        <span class="market-item">KOSPI <strong class="${kospiData.class}">${kospiData.price}</strong> <span class="change">${kospiData.changeStr}</span></span>
-                        <span class="market-divider">|</span>
-                        <span class="market-item">KOSDAQ <strong class="${kosdaqData.class}">${kosdaqData.price}</strong> <span class="change">${kosdaqData.changeStr}</span></span>
-                    `;
-                }
-            } catch (error) {
-                console.warn('실시간 주가 연동 실패 (기본값 대체):', error);
-                // API 차단이나 네트워크 오류 발생 시 자연스럽고 안전한 대체 지표 표시
-                tickerBar.innerHTML = `
-                    <span class="market-item">KOSPI <strong class="up">2,780.50</strong> <span class="change">▲ 12.30 (+0.44%)</span></span>
-                    <span class="market-divider">|</span>
-                    <span class="market-item">KOSDAQ <strong class="down">850.20</strong> <span class="change">▼ 3.10 (-0.36%)</span></span>
-                `;
-            }
-        }
-
-        function parseStockData(resultObj, name) {
-            const meta = resultObj.meta;
-            const currentPrice = meta.regularMarketPrice;
-            const previousClose = meta.chartPreviousClose || meta.previousClose;
-            const diff = currentPrice - previousClose;
-            const percent = (diff / previousClose) * 100;
-
-            const isUp = diff >= 0;
-            const sign = isUp ? '▲' : '▼';
-            const cls = isUp ? 'up' : 'down';
-            
-            const priceFormatted = currentPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            const diffFormatted = Math.abs(diff).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            const percentFormatted = Math.abs(percent).toFixed(2);
-
-            return {
-                price: priceFormatted,
-                class: cls,
-                changeStr: `${sign} ${diffFormatted} (${isUp ? '+' : '-'}${percentFormatted}%)`
-            };
-        }
 
         async function fetchArticles() {
             let articles = [];
