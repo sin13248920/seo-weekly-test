@@ -468,6 +468,7 @@
     </footer>
 
     <!-- 스크립트 영역 -->
+    <!-- 스크립트 영역 -->
     <script>
         window.addEventListener('DOMContentLoaded', function() {
             // 날짜 세팅
@@ -487,30 +488,33 @@
 
         async function fetchArticles() {
             let articles = [];
-            const datePrefix = "260911"; 
             
-            for (let i = 1; i <= 10; i++) {
-                let seq = String(i).padStart(2, '0');
-                let fileName = `${datePrefix}${seq}`;
-                
+            // 등록된 기사 파일명(확장자 제외)을 여기에 직접 나열해 주세요. (최신순)
+            const articleIds = ["26091301", "26091102", "26091101"]; 
+            
+            for (let id of articleIds) {
                 try {
-                    let response = await fetch(`articles/${fileName}.json`);
+                    let response = await fetch(`articles/${id}.json`);
                     if (response.ok) {
                         let data = await response.json();
                         articles.push({
-                            id: fileName,
+                            id: id,
                             ...data
                         });
                     }
-                } catch (e) {}
+                } catch (e) {
+                    console.error(`${id}.json 파일을 불러오지 못했습니다.`, e);
+                }
             }
 
+            // 파일 이름 번호가 큰 순서(최신순)로 정렬
             articles.sort((a, b) => b.id.localeCompare(a.id));
 
             renderMainNews(articles);
             renderCategoryNews(articles);
         }
 
+        // 주요 뉴스 렌더링 (최신기사 기준)
         function renderMainNews(articles) {
             const grid = document.getElementById('topNewsGrid');
             if (articles.length === 0) {
@@ -518,8 +522,8 @@
                 return;
             }
 
-            const leadArticle = articles[0];
-            const subArticles = articles.slice(1, 4);
+            const leadArticle = articles[0]; // 가장 최신 기사
+            const subArticles = articles.slice(1, 4); // 그다음 최신 기사 최대 3개
 
             let leadThumbHtml = leadArticle.image 
                 ? `<img src="${leadArticle.image}" alt="대표 이미지">` 
@@ -551,6 +555,7 @@
             grid.innerHTML = html;
         }
 
+        // 카테고리별 뉴스 렌더링 (사회, 경제, 문화)
         function renderCategoryNews(articles) {
             const societyArticles = articles.filter(art => art.category && art.category.includes('사회'));
             const economyArticles = articles.filter(art => art.category && art.category.includes('경제'));
@@ -582,6 +587,7 @@
             container.innerHTML = html;
         }
 
+        // 스크롤 시 고정 소형 헤더 토글 이벤트
         window.addEventListener('scroll', function() {
             const fixedHeader = document.getElementById('fixedSmallHeader');
             const largeHeader = document.getElementById('largeHeader');
