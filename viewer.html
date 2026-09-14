@@ -451,7 +451,7 @@
             opacity: 0.85;
         }
 
-        /* 인덱스 푸터 스타일 적용 (Category/Index의 최신 푸터 구조 반영) */
+        /* 인덱스 푸터 스타일 적용 */
         footer {
             background-color: #f2f4f6;
             border-top: none;
@@ -522,17 +522,14 @@
             .header-main-bar { height: 60px; }
             .logo-img-large { height: 32px; }
             
-            /* 좁은 화면에서 왼쪽 유틸리티 사이드바 확실하게 숨김 */
             .utility-sidebar { display: none !important; }
             
             .page-wrapper { padding: 0 15px; }
             .widget-ads-grid { grid-template-columns: 1fr; }
 
-            /* 모바일 고정 헤더 설정 (로고 숨김, 유틸리티 바 꽉 채우기) */
             .fixed-small-header .header-container { display: none; }
             .fixed-small-header .mobile-utility-bar { display: flex; }
 
-            /* 모바일 푸터 정렬 대응 */
             .footer-top {
                 flex-direction: column;
                 gap: 20px;
@@ -548,7 +545,7 @@
 </head>
 <body>
 
-    <!-- 1. 페이지와 함께 스크롤되어 올라가는 큰 헤더 (날짜 바 포함) -->
+    <!-- 1. 큰 헤더 -->
     <div class="large-header" id="largeHeader">
         <div class="header-main-bar">
             <div class="header-container">
@@ -564,15 +561,13 @@
         </div>
     </div>
 
-    <!-- 2. 일정 수준 이상 스크롤했을 때 위에서 스르륵 나타나는 고정 소형 헤더 -->
+    <!-- 2. 고정 소형 헤더 -->
     <header class="fixed-small-header" id="fixedSmallHeader">
-        <!-- PC용 고정 헤더 (로고 정가운데) -->
         <div class="header-container">
             <a href="index.html" class="logo-link">
                 <img src="assets/seologo.png" alt="서오일보 로고" class="logo-img-small">
             </a>
         </div>
-        <!-- 모바일 스크롤 시 나타나는 유틸리티 바 (텍스트 제거 및 이미지 적용) -->
         <div class="mobile-utility-bar">
             <button class="util-btn" onclick="changeFontSize(1)">A+</button>
             <button class="util-btn" onclick="changeFontSize(-1)">A-</button>
@@ -600,6 +595,7 @@
             <!-- 정상 기사 영역 -->
             <div id="articleContainer">
                 <div class="article-header">
+                    <!-- 카테고리 클릭 시 category.html로 연결되도록 수정된 부분 -->
                     <a href="#" class="article-category" id="articleCategory">카테고리</a>
                     <h1 class="article-title" id="articleTitle"></h1>
                     <div class="article-info">
@@ -661,7 +657,7 @@
         </main>
     </div>
 
-    <!-- 인덱스 푸터 적용 -->
+    <!-- 푸터 적용 -->
     <footer>
         <div class="footer-inner">
             <div class="footer-top">
@@ -703,7 +699,6 @@
     <!-- 스크립트 영역 -->
     <script>
         window.addEventListener('DOMContentLoaded', function() {
-            // 날짜 세팅 추가
             const dateEl = document.getElementById('headerDate');
             if(dateEl) {
                 const now = new Date();
@@ -734,9 +729,17 @@
                 .then(data => {
                     document.getElementById('pageTitle').innerText = data.title + " | 서오일보";
                     
+                    // 카테고리 링크 및 이름 설정 로직
                     const categoryEl = document.getElementById('articleCategory');
                     categoryEl.innerText = data.category;
-                    categoryEl.href = `index.html?category=${encodeURIComponent(data.category)}`;
+                    
+                    let categoryParam = 'social';
+                    if (data.category.includes('경제')) {
+                        categoryParam = 'economy';
+                    } else if (data.category.includes('문화') || data.category.includes('생활')) {
+                        categoryParam = 'culture';
+                    }
+                    categoryEl.href = `category.html?type=${categoryParam}`;
 
                     document.getElementById('articleTitle').innerText = data.title;
                     document.getElementById('articleReporter').innerText = data.reporter; 
