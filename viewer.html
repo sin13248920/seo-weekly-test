@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle">데일리 뉴스</title>
+    <title id="pageTitle">서오일보</title>
     <!-- 브라우저 탭 아이콘 (파비콘) 설정 -->
     <link rel="icon" href="assets/favi.png" type="image/png">
     
@@ -150,6 +150,12 @@
         .mobile-utility-bar .util-btn:last-child {
             border-right: none;
         }
+        .mobile-utility-bar .util-icon {
+            width: 18px;
+            height: 18px;
+            object-fit: contain;
+            display: block;
+        }
 
         /* 스크롤 프로세스바 */
         .scroll-progress-bar {
@@ -214,6 +220,13 @@
             color: #111111;
         }
 
+        .util-icon {
+            width: 18px;
+            height: 18px;
+            object-fit: contain;
+            display: block;
+        }
+
         .util-divider {
             width: 24px;
             height: 1px;
@@ -240,6 +253,10 @@
             letter-spacing: 0.5px;
             margin-bottom: 12px;
             display: inline-block;
+            text-decoration: none;
+        }
+        .article-category:hover {
+            text-decoration: underline;
         }
 
         .article-title {
@@ -450,61 +467,76 @@
             opacity: 0.85;
         }
 
+        /* index.html / category.html 과 동일하게 교체된 푸터 스타일 */
         footer {
-            background-color: #ffffff;
+            background-color: #f8f9fa;
             border-top: 1px solid #d1d8dd;
-            padding: 40px 20px;
-            font-size: 13px;
-            color: #666666;
+            padding: 40px 0;
             margin-top: auto;
+            font-size: 13px;
+            color: #555555;
         }
 
-        .footer-inner {
-            max-width: 900px;
+        .footer-container {
+            max-width: 1100px;
+            width: 100%;
             margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
         .footer-top {
             display: flex;
-            align-items: flex-start;
             justify-content: space-between;
-            padding-bottom: 25px;
-            border-bottom: 1px solid #d1d8dd;
+            align-items: center;
+            border-bottom: 1px solid #e1e4e8;
+            padding-bottom: 20px;
         }
 
-        .footer-logo-img {
+        .footer-logo {
             height: 24px;
             width: auto;
             display: block;
         }
 
-        .footer-info {
-            flex: 1;
-            line-height: 1.7;
-            color: #777777;
-            padding-left: 30px;
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            color: #333333;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
         }
 
         .footer-bottom {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding-top: 20px;
+            align-items: flex-start;
+            gap: 20px;
         }
 
-        .footer-copyright {
-            color: #999999;
+        .footer-info {
+            line-height: 1.6;
+            color: #666666;
             font-size: 12px;
         }
 
         .family-site-select {
-            padding: 8px 14px;
-            font-size: 13px;
+            padding: 8px 12px;
+            font-size: 12px;
             border: 1px solid #cbd5e1;
             background-color: #ffffff;
             color: #333333;
             cursor: pointer;
-            width: 200px;
+            width: 180px;
         }
 
         /* 반응형 모바일 설정 (768px 이하) */
@@ -522,6 +554,16 @@
             /* 모바일 고정 헤더 설정 (로고 숨김, 유틸리티 바 꽉 채우기) */
             .fixed-small-header .header-container { display: none; }
             .fixed-small-header .mobile-utility-bar { display: flex; }
+
+            .footer-top {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            .footer-bottom {
+                flex-direction: column;
+                align-items: flex-start;
+            }
         }
     </style>
 </head>
@@ -538,7 +580,7 @@
         </div>
         <div class="sub-info-bar">
             <div class="sub-info-inner">
-                <span class="current-date" id="headerDate">2026.09.11 (금)</span>
+                <span class="current-date" id="headerDate">2026.09.14 (월)</span>
                 <div class="stock-market-ticker">
                     <span class="market-item">KOSPI <strong class="up">2,780.50</strong> <span class="change">▲ 12.30 (+0.44%)</span></span>
                     <span class="market-divider">|</span>
@@ -556,12 +598,12 @@
                 <img src="assets/seologo.png" alt="서오일보 로고" class="logo-img-small">
             </a>
         </div>
-        <!-- 모바일 스크롤 시 나타나는 유틸리티 바 (꽉 채움) -->
+        <!-- 모바일 스크롤 시 나타나는 유틸리티 바 (아이콘만 표시) -->
         <div class="mobile-utility-bar">
-            <button class="util-btn" onclick="changeFontSize(1)">A+</button>
-            <button class="util-btn" onclick="changeFontSize(-1)">A-</button>
-            <button class="util-btn" onclick="openPrintWindow()">🖨️ 인쇄</button>
-            <button class="util-btn" onclick="alert('기사 링크가 복사되었습니다.')">🔗 공유</button>
+            <button class="util-btn" onclick="changeFontSize(1)" title="글자 키우기">A+</button>
+            <button class="util-btn" onclick="changeFontSize(-1)" title="글자 줄이기">A-</button>
+            <button class="util-btn" onclick="openPrintWindow()" title="인쇄하기"><img src="assets/print.png" alt="인쇄" class="util-icon"></button>
+            <button class="util-btn" onclick="alert('기사 링크가 복사되었습니다.')" title="공유하기"><img src="assets/share.png" alt="공유" class="util-icon"></button>
         </div>
         <div class="scroll-progress-bar" id="scrollProgressBar"></div>
     </header>
@@ -574,9 +616,9 @@
                 <button class="util-btn" title="글자 키우기" onclick="changeFontSize(1)">A+</button>
                 <button class="util-btn" title="글자 줄이기" onclick="changeFontSize(-1)">A-</button>
                 <div class="util-divider"></div>
-                <button class="util-btn" title="인쇄하기" onclick="openPrintWindow()">🖨️</button>
+                <button class="util-btn" title="인쇄하기" onclick="openPrintWindow()"><img src="assets/print.png" alt="인쇄" class="util-icon"></button>
                 <div class="util-divider"></div>
-                <button class="util-btn" title="공유하기" onclick="alert('기사 링크가 복사되었습니다.')">🔗</button>
+                <button class="util-btn" title="공유하기" onclick="alert('기사 링크가 복사되었습니다.')"><img src="assets/share.png" alt="공유" class="util-icon"></button>
             </div>
         </aside>
 
@@ -584,7 +626,7 @@
             <!-- 정상 기사 영역 -->
             <div id="articleContainer">
                 <div class="article-header">
-                    <span class="article-category" id="articleCategory">카테고리</span>
+                    <a href="#" class="article-category" id="articleCategory">카테고리</a>
                     <h1 class="article-title" id="articleTitle"></h1>
                     <div class="article-info">
                         <span id="articleReporter"></span>
@@ -645,26 +687,40 @@
         </main>
     </div>
 
-    <!-- 푸터 영역 -->
+    <!-- 푸터 영역 (index.html, category.html과 동일하게 구성) -->
     <footer>
         <div class="footer-inner">
             <div class="footer-top">
-                <img src="assets/seologo.png" alt="데일리 뉴스 로고" class="footer-logo-img">
+                <div class="footer-logo-area">
+                    <img src="assets/seologo.png" alt="서오일보 로고" class="footer-logo-img">
+                </div>
                 <div class="footer-info">
-                    주소: 서울특별시 중구 세종대로 123, 4층 | 대표번호: 02-123-4567 | 인터넷신문등록번호: 서울 아 00000<br>
-                    등록(발행)일자: 2026년 01월 01일 | 발행인: 홍길동 | 편집인: 김철수
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <div class="footer-copyright">
-                    Copyright &copy; Daily News All rights reserved. 무단 전재 및 재배포 금지.
-                </div>
-                <div class="footer-family">
-                    <select class="family-site-select" onchange="if(this.value) { window.open(this.value, '_blank'); this.value=''; }">
-                        <option value="">데일리뉴스 관계사</option>
-                        <option value="https://sin13248920.github.io/Seo-Architecture/">서오건축</option>
-                        <option value="https://sin13248920.github.io/weekly-seo-e-viewer/index.html">월간서오 e뷰어</option>
-                    </select>
+                    <div class="footer-row">
+                        <span>주소 : 서울특별시 용산구 한일로 301 (우) 01201</span>
+                        <span class="footer-bar">|</span>
+                        <span>전화 : 02-123-4567</span>
+                        <span class="footer-bar">|</span>
+                        <span>등록번호 : 서울 아 00000</span>
+                        <span class="footer-bar">|</span>
+                        <span>등록일자 : 2026.09.11</span>
+                        <span class="footer-bar">|</span>
+                        <span>발행인·편집인 : 김서오</span>
+                    </div>
+                    <div class="footer-row">
+                        <span>사업자명 : 서오일보(주)</span>
+                        <span class="footer-bar">|</span>
+                        <span>사업자등록번호 : 123-45-6789</span>
+                        <span class="footer-bar">|</span>
+                        <span>대표자명 : 김서오</span>
+                        <span class="footer-bar">|</span>
+                        <span>통신판매업신고번호 : 2026-서울용산-0123</span>
+                    </div>
+                    <div class="footer-row footer-desc">
+                        서오일보의 모든 콘텐츠(기사)는 저작권법의 보호를 받는바, 무단 전재, 복사, 배포 등을 금합니다.
+                    </div>
+                    <div class="footer-row footer-copyright">
+                        Copyright by SeoIlbo Co., Ltd. All Rights Reserved
+                    </div>
                 </div>
             </div>
         </div>
@@ -701,8 +757,15 @@
                     return response.json();
                 })
                 .then(data => {
-                    document.getElementById('pageTitle').innerText = data.title + " - 서오일보";
-                    document.getElementById('articleCategory').innerText = data.category;
+                    // 4. 창 이름 형식 지정: '기사제목 | 서오일보'
+                    document.getElementById('pageTitle').innerText = data.title + " | 서오일보";
+                    
+                    // 2. 카테고리 설정 및 카테고리 페이지 연결
+                    const categoryEl = document.getElementById('articleCategory');
+                    categoryEl.innerText = data.category;
+                    // 예시 카테고리 매핑 (데이터에 카테고리 코드나 이름이 있다고 가정)
+                    categoryEl.href = `category.html?cat=${encodeURIComponent(data.category)}`;
+
                     document.getElementById('articleTitle').innerText = data.title;
                     document.getElementById('articleReporter').innerText = data.reporter; 
                     document.getElementById('articleDate').innerText = "입력 : " + data.date;
@@ -756,7 +819,7 @@
         });
 
         function showErrorState() {
-            document.getElementById('pageTitle').innerText = "페이지를 찾을 수 없습니다 - 서오일보";
+            document.getElementById('pageTitle').innerText = "페이지를 찾을 수 없습니다 | 서오일보";
             document.getElementById('articleContainer').style.display = 'none';
             document.getElementById('utilitySidebar').style.display = 'none';
             document.getElementById('errorContainer').style.display = 'block';
@@ -802,7 +865,7 @@
                 <html lang="ko">
                 <head>
                     <meta charset="UTF-8">
-                    <title>인쇄 미리보기</title>
+                    <title>인쇄 미리보기 | 서오일보</title>
                     <style>
                         * { margin: 0; padding: 0; box-sizing: border-box; }
                         body {
