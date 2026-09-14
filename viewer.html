@@ -24,7 +24,7 @@
             min-height: 100vh;
         }
 
-        /* 1. 페이지와 함께 스크롤되어 올라가는 큰 헤더 */
+        /* 1. 페이지와 함께 스크롤되어 올라가는 큰 헤더 (날짜 정보 바 포함) */
         .large-header {
             width: 100%;
             background-color: #ffffff;
@@ -62,6 +62,28 @@
             height: 40px; 
             width: auto;
             display: block;
+        }
+
+        /* 날짜 정보 바 스타일 추가 */
+        .sub-info-bar {
+            background-color: #ffffff;
+            border-top: 1px solid #f1f3f5;
+            border-bottom: 1px solid #e1e4e8;
+            font-size: 12px;
+            color: #555555;
+            height: 36px;
+            display: flex;
+            align-items: center;
+        }
+
+        .sub-info-inner {
+            max-width: 1100px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         /* 2. 일정 수준 이상 스크롤했을 때 위에서 스르륵 나타나는 고정 소형 헤더 */
@@ -429,29 +451,31 @@
             opacity: 0.85;
         }
 
-        /* 인덱스 푸터 스타일 적용 */
+        /* 인덱스 푸터 스타일 적용 (Category/Index의 최신 푸터 구조 반영) */
         footer {
-            background-color: #f8f9fa;
-            border-top: 1px solid #d1d8dd;
+            background-color: #f2f4f6;
+            border-top: none;
             padding: 30px 20px;
             font-size: 12px;
             color: #666666;
             margin-top: auto;
+            line-height: 1.6;
         }
 
         .footer-inner {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
         .footer-top {
             display: flex;
-            align-items: center;
-            gap: 30px;
+            align-items: flex-start;
+            gap: 40px;
         }
 
         .footer-logo-area {
             flex-shrink: 0;
+            padding-top: 2px;
         }
 
         .footer-logo-img {
@@ -461,6 +485,7 @@
         }
 
         .footer-info {
+            flex: 1;
             display: flex;
             flex-direction: column;
             gap: 6px;
@@ -468,30 +493,32 @@
 
         .footer-row {
             display: flex;
-            align-items: center;
             flex-wrap: wrap;
-            gap: 6px;
+            align-items: center;
+            gap: 0;
             color: #555555;
-            line-height: 1.5;
         }
 
         .footer-bar {
-            color: #cbd5e1;
+            margin: 0 8px;
+            color: #d1d5db;
             font-size: 11px;
         }
 
         .footer-desc {
-            color: #777777;
-            margin-top: 2px;
+            margin-top: 4px;
+            color: #666666;
         }
 
         .footer-copyright {
+            margin-top: 4px;
             color: #888888;
             font-weight: 500;
         }
 
         /* 반응형 모바일 설정 (768px 이하) */
         @media (max-width: 768px) {
+            .sub-info-bar { display: none; }
             .header-main-bar { height: 60px; }
             .logo-img-large { height: 32px; }
             
@@ -508,21 +535,31 @@
             /* 모바일 푸터 정렬 대응 */
             .footer-top {
                 flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
+                gap: 20px;
+            }
+            .footer-bar {
+                margin: 0 6px;
+            }
+            footer {
+                padding: 20px 15px;
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- 1. 페이지와 함께 스크롤되어 올라가는 큰 헤더 -->
+    <!-- 1. 페이지와 함께 스크롤되어 올라가는 큰 헤더 (날짜 바 포함) -->
     <div class="large-header" id="largeHeader">
         <div class="header-main-bar">
             <div class="header-container">
                 <a href="index.html" class="logo-link">
                     <img src="assets/seologo.png" alt="서오일보 로고" class="logo-img-large">
                 </a>
+            </div>
+        </div>
+        <div class="sub-info-bar">
+            <div class="sub-info-inner">
+                <span class="current-date" id="headerDate">2026.09.12 (토)</span>
             </div>
         </div>
     </div>
@@ -666,6 +703,17 @@
     <!-- 스크립트 영역 -->
     <script>
         window.addEventListener('DOMContentLoaded', function() {
+            // 날짜 세팅 추가
+            const dateEl = document.getElementById('headerDate');
+            if(dateEl) {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const week = ['일', '월', '화', '수', '목', '금', '토'][now.getDay()];
+                dateEl.innerText = `${year}.${month}.${day} (${week})`;
+            }
+
             const urlParams = new URLSearchParams(window.location.search);
             const articleId = urlParams.get('id');
 
@@ -761,7 +809,7 @@
                 progressBar.style.width = scrolled + '%';
             }
 
-            const threshold = largeHeader ? largeHeader.offsetHeight : 75;
+            const threshold = largeHeader ? largeHeader.offsetHeight : 111;
 
             if (winScroll > threshold) {
                 fixedHeader.classList.add('active');
@@ -841,7 +889,7 @@
                         }
                         h1 { font-size: 24pt; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
                         p { font-size: 12pt; margin-bottom: 15px; }
-                        .article-image-container img { width: 100%; height: auto; max-height: 500px; object-clear: cover; }
+                        .article-image-container img { width: 100%; height: auto; max-height: 500px; object-fit: cover; }
 
                         .ad-box, .reporter-section, .widget-ads-container {
                             display: none !important;
