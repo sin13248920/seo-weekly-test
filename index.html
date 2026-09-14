@@ -63,7 +63,7 @@
             display: block;
         }
 
-        /* 날짜 및 주가 정보 바 */
+        /* 날짜 정보 바 (주가종합지수 삭제) */
         .sub-info-bar {
             background-color: #ffffff;
             border-top: 1px solid #f1f3f5;
@@ -84,16 +84,6 @@
             justify-content: space-between;
             align-items: center;
         }
-
-        .stock-market-ticker {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .market-item strong.up { color: #C91C1C; }
-        .market-item strong.down { color: #0055ff; }
-        .market-divider { color: #cccccc; }
 
         /* 2. 스크롤 시 위에서 나타나는 고정 소형 헤더 */
         .fixed-small-header {
@@ -245,6 +235,22 @@
             border-bottom: 2px solid #C91C1C;
             padding-bottom: 8px;
             margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* 카테고리 타이틀 링크 스타일 */
+        .category-col-title a {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            justify-content: space-between;
+        }
+        .category-col-title a:hover {
+            color: #C91C1C;
         }
 
         .category-article-list {
@@ -291,200 +297,10 @@
             padding: 30px 0;
         }
 
-        /* 푸터 영역 */
-        footer {
-            background-color: #ffffff;
-            border-top: 1px solid #d1d8dd;
-            padding: 40px 20px;
-            font-size: 13px;
-            color: #666666;
-            margin-top: auto;
-        }
-
-        .footer-inner {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        .footer-top {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            padding-bottom: 25px;
-            border-bottom: 1px solid #d1d8dd;
-        }
-
-        .footer-logo-img {
-            height: 24px;
-            width: auto;
-            display: block;
-        }
-
-        .footer-info {
-            flex: 1;
-            line-height: 1.7;
-            color: #777777;
-            padding-left: 30px;
-        }
-
-        .footer-bottom {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 20px;
-        }
-
-        .footer-copyright {
-            color: #999999;
-            font-size: 12px;
-        }
-
-        .family-site-select {
-            padding: 8px 14px;
-            font-size: 13px;
-            border: 1px solid #cbd5e1;
-            background-color: #ffffff;
-            color: #333333;
-            cursor: pointer;
-            width: 200px;
-        }
-
-        /* 반응형 모바일 설정 (768px 이하) */
-        @media (max-width: 768px) {
-            .sub-info-bar { display: none; }
-            .header-main-bar { height: 60px; }
-            .logo-img-large { height: 32px; }
-            
-            .top-news-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            .main-lead-thumb {
-                height: 220px;
-            }
-            .category-sections-wrapper {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            .main-container {
-                margin: 20px auto 40px auto;
-                padding: 0 15px;
-            }
-        }
-    </style>
-</head>
-<body>
-
-    <!-- 1. 기본 큰 헤더 -->
-    <div class="large-header" id="largeHeader">
-        <div class="header-main-bar">
-            <div class="header-container">
-                <a href="index.html" class="logo-link">
-                    <img src="assets/seologo.png" alt="서오일보 로고" class="logo-img-large">
-                </a>
-            </div>
-        </div>
-        <div class="sub-info-bar">
-            <div class="sub-info-inner">
-                <span class="current-date" id="headerDate">2026.09.12 (토)</span>
-                <div class="stock-market-ticker" id="stockTickerBar">
-                    <span class="market-item">KOSPI <strong class="up">6,900.50</strong> <span class="change">▲ 45.20 (+0.66%)</span></span>
-                    <span class="market-divider">|</span>
-                    <span class="market-item">KOSDAQ <strong class="up">1,420.30</strong> <span class="change">▲ 12.10 (+0.86%)</span></span>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 2. 스크롤 시 위에서 스르륵 나타나는 고정 소형 헤더 -->
-    <header class="fixed-small-header" id="fixedSmallHeader">
-        <div class="header-container">
-            <a href="index.html" class="logo-link">
-                <img src="assets/seologo.png" alt="서오일보 로고" class="logo-img-small">
-            </a>
-        </div>
-    </header>
-
-    <!-- 메인 콘텐츠 영역 -->
-    <main class="main-container">
-        
-        <!-- 주요 뉴스 섹션 -->
-        <div class="main-section-title">주요 뉴스</div>
-        <div class="top-news-grid" id="topNewsGrid">
-            <div style="grid-column: 1 / -1; text-align: center; color: #888; padding: 40px 0;">기사를 불러오는 중입니다...</div>
-        </div>
-
-        <!-- 카테고리별 섹션 (사회, 경제, 문화) -->
-        <div class="main-section-title" style="margin-top: 50px;">카테고리별 뉴스</div>
-        <div class="category-sections-wrapper">
-            <!-- 사회 섹션 -->
-            <div class="category-column">
-                <div class="category-col-title">사회</div>
-                <div class="category-article-list" id="societyArticleList">
-                    <div class="no-article-notice">기사가 존재하지 않습니다.</div>
-                </div>
-            </div>
-            <!-- 경제 섹션 -->
-            <div class="category-column">
-                <div class="category-col-title">경제</div>
-                <div class="category-article-list" id="economyArticleList">
-                    <div class="no-article-notice">기사가 존재하지 않습니다.</div>
-                </div>
-            </div>
-            <!-- 문화 섹션 -->
-            <div class="category-column">
-                <div class="category-col-title">문화</div>
-                <div class="category-article-list" id="cultureArticleList">
-                    <div class="no-article-notice">기사가 존재하지 않습니다.</div>
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- 푸터 영역 -->
-    <footer>
-        <div class="footer-inner">
-            <div class="footer-top">
-                <div class="footer-logo-area">
-                    <img src="assets/seologo.png" alt="서오일보 로고" class="footer-logo-img">
-                </div>
-                <div class="footer-info">
-                    <div class="footer-row">
-                        <span>주소 : 서울특별시 용산구 한일로 301 (우) 01201</span>
-                        <span class="footer-bar">|</span>
-                        <span>전화 : 02-123-4567</span>
-                        <span class="footer-bar">|</span>
-                        <span>등록번호 : 서울 아 00000</span>
-                        <span class="footer-bar">|</span>
-                        <span>등록일자 : 2026.09.11</span>
-                        <span class="footer-bar">|</span>
-                        <span>발행인·편집인 : 김서오</span>
-                    </div>
-                    <div class="footer-row">
-                        <span>사업자명 : 서오일보(주)</span>
-                        <span class="footer-bar">|</span>
-                        <span>사업자등록번호 : 123-45-6789</span>
-                        <span class="footer-bar">|</span>
-                        <span>대표자명 : 김서오</span>
-                        <span class="footer-bar">|</span>
-                        <span>통신판매업신고번호 : 2026-서울용산-0123</span>
-                    </div>
-                    <div class="footer-row footer-desc">
-                        서오일보의 모든 콘텐츠(기사)는 저작권법의 보호를 받는바, 무단 전재, 복사, 배포 등을 금합니다.
-                    </div>
-                    <div class="footer-row footer-copyright">
-                        Copyright by SeoIlbo Co., Ltd. All Rights Reserved
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <style>
+        /* 푸터 영역 (맨 밑 구분선 삭제) */
         footer {
             background-color: #f2f4f6;
-            border-top: none; /* 아래쪽 구분선 제거 */
+            border-top: none; 
             padding: 30px 20px;
             font-size: 12px;
             color: #666666;
@@ -546,8 +362,27 @@
             font-weight: 500;
         }
 
-        /* 모바일 환경 대응 */
+        /* 반응형 모바일 설정 (768px 이하) */
         @media (max-width: 768px) {
+            .sub-info-bar { display: none; }
+            .header-main-bar { height: 60px; }
+            .logo-img-large { height: 32px; }
+            
+            .top-news-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .main-lead-thumb {
+                height: 220px;
+            }
+            .category-sections-wrapper {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .main-container {
+                margin: 20px auto 40px auto;
+                padding: 0 15px;
+            }
             .footer-top {
                 flex-direction: column;
                 gap: 20px;
@@ -560,8 +395,125 @@
             }
         }
     </style>
+</head>
+<body>
 
-    <!-- 스크립트 영역 -->
+    <!-- 1. 기본 큰 헤더 -->
+    <div class="large-header" id="largeHeader">
+        <div class="header-main-bar">
+            <div class="header-container">
+                <a href="index.html" class="logo-link">
+                    <img src="assets/seologo.png" alt="서오일보 로고" class="logo-img-large">
+                </a>
+            </div>
+        </div>
+        <div class="sub-info-bar">
+            <div class="sub-info-inner">
+                <span class="current-date" id="headerDate">2026.09.12 (토)</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. 스크롤 시 위에서 스르륵 나타나는 고정 소형 헤더 -->
+    <header class="fixed-small-header" id="fixedSmallHeader">
+        <div class="header-container">
+            <a href="index.html" class="logo-link">
+                <img src="assets/seologo.png" alt="서오일보 로고" class="logo-img-small">
+            </a>
+        </div>
+    </header>
+
+    <!-- 메인 콘텐츠 영역 -->
+    <main class="main-container">
+        
+        <!-- 주요 뉴스 섹션 -->
+        <div class="main-section-title">주요 뉴스</div>
+        <div class="top-news-grid" id="topNewsGrid">
+            <div style="grid-column: 1 / -1; text-align: center; color: #888; padding: 40px 0;">기사를 불러오는 중입니다...</div>
+        </div>
+
+        <!-- 카테고리별 섹션 (사회, 경제, 문화) -->
+        <div class="main-section-title" style="margin-top: 50px;">카테고리별 뉴스</div>
+        <div class="category-sections-wrapper">
+            <!-- 사회 섹션 -->
+            <div class="category-column">
+                <div class="category-col-title">
+                    <a href="category.html?type=social">
+                        <span>사회</span>
+                        <span>&gt;</span>
+                    </a>
+                </div>
+                <div class="category-article-list" id="societyArticleList">
+                    <div class="no-article-notice">기사가 존재하지 않습니다.</div>
+                </div>
+            </div>
+            <!-- 경제 섹션 -->
+            <div class="category-column">
+                <div class="category-col-title">
+                    <a href="category.html?type=economy">
+                        <span>경제</span>
+                        <span>&gt;</span>
+                    </a>
+                </div>
+                <div class="category-article-list" id="economyArticleList">
+                    <div class="no-article-notice">기사가 존재하지 않습니다.</div>
+                </div>
+            </div>
+            <!-- 문화 섹션 -->
+            <div class="category-column">
+                <div class="category-col-title">
+                    <a href="category.html?type=culture">
+                        <span>문화</span>
+                        <span>&gt;</span>
+                    </a>
+                </div>
+                <div class="category-article-list" id="cultureArticleList">
+                    <div class="no-article-notice">기사가 존재하지 않습니다.</div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- 푸터 영역 -->
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-top">
+                <div class="footer-logo-area">
+                    <img src="assets/seologo.png" alt="서오일보 로고" class="footer-logo-img">
+                </div>
+                <div class="footer-info">
+                    <div class="footer-row">
+                        <span>주소 : 서울특별시 용산구 한일로 301 (우) 01201</span>
+                        <span class="footer-bar">|</span>
+                        <span>전화 : 02-123-4567</span>
+                        <span class="footer-bar">|</span>
+                        <span>등록번호 : 서울 아 00000</span>
+                        <span class="footer-bar">|</span>
+                        <span>등록일자 : 2026.09.11</span>
+                        <span class="footer-bar">|</span>
+                        <span>발행인·편집인 : 김서오</span>
+                    </div>
+                    <div class="footer-row">
+                        <span>사업자명 : 서오일보(주)</span>
+                        <span class="footer-bar">|</span>
+                        <span>사업자등록번호 : 123-45-6789</span>
+                        <span class="footer-bar">|</span>
+                        <span>대표자명 : 김서오</span>
+                        <span class="footer-bar">|</span>
+                        <span>통신판매업신고번호 : 2026-서울용산-0123</span>
+                    </div>
+                    <div class="footer-row footer-desc">
+                        서오일보의 모든 콘텐츠(기사)는 저작권법의 보호를 받는바, 무단 전재, 복사, 배포 등을 금합니다.
+                    </div>
+                    <div class="footer-row footer-copyright">
+                        Copyright by SeoIlbo Co., Ltd. All Rights Reserved
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
     <!-- 스크립트 영역 -->
     <script>
         window.addEventListener('DOMContentLoaded', function() {
