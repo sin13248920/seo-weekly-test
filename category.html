@@ -113,7 +113,7 @@
             display: block;
         }
 
-        /* 메인 컨테이너 레이아웃 (중앙일보 리스트 스타일 참고) */
+        /* 메인 컨테이너 레이아웃 */
         .main-container {
             max-width: 800px;
             width: 100%;
@@ -213,70 +213,44 @@
             padding: 80px 0;
         }
 
-        /* 푸터 영역 */
-        footer {
-            background-color: #f2f4f6;
-            border-top: none; 
-            padding: 30px 20px;
-            font-size: 12px;
-            color: #666666;
-            margin-top: auto;
-            line-height: 1.6;
-        }
-
-        .footer-inner {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .footer-top {
-            display: flex;
-            align-items: flex-start;
-            gap: 40px;
-        }
-
-        .footer-logo-area {
-            flex-shrink: 0;
-            padding-top: 2px;
-        }
-
-        .footer-logo-img {
-            height: 32px;
-            width: auto;
-            display: block;
-        }
-
-        .footer-info {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .footer-row {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 0;
-            color: #555555;
-        }
-
-        .footer-bar {
-            margin: 0 8px;
-            color: #d1d5db;
-            font-size: 11px;
-        }
-
-        .footer-desc {
-            margin-top: 4px;
-            color: #666666;
-        }
-
-        .footer-copyright {
-            margin-top: 4px;
-            color: #888888;
-            font-weight: 500;
-        }
+        /* 푸터 영역 (인덱스와 동일) */
+        <footer>
+            <div class="footer-inner">
+                <div class="footer-top">
+                    <div class="footer-logo-area">
+                        <img src="assets/seologo.png" alt="서오일보 로고" class="footer-logo-img">
+                    </div>
+                    <div class="footer-info">
+                        <div class="footer-row">
+                            <span>주소 : 서울특별시 용산구 한일로 301 (우) 01201</span>
+                            <span class="footer-bar">|</span>
+                            <span>전화 : 02-123-4567</span>
+                            <span class="footer-bar">|</span>
+                            <span>등록번호 : 서울 아 00000</span>
+                            <span class="footer-bar">|</span>
+                            <span>등록일자 : 2026.09.11</span>
+                            <span class="footer-bar">|</span>
+                            <span>발행인·편집인 : 김서오</span>
+                        </div>
+                        <div class="footer-row">
+                            <span>사업자명 : 서오일보(주)</span>
+                            <span class="footer-bar">|</span>
+                            <span>사업자등록번호 : 123-45-6789</span>
+                            <span class="footer-bar">|</span>
+                            <span>대표자명 : 김서오</span>
+                            <span class="footer-bar">|</span>
+                            <span>통신판매업신고번호 : 2026-서울용산-0123</span>
+                        </div>
+                        <div class="footer-row footer-desc">
+                            서오일보의 모든 콘텐츠(기사)는 저작권법의 보호를 받는바, 무단 전재, 복사, 배포 등을 금합니다.
+                        </div>
+                        <div class="footer-row footer-copyright">
+                            Copyright by SeoIlbo Co., Ltd. All Rights Reserved
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
 
         /* 반응형 모바일 설정 (768px 이하) */
         @media (max-width: 768px) {
@@ -294,7 +268,7 @@
                 font-size: 15px;
             }
             .art-card-desc {
-                display: none; /* 모바일에서는 요약문 숨김 처리로 깔끔하게 정리 */
+                display: none; 
             }
             .footer-top {
                 flex-direction: column;
@@ -418,7 +392,6 @@
             document.getElementById('pageTitle').innerText = `${currentCat.name} | 서오일보`;
             document.getElementById('categoryHeading').innerText = currentCat.name;
 
-            // 인덱스와 동일한 기사 ID 목록 (필요에 따라 계속 추가 관리 가능)
             const articleIds = ["26091501", "26091301", "26091102", "26091101"]; 
             let articles = [];
 
@@ -457,11 +430,14 @@
 
             let html = '';
             articles.forEach(art => {
+                // 이미지가 있는 경우에만 썸네일 박스 HTML 생성, 없으면 빈 문자열 처리하여 아예 안 뜨게 설정
                 let thumbHtml = art.image 
-                    ? `<img src="${art.image}" alt="썸네일 이미지">` 
-                    : `<span style="color:#adb5bd; font-size:11px;">이미지 없음</span>`;
+                    ? `<div class="art-card-thumb"><img src="${art.image}" alt="썸네일 이미지"></div>` 
+                    : '';
 
                 let descText = art.content && art.content[0] ? art.content[0] : '';
+                // 날짜 옆에 '서오일보' 고정 대신 기자 이름(art.reporter) 표시 (기본값 설정 가능)
+                let reporterName = art.reporter || '기자명 없음';
 
                 html += `
                     <a href="viewer.html?id=${art.id}" class="article-card-item">
@@ -473,12 +449,10 @@
                             <div class="art-card-meta">
                                 <span>${art.date || ''}</span>
                                 <span>|</span>
-                                <span>${art.author || '서오일보'}</span>
+                                <span>${reporterName}</span>
                             </div>
                         </div>
-                        <div class="art-card-thumb">
-                            ${thumbHtml}
-                        </div>
+                        ${thumbHtml}
                     </a>
                 `;
             });
