@@ -6,6 +6,12 @@
     <title id="pageTitle">서오일보</title>
     <!-- 브라우저 탭 아이콘 (파비콘) 설정 -->
     <link rel="icon" href="assets/favi.png" type="image/png">
+
+    <!-- Open Graph 태그 (카톡 등 공유 미리보기용) -->
+    <meta property="og:title" content="서오일보" id="ogTitle">
+    <meta property="og:description" content="여기를 눌러 링크를 확인하세요" id="ogDesc">
+    <meta property="og:image" content="assets/seologo.png" id="ogImage">
+    <meta property="og:url" id="ogUrl">
     
     <style>
         * {
@@ -714,6 +720,26 @@
                         throw new Error('기사 데이터를 찾을 수 없습니다.');
                     }
                     return response.json();
+
+                    // --- 여기서부터 카카오톡 공유 미리보기(OG 태그) 동적 변경 코드 ---
+        
+                    // 1. 기사 제목을 공유 제목으로 설정 (+ 뒤에 | 서오일보 추가 등 원하시는 대로)
+                    document.getElementById('ogTitle').setAttribute('content', data.title);
+        
+                    // 2. 설명란은 무조건 원하시는 문구로 고정
+                    document.getElementById('ogDesc').setAttribute('content', "여기를 눌러 링크를 확인하세요.");
+        
+                   // 3. 기사 대표 이미지 설정 (기사에 이미지가 있으면 그 이미지, 없으면 기본 로고)
+                   if (data.image && data.image.trim() !== "") {
+                   // 메신저 봇은 '상대 경로'를 못 읽을 수 있으므로 전체 절대 경로(domain + path)로 넣어주는 것이 안전합니다.
+                   const absoluteImageUrl = window.location.origin + "/" + data.image.replace(/^\//, '');
+                   document.getElementById('ogImage').setAttribute('content', absoluteImageUrl);
+        }
+        
+        // 4. 현재 페이지 주소 설정
+        document.getElementById('ogUrl').setAttribute('content', window.location.href);
+        
+        // -------------------------------------------------------------
                 })
                 .then(data => {
                     document.getElementById('pageTitle').innerText = data.title + " | 서오일보";
