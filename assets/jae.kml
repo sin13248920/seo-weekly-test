@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document id="document">
+	<name>제목 없는 KML 파일</name>
+	<gx:CascadingStyle kml:id="__managed_style_01946C607B41EFAC3FFC_highlight">
+		<styleUrl>https://earth.google.com/balloon_components/base/1.1.0.0/card_template.kml#main</styleUrl>
+		<Style>
+			<IconStyle>
+				<scale>1.2</scale>
+				<Icon>
+					<href>https://earth.google.com/earth/document/icon?color=1976d2&amp;id=2000&amp;scale=4</href>
+				</Icon>
+				<hotSpot x="64" y="128" xunits="pixels" yunits="insetPixels"/>
+			</IconStyle>
+			<LabelStyle>
+			</LabelStyle>
+			<LineStyle>
+				<color>ff2dc0fb</color>
+				<width>4</width>
+			</LineStyle>
+			<PolyStyle>
+				<color>402dc0fb</color>
+			</PolyStyle>
+			<BalloonStyle>
+			</BalloonStyle>
+		</Style>
+	</gx:CascadingStyle>
+	<gx:CascadingStyle kml:id="__managed_style_01946C607B41EFAC3FFC_normal">
+		<styleUrl>https://earth.google.com/balloon_components/base/1.1.0.0/card_template.kml#main</styleUrl>
+		<Style>
+			<IconStyle>
+				<Icon>
+					<href>https://earth.google.com/earth/document/icon?color=1976d2&amp;id=2000&amp;scale=4</href>
+				</Icon>
+				<hotSpot x="64" y="128" xunits="pixels" yunits="insetPixels"/>
+			</IconStyle>
+			<LabelStyle>
+			</LabelStyle>
+			<LineStyle>
+				<color>ff2dc0fb</color>
+				<width>2.66667</width>
+			</LineStyle>
+			<PolyStyle>
+				<color>402dc0fb</color>
+			</PolyStyle>
+			<BalloonStyle>
+			</BalloonStyle>
+		</Style>
+	</gx:CascadingStyle>
+	<StyleMap id="__managed_style_01946C607B41EFAC3FFC">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#__managed_style_01946C607B41EFAC3FFC_normal</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#__managed_style_01946C607B41EFAC3FFC_highlight</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Placemark id="01A09BE49541EFABEFE3">
+		<name>장안1구역</name>
+		<description><![CDATA[<h2><b>장안1구역</b><br></h2><div>세대수: 1754세대 예정<br></div><div>최고 층수: 최고 35층<br></div><div><br></div>]]></description>
+		<LookAt>
+			<longitude>127.069125144416</longitude>
+			<latitude>37.57423566548999</latitude>
+			<altitude>12.79244733381858</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>35</gx:fovy>
+			<range>1274.530811590667</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_01946C607B41EFAC3FFC</styleUrl>
+		<Polygon>
+			<outerBoundaryIs>
+				<LinearRing>
+					<coordinates>
+						127.0689647502765,37.5732748929207,0 127.0697939267084,37.57319739274921,0 127.0698720465728,37.57431040234022,0 127.0700828715331,37.57429832506216,0 127.0701490714789,37.5753826529448,0 127.0697035414949,37.57548177342231,0 127.0695902582643,37.57490252382058,0 127.0690781720843,37.57494885703076,0 127.0691016397978,37.57518445089403,0 127.0692697985604,37.57517824378377,0 127.0693244886625,37.57558409102524,0 127.0677119396652,37.57591664690305,0 127.067268450258,37.57434183078765,0 127.0674226683065,37.57430210474224,0 127.0672271524097,37.57367855169366,0 127.066901100647,37.57304521156769,0 127.0670381858819,37.57300176761654,0 127.0670025023689,37.57284322421093,0 127.0685928992845,37.5727348390014,0 127.0689647502765,37.5732748929207,0 
+					</coordinates>
+				</LinearRing>
+			</outerBoundaryIs>
+		</Polygon>
+	</Placemark>
+</Document>
+</kml>
