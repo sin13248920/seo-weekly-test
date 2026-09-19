@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>서울 동북권 정비사업 지도 | 서오일보</title>
     
-    <!-- Leaflet CSS 링크 (오픈소스 지도 라이브러리) -->
+    <!-- Leaflet CSS 링크 -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 
     <style>
@@ -99,7 +99,7 @@
         /* 지도가 들어갈 영역 */
         .map-container {
             width: 100%;
-            height: 650px;
+            height: 550px;
             background-color: #ffffff;
             border: 1px solid #d1d8dd;
             border-radius: 8px;
@@ -107,60 +107,114 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
-        /* 푸터 스타일 */
-        footer {
-            background-color: #222222;
-            color: #aaaaaa;
-            padding: 40px 0;
-            font-size: 12px;
-            line-height: 1.6;
-            margin-top: 60px;
+        /* 지도 아랫부분 정보 박스 스타일 */
+        .info-box {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #ffffff;
+            border: 1px solid #d1d8dd;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
         }
 
-        .footer-inner {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 20px;
+        .info-box h3 {
+            font-size: 18px;
+            color: #111111;
+            margin-bottom: 8px;
         }
 
-        .footer-top {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .footer-logo-img {
-            height: 30px;
-            filter: grayscale(100%) brightness(200%);
-        }
-
-        .footer-info {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .footer-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .footer-bar {
+        .info-box p {
+            font-size: 15px;
             color: #555555;
+            line-height: 1.5;
         }
 
-        .footer-desc {
-            margin-top: 10px;
-            color: #888888;
-        }
+        /* 푸터 스타일 */
+        <footer>
+            <div class="footer-inner">
+                <div class="footer-top">
+                    <div class="footer-logo-area">
+                        <img src="assets/seologo.png" alt="서오일보 로고" class="footer-logo-img">
+                    </div>
+                    <div class="footer-info">
+                        <div class="footer-row">
+                            <span>주소 : 서울특별시 용산구 한일로 301 (우) 01201</span>
+                            <span class="footer-bar">|</span>
+                            <span>전화 : 02-123-4567</span>
+                            <span class="footer-bar">|</span>
+                            <span>등록번호 : 서울 아 00000</span>
+                            <span class="footer-bar">|</span>
+                            <span>등록일자 : 2026.09.11</span>
+                            <span class="footer-bar">|</span>
+                            <span>발행인·편집인 : 김서오</span>
+                        </div>
+                        <div class="footer-row">
+                            <span>사업자명 : 서오일보(주)</span>
+                            <span class="footer-bar">|</span>
+                            <span>사업자등록번호 : 123-45-6789</span>
+                            <span class="footer-bar">|</span>
+                            <span>대표자명 : 김서오</span>
+                            <span class="footer-bar">|</span>
+                            <span>통신판매업신고번호 : 2026-서울용산-0123</span>
+                        </div>
+                        <div class="footer-row footer-desc">
+                            서오일보의 모든 콘텐츠(기사)는 저작권법의 보호를 받는바, 무단 전재, 복사, 배포 등을 금합니다.
+                        </div>
+                        <div class="footer-row footer-copyright">
+                            Copyright by SeoIlbo Co., Ltd. All Rights Reserved
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
 
-        .footer-copyright {
-            color: #777777;
-        }
+        <style>
+            footer {
+                background-color: #222222;
+                color: #aaaaaa;
+                padding: 40px 0;
+                font-size: 12px;
+                line-height: 1.6;
+                margin-top: 60px;
+            }
+            .footer-inner {
+                max-width: 1100px;
+                margin: 0 auto;
+                padding: 0 20px;
+            }
+            .footer-top {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+            }
+            .footer-logo-img {
+                height: 30px;
+                filter: grayscale(100%) brightness(200%);
+            }
+            .footer-info {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+            }
+            .footer-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                align-items: center;
+            }
+            .footer-bar {
+                color: #555555;
+            }
+            .footer-desc {
+                margin-top: 10px;
+                color: #888888;
+            }
+            .footer-copyright {
+                color: #777777;
+            }
+        </style>
 
-        /* 반응형 디자인 */
+        <!-- 반응형 디자인 -->
         @media (max-width: 768px) {
             .sub-info-bar {
                 display: none;
@@ -170,7 +224,7 @@
                 margin-bottom: 16px;
             }
             .map-container {
-                height: 450px;
+                height: 400px;
             }
         }
     </style>
@@ -198,6 +252,12 @@
         <h1 class="page-title">서울 동북권 정비사업 지도</h1>
         <!-- 지도가 렌더링될 div -->
         <div id="map" class="map-container"></div>
+
+        <!-- 지도 하단 정보 표시 박스 -->
+        <div class="info-box">
+            <h3 id="infoTitle">정비사업 구역 안내</h3>
+            <p id="infoDesc">지도의 구역(도형)을 클릭하시면 해당 정비사업 구역의 상세 정보가 이 곳에 표시됩니다.</p>
+        </div>
     </main>
 
     <!-- 푸터 영역 -->
@@ -239,7 +299,7 @@
         </div>
     </footer>
 
-    <!-- Leaflet JS 및 KML을 읽기 위한 Omnivore 플러그인 스크립트 -->
+    <!-- Leaflet JS 및 KML 로더 플러그인 -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js'></script>
 
@@ -257,27 +317,61 @@
                 dateEl.innerText = `${year}.${month}.${day} (${week})`;
             }
 
-            // 1. 지도 초기화 (서울 동북권 중심 좌표 기준)
+            // 1. 지도 초기화
             const map = L.map('map').setView([37.6064, 127.0275], 13);
 
-            // 2. 오픈스트리트맵 타일 레이어 추가 (API 키 불필요, 무료)
+            // 2. 오픈스트리트맵 타일 레이어 추가
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 19,
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
 
-            // 3. assets 폴더의 jae.kml 파일 불러와서 지도에 올리기
+            // 3. 구역별 상세 정보를 관리하는 객체 (나중에 도형이 여러 개가 되면 여기에 계속 추가하시면 됩니다!)
+            const zoneInfoDatabase = {
+                "장안1구역": {
+                    title: "장안1구역 재개발 정비사업",
+                    desc: "장안동 일대의 노후 주거지를 정비하여 공동주택 및 부대복리시설을 건립하는 정비사업입니다. 현재 추진 단계 및 구역계가 지정되어 있습니다."
+                },
+                // 나중에 구역이 추가되면 아래처럼 계속 늘려주시면 됩니다.
+                // "이문1구역": {
+                //     title: "이문1구역 재개발",
+                //     desc: "설명 내용..."
+                // }
+            };
+
+            // 4. assets/jae.kml 파일 불러와서 도형마다 이벤트 처리하기
             omnivore.kml('assets/jae.kml')
-                .on('ready', function(layer) {
-                    // KML 안의 도형 영역에 맞춰 지도가 자동으로 줌/이동되도록 설정
-                    try {
-                        map.fitBounds(this.getBounds());
-                    } catch(e) {
-                        console.log("범위 자동 조절 중 오류 발생:", e);
-                    }
+                .on('ready', function() {
+                    map.fitBounds(this.getBounds());
+                })
+                .on('layeradd', function(e) {
+                    const layer = e.layer;
+                    
+                    // KML 파일에 적힌 도형 이름을 가져옴 (없으면 기본값 지정)
+                    const rawName = layer.feature && layer.feature.properties && layer.feature.properties.name 
+                                    ? layer.feature.properties.name.trim() 
+                                    : "장안1구역"; // 임시 기본값
+
+                    // 도형 클릭 시 동작
+                    layer.on('click', function() {
+                        const titleEl = document.getElementById('infoTitle');
+                        const descEl = document.getElementById('infoDesc');
+
+                        // 데이터베이스에 등록된 정보가 있다면 불러오고, 없으면 기본 타이틀 출력
+                        if (zoneInfoDatabase[rawName]) {
+                            titleEl.innerText = zoneInfoDatabase[rawName].title;
+                            descEl.innerText = zoneInfoDatabase[rawName].desc;
+                        } else {
+                            titleEl.innerText = rawName + " 정비사업 구역";
+                            descEl.innerText = "선택하신 " + rawName + "에 대한 상세 정비사업 정보입니다.";
+                        }
+
+                        // (선택) 클릭한 도형 시각적 효과 (색상 강조 등)
+                        layer.setStyle({ color: '#ff7800', weight: 4 });
+                    });
                 })
                 .on('error', function(err) {
-                    console.error("jae.kml 파일을 불러오는 중 오류가 발생했습니다:", err);
+                    console.error("jae.kml 파일 로드 실패:", err);
                 })
                 .addTo(map);
         });
