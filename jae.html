@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>서울 동북권 정비사업 지도 | 서오일보</title>
+    
+    <!-- Leaflet CSS 링크 (오픈소스 지도 라이브러리) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+
     <style>
         /* 공통 초기화 및 스타일 */
         * {
@@ -184,7 +188,7 @@
         </div>
         <div class="sub-info-bar">
             <div class="sub-info-inner">
-                <span class="current-date" id="headerDate">2026.09.20 (일)</span>
+                <span class="current-date" id="headerDate"></span>
             </div>
         </div>
     </div>
@@ -235,13 +239,14 @@
         </div>
     </footer>
 
-    <!-- 구글 지도 API 스크립트 (YOUR_API_KEY 부분에 본인의 구글 맵스 API 키를 입력하세요) -->
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
+    <!-- Leaflet JS 및 KML을 읽기 위한 Omnivore 플러그인 스크립트 -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js'></script>
 
     <!-- 스크립트 영역 -->
     <script>
-        // 날짜 동적 세팅
         window.addEventListener('DOMContentLoaded', function() {
+            // 날짜 동적 세팅
             const dateEl = document.getElementById('headerDate');
             if(dateEl) {
                 const now = new Date();
@@ -251,28 +256,31 @@
                 const week = ['일', '월', '화', '수', '목', '금', '토'][now.getDay()];
                 dateEl.innerText = `${year}.${month}.${day} (${week})`;
             }
+
+            // 1. 지도 초기화 (서울 동북권 중심 좌표 기준)
+            const map = L.map('map').setView([37.6064, 127.0275], 13);
+
+            // 2. 오픈스트리트맵 타일 레이어 추가 (API 키 불필요, 무료)
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // 3. assets 폴더의 jae.kml 파일 불러와서 지도에 올리기
+            omnivore.kml('assets/jae.kml')
+                .on('ready', function(layer) {
+                    // KML 안의 도형 영역에 맞춰 지도가 자동으로 줌/이동되도록 설정
+                    try {
+                        map.fitBounds(this.getBounds());
+                    } catch(e) {
+                        console.log("범위 자동 조절 중 오류 발생:", e);
+                    }
+                })
+                .on('error', function(err) {
+                    console.error("jae.kml 파일을 불러오는 중 오류가 발생했습니다:", err);
+                })
+                .addTo(map);
         });
-
-        // 구글 지도 및 KML 레이어 초기화 함수
-        function initMap() {
-            // 서울 동북권 중심 좌표 (예: 미아/장위 부근)
-            const centerPos = { lat: 37.6064, lng: 127.0275 };
-
-            const map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 13,
-                center: centerPos
-            });
-
-            // 로컬에 있는 KML 파일 경로 (예: assets 폴더 안에 map.kml이 있는 경우)
-            // ※ 주의: 로컬 테스트 시 반드시 Live Server 등의 로컬 웹서버 환경에서 실행해야 합니다.
-            const kmlUrl = 'assets/jae.kml'; 
-
-            const kmlLayer = new google.maps.KmlLayer(kmlUrl, {
-                suppressInfoWindows: false,
-                map: map,
-                preserveViewport: false
-            });
-        }
     </script>
 </body>
 </html>
