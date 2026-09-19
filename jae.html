@@ -21,7 +21,7 @@
             min-height: 100vh;
         }
 
-        /* 헤더 스타일 (제공된 소스 기준) */
+        /* 헤더 스타일 */
         .large-header {
             width: 100%;
             background-color: #ffffff;
@@ -92,6 +92,7 @@
             letter-spacing: -0.5px;
         }
 
+        /* 지도가 들어갈 영역 */
         .map-container {
             width: 100%;
             height: 650px;
@@ -102,13 +103,7 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
-        .map-container iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        /* 푸터 스타일 (제공된 소스 기준) */
+        /* 푸터 스타일 */
         footer {
             background-color: #222222;
             color: #aaaaaa;
@@ -178,7 +173,7 @@
 </head>
 <body>
 
-    <!-- 1. 기본 큰 헤더 -->
+    <!-- 헤더 영역 -->
     <div class="large-header" id="largeHeader">
         <div class="header-main-bar">
             <div class="header-container">
@@ -189,7 +184,7 @@
         </div>
         <div class="sub-info-bar">
             <div class="sub-info-inner">
-                <span class="current-date" id="headerDate">2026.09.12 (토)</span>
+                <span class="current-date" id="headerDate">2026.09.20 (일)</span>
             </div>
         </div>
     </div>
@@ -197,10 +192,8 @@
     <!-- 메인 콘텐츠 영역 -->
     <main class="main-container">
         <h1 class="page-title">서울 동북권 정비사업 지도</h1>
-        <div class="map-container">
-            <!-- 구글 어스 프로젝트 임베드 링크 -->
-            <iframe src="https://earth.google.com/earth/d/1o83ZEVAEdzUZiFptPN1sfgX_iJiUNs3Y?usp=sharing" allowfullscreen></iframe>
-        </div>
+        <!-- 지도가 렌더링될 div -->
+        <div id="map" class="map-container"></div>
     </main>
 
     <!-- 푸터 영역 -->
@@ -242,10 +235,13 @@
         </div>
     </footer>
 
+    <!-- 구글 지도 API 스크립트 (YOUR_API_KEY 부분에 본인의 구글 맵스 API 키를 입력하세요) -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
+
     <!-- 스크립트 영역 -->
     <script>
+        // 날짜 동적 세팅
         window.addEventListener('DOMContentLoaded', function() {
-            // 날짜 동적 세팅
             const dateEl = document.getElementById('headerDate');
             if(dateEl) {
                 const now = new Date();
@@ -256,6 +252,27 @@
                 dateEl.innerText = `${year}.${month}.${day} (${week})`;
             }
         });
+
+        // 구글 지도 및 KML 레이어 초기화 함수
+        function initMap() {
+            // 서울 동북권 중심 좌표 (예: 미아/장위 부근)
+            const centerPos = { lat: 37.6064, lng: 127.0275 };
+
+            const map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 13,
+                center: centerPos
+            });
+
+            // 로컬에 있는 KML 파일 경로 (예: assets 폴더 안에 map.kml이 있는 경우)
+            // ※ 주의: 로컬 테스트 시 반드시 Live Server 등의 로컬 웹서버 환경에서 실행해야 합니다.
+            const kmlUrl = 'assets/jae.kml'; 
+
+            const kmlLayer = new google.maps.KmlLayer(kmlUrl, {
+                suppressInfoWindows: false,
+                map: map,
+                preserveViewport: false
+            });
+        }
     </script>
 </body>
 </html>
