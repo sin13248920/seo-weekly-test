@@ -29,35 +29,34 @@
             font-size: 1.2rem;
             font-weight: bold;
             z-index: 1000;
+            flex-shrink: 0;
         }
-        /* 메인 컨테이너 (지도 + 플로팅 패널) */
+        /* 데스크톱 기준 메인 레이아웃: 좌우 배치 (고정형) */
         .main-container {
-            position: relative;
+            display: flex;
             flex: 1;
             width: 100%;
+            height: calc(100vh - 54px);
+            overflow: hidden;
         }
-        /* 지도 영역 */
+        /* 지도 영역 (데스크톱: 왼쪽) */
         #map {
-            width: 100%;
+            flex: 1;
             height: 100%;
         }
-        /* 우측 플로팅 정보 패널 */
-        .floating-panel {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 320px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            z-index: 999;
-            padding: 20px;
-            backdrop-filter: blur(5px);
-            max-height: calc(100vh - 80px);
+        /* 고정형 정보 패널 (데스크톱: 오른쪽 너비 360px) */
+        .side-panel {
+            width: 360px;
+            background: #ffffff;
+            border-left: 1px solid #ddd;
             display: flex;
             flex-direction: column;
+            padding: 20px;
+            box-shadow: -2px 0 5px rgba(0,0,0,0.05);
+            z-index: 999;
+            overflow: hidden;
         }
-        .floating-panel h3 {
+        .side-panel h3 {
             font-size: 1.1rem;
             margin-bottom: 10px;
             color: #333;
@@ -92,11 +91,11 @@
             background-color: #dfe4ea;
         }
         .folder-items {
-            display: block; /* 폴더 내 구역 목록 */
+            display: block;
         }
         /* 개별 구역 아이템 스타일 */
         .item-row {
-            padding: 8px 12px 8px 24px; /* 들여쓰기 */
+            padding: 8px 12px 8px 24px;
             font-size: 0.9rem;
             cursor: pointer;
             border-bottom: 1px solid #f8f9fa;
@@ -116,14 +115,44 @@
             border-radius: 6px;
             border: 1px solid #e1e1e1;
             font-size: 0.9rem;
-            min-height: 80px;
-            max-height: 150px;
+            min-height: 90px;
+            max-height: 160px;
             overflow-y: auto;
             color: #555;
+            flex-shrink: 0;
         }
         .detail-box h4 {
             color: #1a1a1a;
             margin-bottom: 5px;
+        }
+
+        /* 📱 모바일 환경 대응 (너비 768px 이하) */
+        @media (max-width: 768px) {
+            body {
+                overflow: auto; /* 모바일에서는 전체 스크롤 허용 */
+                height: auto;
+            }
+            .main-container {
+                flex-direction: column; /* 상하 배치 */
+                height: auto;
+            }
+            #map {
+                width: 100%;
+                /* 16:9 비율 유지 (너비 기준 높이 계산) */
+                height: calc(100vw * 9 / 16);
+                flex: none;
+            }
+            .side-panel {
+                width: 100%;
+                height: auto;
+                border-left: none;
+                border-top: 1px solid #ddd;
+                box-shadow: none;
+                padding: 15px;
+            }
+            #folder-list {
+                max-height: 250px; /* 모바일에서 목록 영역 높이 제한 */
+            }
         }
     </style>
 </head>
@@ -134,13 +163,13 @@
         사이트
     </header>
 
-    <!-- 메인 콘텐츠 영역 -->
+    <!-- 메인 콘텐츠 영역 (고정형 레이아웃) -->
     <div class="main-container">
-        <!-- 지도 -->
+        <!-- 지도 영역 -->
         <div id="map"></div>
 
-        <!-- 우측 플로팅 정보 패널 -->
-        <div class="floating-panel">
+        <!-- 우측 고정형 정보 패널 -->
+        <div class="side-panel">
             <h3>구역 목록</h3>
             <div id="folder-list">
                 <div style="padding: 15px; color: #888; text-align: center;">KML 파일을 불러오는 중...</div>
@@ -174,143 +203,108 @@
         const defaultStyle = { color: '#3388ff', fillColor: '#3388ff', fillOpacity: 0.2 };
         const selectedStyle = { color: '#ff4757', fillColor: '#ff6b81', fillOpacity: 0.5 };
 
-        // 3. assets/jae.kml 파일 불러오기 (LayerGroup 구조 활용)
-        let kmlLayer = omnivore.kml('assets/jae.kml', null, L.geoJson(null, {
-            style: function(feature) {
-                return defaultStyle;
-            }
-        }))
-        .on('ready', function() {
-            folderListEl.innerHTML = ''; // 로딩 문구 제거
-            
-            let folderMap = {}; // 폴더 이름별로 구역들을 담을 객체
+        // 폴더별로 엘리먼트를 관리하기 위한 객체
+        let foldersData = {
+            "동대문구": { title: "동대문구", el: null, itemsEl: null, hasItems: false },
+            "중랑구": { title: "중랑구", el: null, itemsEl: null, hasItems: false },
+            "기타 구역": { title: "기타 구역", el: null, itemsEl: null, hasItems: false }
+        };
 
-            // KML 안의 각 도형 레이어 순회
-            this.eachLayer(function(layer) {
-                // 상위 폴더 이름 추출 (구글 어스 폴더명은 보통 feature.layer.feature.properties.name 등에 담기거나 상위 구조에서 파싱됨)
-                // omnivore가 로드할 때 상위 폴더 정보를 갖는 경우 처리
-                let folderName = '기타 구역';
+        // UI에 폴더 구조 미리 생성
+        function initFoldersUI() {
+            folderListEl.innerHTML = '';
+            for (let key in foldersData) {
+                let folderGroupDiv = document.createElement('div');
+                folderGroupDiv.className = 'folder-group';
+
+                let folderTitleDiv = document.createElement('div');
+                folderTitleDiv.className = 'folder-title';
+                folderTitleDiv.innerHTML = `<span>📁 ${foldersData[key].title}</span><span>▼</span>`;
                 
-                // KML 구조상 상위 그룹/폴더 이름 확인 시도
-                if (layer.feature && layer.feature.properties) {
-                    // KML 스타일 상 상위 폴더명이 strokes나 layer 이름으로 들어오는 경우 방어 코드
-                    if (layer.feature.properties.folderName) {
-                        folderName = layer.feature.properties.folderName;
-                    } else if (layer.feature.properties.name) {
-                        // 만약 속성에 직접 폴더 정보가 없다면 상층부 레이어 그룹 이름 확인
-                        // 구글어스 KML의 폴더는 보통 parent layer의 name으로 지정됨
+                let folderItemsDiv = document.createElement('div');
+                folderItemsDiv.className = 'folder-items';
+
+                // 폴더 토글 기능
+                folderTitleDiv.addEventListener('click', function() {
+                    if (folderItemsDiv.style.display === 'none') {
+                        folderItemsDiv.style.display = 'block';
+                        folderTitleDiv.lastChild.innerText = '▼';
+                    } else {
+                        folderItemsDiv.style.display = 'none';
+                        folderTitleDiv.lastChild.innerText = '▶';
                     }
-                }
+                });
 
-                // * 대안: 만약 구글어스 KML 구조상 폴더명이 레이어 그룹에 속해있지 않다면, 
-                // description이나 특성 이름(예: 중랑구_OO구역) 규칙을 이용하거나 
-                // 아래처럼 omnivore가 파싱한 layer hierarchy를 순회합니다.
-            });
-
-            // 위 방식보다 더 확실하게 구글 어스 폴더 계층을 잡기 위해 
-            // omnivore.kml 이 생성하는 레이어 구조(LayerGroup 내의 LayerGroup들)를 순회합니다.
-            
-            let hasItems = false;
-
-            kmlLayer.eachLayer(function(groupOrLayer) {
-                // 구글 어스에서 폴더는 Leaflet 내부에서 L.LayerGroup 또는 L.FeatureGroup으로 한 번 더 감싸져 들어옵니다.
-                if (groupOrLayer instanceof L.LayerGroup || groupOrLayer.getLayers) {
-                    // 폴더로 추정되는 그룹
-                    // 폴더 이름 알아내기 (KML 폴더 이름이 지정된 경우)
-                    let folderName = groupOrLayer.feature && groupOrLayer.feature.properties && groupOrLayer.feature.properties.name 
-                                     ? groupOrLayer.feature.properties.name 
-                                     : '기타 폴더';
-
-                    // 폴더 UI 생성
-                    let folderGroupDiv = document.createElement('div');
-                    folderGroupDiv.className = 'folder-group';
-
-                    let folderTitleDiv = document.createElement('div');
-                    folderTitleDiv.className = 'folder-title';
-                    folderTitleDiv.innerHTML = `<span>📁 ${folderName}</span><span>▼</span>`;
-                    
-                    let folderItemsDiv = document.createElement('div');
-                    folderItemsDiv.className = 'folder-items';
-
-                    // 폴더 제목 클릭 시 펼치기/접기 토글 기능
-                    folderTitleDiv.addEventListener('click', function() {
-                        if (folderItemsDiv.style.display === 'none') {
-                            folderItemsDiv.style.display = 'block';
-                            folderTitleDiv.lastChild.innerText = '▼';
-                        } else {
-                            folderItemsDiv.style.display = 'none';
-                            folderTitleDiv.lastChild.innerText = '▶';
-                        }
-                    });
-
-                    folderGroupDiv.appendChild(folderTitleDiv);
-
-                    // 폴더 하위의 실제 도형들 순회
-                    groupOrLayer.eachLayer(function(layer) {
-                        hasItems = true;
-                        processLayer(layer, folderItemsDiv);
-                    });
-
-                    folderGroupDiv.appendChild(folderItemsDiv);
-                    folderListEl.appendChild(folderGroupDiv);
-
-                } else {
-                    // 폴더 없이 바로 최상단에 있는 도형인 경우
-                    if (!window._rootFolderDiv) {
-                        window._rootFolderDiv = document.createElement('div');
-                        window._rootFolderDiv.className = 'folder-group';
-                        window._rootFolderDiv.innerHTML = '<div class="folder-title"><span>📁 기본 폴더</span></div>';
-                        window._rootItemsDiv = document.createElement('div');
-                        window._rootItemsDiv.className = 'folder-items';
-                        window._rootFolderDiv.appendChild(window._rootItemsDiv);
-                        folderListEl.appendChild(window._rootFolderDiv);
-                    }
-                    hasItems = true;
-                    processLayer(groupOrLayer, window._rootItemsDiv);
-                }
-            });
-
-            if (!hasItems) {
-                folderListEl.innerHTML = '<div style="padding: 15px; color: #888; text-align: center;">표시할 구역이 없습니다.</div>';
+                folderGroupDiv.appendChild(folderTitleDiv);
+                folderGroupDiv.appendChild(folderItemsDiv);
+                
+                // 일단 DOM에 추가하되, 나중에 아이템이 없으면 숨길 수 있음
+                folderListEl.appendChild(folderGroupDiv);
+                foldersData[key].el = folderGroupDiv;
+                foldersData[key].itemsEl = folderItemsDiv;
+                folderGroupDiv.style.display = 'none'; // 초기엔 숨김 (아이템이 들어올 때 표시)
             }
-        })
-        .on('error', function(err) {
-            folderListEl.innerHTML = '<div style="padding: 15px; color: red; text-align: center;">KML 로드 실패 (경로 확인)</div>';
-            console.error("KML Load Error:", err);
-        })
-        .addTo(map);
-
-        // 개별 도형 처리 및 목록 아이템 연결 함수
-        function processLayer(layer, containerEl) {
-            let name = (layer.feature && layer.feature.properties && layer.feature.properties.name) ? layer.feature.properties.name : '이름 없는 구역';
-            let description = (layer.feature && layer.feature.properties && layer.feature.properties.description) ? layer.feature.properties.description : '상세 정보가 없습니다.';
-
-            // 기본 스타일 설정
-            if (layer.setStyle) {
-                layer.setStyle(defaultStyle);
-            }
-
-            // 우측 목록(HTML)에 행 추가
-            const row = document.createElement('div');
-            row.className = 'item-row';
-            row.innerText = `📍 ${name}`;
-
-            // 우측 목록 클릭 시
-            row.addEventListener('click', function(e) {
-                e.stopPropagation();
-                selectZone(name, description, layer);
-                moveToZone(layer);
-            });
-
-            // 지도 위 도형 클릭 시
-            layer.on('click', function(e) {
-                L.DomEvent.stopPropagation(e);
-                selectZone(name, description, layer);
-                moveToZone(layer);
-            });
-
-            containerEl.appendChild(row);
         }
+
+        initFoldersUI();
+
+        // 3. assets/jae.kml 파일 불러오기
+        omnivore.kml('assets/jae.kml')
+            .on('ready', function() {
+                let hasAnyItem = false;
+
+                this.eachLayer(function(layer) {
+                    let name = (layer.feature && layer.feature.properties && layer.feature.properties.name) ? layer.feature.properties.name : '이름 없는 구역';
+                    let description = (layer.feature && layer.feature.properties && layer.feature.properties.description) ? layer.feature.properties.description : '';
+
+                    // 기본 스타일 적용
+                    if (layer.setStyle) {
+                        layer.setStyle(defaultStyle);
+                    }
+
+                    // 소재지 분석 ("소재지: 동대문구" 또는 "소재지: 중랑구" 탐색)
+                    let targetFolder = "기타 구역";
+                    if (description.includes("동대문구")) {
+                        targetFolder = "동대문구";
+                    } else if (description.includes("중랑구")) {
+                        targetFolder = "중랑구";
+                    }
+
+                    hasAnyItem = true;
+                    foldersData[targetFolder].hasItems = true;
+                    foldersData[targetFolder].el.style.display = 'block'; // 아이템이 있으므로 폴더 표시
+
+                    // 우측(하단) 목록에 항목 추가
+                    const row = document.createElement('div');
+                    row.className = 'item-row';
+                    row.innerText = `📍 ${name}`;
+
+                    // 목록 클릭 시
+                    row.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        selectZone(name, description, layer);
+                        moveToZone(layer);
+                    });
+
+                    // 지도 위 도형 클릭 시
+                    layer.on('click', function(e) {
+                        L.DomEvent.stopPropagation(e);
+                        selectZone(name, description, layer);
+                        moveToZone(layer);
+                    });
+
+                    foldersData[targetFolder].itemsEl.appendChild(row);
+                });
+
+                if (!hasAnyItem) {
+                    folderListEl.innerHTML = '<div style="padding: 15px; color: #888; text-align: center;">표시할 구역이 없습니다.</div>';
+                }
+            })
+            .on('error', function(err) {
+                folderListEl.innerHTML = '<div style="padding: 15px; color: red; text-align: center;">KML 로드 실패 (경로 확인)</div>';
+                console.error("KML Load Error:", err);
+            })
+            .addTo(map);
 
         // 지도 빈 배경 클릭 시 선택 초기화
         map.on('click', function() {
@@ -330,9 +324,9 @@
                 layer.setStyle(selectedStyle);
             }
 
-            detailContentEl.innerHTML = `<h4>${name}</h4><p>${description}</p>`;
+            // HTML 태그가 description에 포함되어 있을 수 있으므로 innerText 대신 innerHTML 사용 가능
+            detailContentEl.innerHTML = `<h4>${name}</h4><p>${description || '상세 정보가 없습니다.'}</p>`;
 
-            // 모든 목록 활성화 해제 후 현재 것만 활성화
             document.querySelectorAll('.item-row').forEach(el => {
                 if (el.innerText.includes(name)) {
                     el.classList.add('active');
