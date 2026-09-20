@@ -130,10 +130,10 @@
     <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js'></script>
 
     <script>
-        // 1. 지도 초기화 (기본 중심 좌표 및 줌 레벨 설정 - 예: 서울 중심)
+        // 1. 지도 초기화
         var map = L.map('map').setView([37.5665, 126.9780], 13);
 
-        // 2. 배경 지도 타일 추가 (OpenStreetMap 사용 - API 키 불필요)
+        // 2. 배경 지도 타일 추가
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '&copy; OpenStreetMap contributors'
@@ -143,6 +143,11 @@
         const detailContentEl = document.getElementById('detail-content');
         
         let zonesData = [];
+        let currentlySelectedLayer = null; // 현재 선택된 도형 추적 변수
+
+        // 기본 도형 스타일 및 선택된 도형 스타일 정의
+        const defaultStyle = { color: '#3388ff', fillColor: '#3388ff', fillOpacity: 0.2 };
+        const selectedStyle = { color: '#ff4757', fillColor: '#ff6b81', fillOpacity: 0.5 };
 
         // 3. assets/jae.kml 파일 불러오기
         omnivore.kml('assets/jae.kml')
@@ -150,10 +155,14 @@
                 itemListEl.innerHTML = ''; // 로딩 문구 제거
                 
                 this.eachLayer(function(layer) {
-                    // KML 내부의 이름(name) 및 설명(description) 가져오기
                     let name = layer.feature.properties.name || '이름 없는 구역';
                     let description = layer.feature.properties.description || '상세 정보가 없습니다.';
                     
+                    // 기본 스타일 적용
+                    if (layer.setStyle) {
+                        layer.setStyle(defaultStyle);
+                    }
+
                     zonesData.push({ name, description, layer });
 
                     // 목록(HTML)에 항목 추가
@@ -161,20 +170,18 @@
                     row.className = 'item-row';
                     row.innerText = name;
                     
-                    // 목록 이름을 클릭했을 때의 동작
-                    row.addEventListener('click', function() {
+                    // 우측 패널 목록을 클릭했을 때의 동작
+                    row.addEventListener('click', function(e) {
+                        e.stopPropagation(); // 지도 배경 클릭 이벤트로 전파되는 것 방지
                         selectZone(name, description, layer);
+                        moveToZone(layer); // 지도 중앙으로 이동
                     });
 
                     // 지도 위 도형을 클릭했을 때의 동작
-                    layer.on('click', function() {
+                    layer.on('click', function(e) {
+                        L.DomEvent.stopPropagation(e); // 이벤트 버블링 차단
                         selectZone(name, description, layer);
-                        // 해당 도형 위치로 지도 이동 (폴리곤인 경우 중심점 계산)
-                        if (layer.getBounds) {
-                            map.fitBounds(layer.getBounds());
-                        } else if (layer.getLatLng) {
-                            map.setView(layer.getLatLng(), 15);
-                        }
+                        moveToZone(layer); // 지도 중앙으로 이동
                     });
 
                     itemListEl.appendChild(row);
@@ -185,17 +192,35 @@
                 }
             })
             .on('error', function(err) {
-                itemListEl.innerHTML = '<div style="padding: 10px; color: red; text-align: center;">KML 로드 실패 (경로 확인 필요)</div>';
+                itemListEl.innerHTML = '<div style="padding: 10px; color: red; text-align: center;">KML 로드 실패</div>';
                 console.error("KML Load Error:", err);
             })
             .addTo(map);
 
-        // 구역 선택 시 실행되는 공통 함수
+        // 지도 배경(도형 외의 빈 곳)을 클릭했을 때 모든 선택 해제
+        map.on('click', function() {
+            clearSelection();
+        });
+
+        // 구역 선택 시 실행되는 함수
         function selectZone(name, description, layer) {
-            // 상세 정보 창 업데이트
+            // 1. 기존에 선택되어 있던 도형이 있다면 원래 색상으로 복원
+            if (currentlySelectedLayer && currentlySelectedLayer !== layer) {
+                if (currentlySelectedLayer.setStyle) {
+                    currentlySelectedLayer.setStyle(defaultStyle);
+                }
+            }
+
+            // 2. 현재 선택된 도형을 갱신하고 강조 스타일 적용
+            currentlySelectedLayer = layer;
+            if (layer.setStyle) {
+                layer.setStyle(selectedStyle);
+            }
+
+            // 3. 상세 정보 창 업데이트
             detailContentEl.innerHTML = `<h4>${name}</h4><p>${description}</p>`;
 
-            // 목록 UI 활성화 상태 변경
+            // 4. 우측 목록 UI 활성화 상태 변경
             document.querySelectorAll('.item-row').forEach(el => {
                 if (el.innerText === name) {
                     el.classList.add('active');
@@ -203,9 +228,32 @@
                     el.classList.remove('active');
                 }
             });
+        }
 
-            // 도형 스타일 강조 (선택사항: 클릭 시 색상 변경 등)
-            layer.setStyle({ color: '#ff4757', fillColor: '#ff6b81', fillOpacity: 0.5 });
+        // 선택 해제 및 색상 복원 함수
+        function clearSelection() {
+            if (currentlySelectedLayer) {
+                if (currentlySelectedLayer.setStyle) {
+                    currentlySelectedLayer.setStyle(defaultStyle);
+                }
+                currentlySelectedLayer = null;
+            }
+            // 우측 패널 내용 및 활성화 초기화
+            detailContentEl.innerHTML = '지도의 구역이나 목록의 이름을 클릭하세요.';
+            document.querySelectorAll('.item-row').forEach(el => {
+                el.classList.remove('active');
+            });
+        }
+
+        // 해당 구역으로 지도 이동시키는 함수
+        function moveToZone(layer) {
+            if (layer.getBounds) {
+                // 폴리곤 등 영역이 있는 경우 영역에 맞춰서 줌/이동
+                map.fitBounds(layer.getBounds(), { padding: [50, 50] });
+            } else if (layer.getLatLng) {
+                // 단일 마커인 경우 해당 좌표로 이동
+                map.setView(layer.getLatLng(), 16);
+            }
         }
     </script>
 </body>
