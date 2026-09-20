@@ -53,27 +53,53 @@
             z-index: 999;
             padding: 20px;
             backdrop-filter: blur(5px);
+            max-height: calc(100vh - 80px);
+            display: flex;
+            flex-direction: column;
         }
         .floating-panel h3 {
             font-size: 1.1rem;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             color: #333;
             border-bottom: 2px solid #1a1a1a;
-            padding-bottom: 8px;
+            padding-bottom: 6px;
         }
-        /* 도형 목록 스타일 */
-        #item-list {
-            max-height: 150px;
+        /* 폴더 및 목록 컨테이너 스타일 */
+        #folder-list {
+            flex: 1;
             overflow-y: auto;
             margin-bottom: 15px;
             border: 1px solid #ddd;
             border-radius: 4px;
+            background: #fff;
         }
+        /* 폴더 그룹 스타일 */
+        .folder-group {
+            border-bottom: 1px solid #eee;
+        }
+        .folder-title {
+            background-color: #f1f2f6;
+            padding: 10px 12px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            color: #2f3542;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .folder-title:hover {
+            background-color: #dfe4ea;
+        }
+        .folder-items {
+            display: block; /* 폴더 내 구역 목록 */
+        }
+        /* 개별 구역 아이템 스타일 */
         .item-row {
-            padding: 8px 12px;
+            padding: 8px 12px 8px 24px; /* 들여쓰기 */
             font-size: 0.9rem;
             cursor: pointer;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #f8f9fa;
             transition: background 0.2s;
         }
         .item-row:hover {
@@ -91,6 +117,8 @@
             border: 1px solid #e1e1e1;
             font-size: 0.9rem;
             min-height: 80px;
+            max-height: 150px;
+            overflow-y: auto;
             color: #555;
         }
         .detail-box h4 {
@@ -114,8 +142,8 @@
         <!-- 우측 플로팅 정보 패널 -->
         <div class="floating-panel">
             <h3>구역 목록</h3>
-            <div id="item-list">
-                <div style="padding: 10px; color: #888; text-align: center;">KML 파일을 불러오는 중...</div>
+            <div id="folder-list">
+                <div style="padding: 15px; color: #888; text-align: center;">KML 파일을 불러오는 중...</div>
             </div>
             
             <h3>상세 정보</h3>
@@ -139,90 +167,174 @@
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
 
-        const itemListEl = document.getElementById('item-list');
+        const folderListEl = document.getElementById('folder-list');
         const detailContentEl = document.getElementById('detail-content');
         
-        let zonesData = [];
-        let currentlySelectedLayer = null; // 현재 선택된 도형 추적 변수
-
-        // 기본 도형 스타일 및 선택된 도형 스타일 정의
+        let currentlySelectedLayer = null;
         const defaultStyle = { color: '#3388ff', fillColor: '#3388ff', fillOpacity: 0.2 };
         const selectedStyle = { color: '#ff4757', fillColor: '#ff6b81', fillOpacity: 0.5 };
 
-        // 3. assets/jae.kml 파일 불러오기
-        omnivore.kml('assets/jae.kml')
-            .on('ready', function(layer) {
-                itemListEl.innerHTML = ''; // 로딩 문구 제거
+        // 3. assets/jae.kml 파일 불러오기 (LayerGroup 구조 활용)
+        let kmlLayer = omnivore.kml('assets/jae.kml', null, L.geoJson(null, {
+            style: function(feature) {
+                return defaultStyle;
+            }
+        }))
+        .on('ready', function() {
+            folderListEl.innerHTML = ''; // 로딩 문구 제거
+            
+            let folderMap = {}; // 폴더 이름별로 구역들을 담을 객체
+
+            // KML 안의 각 도형 레이어 순회
+            this.eachLayer(function(layer) {
+                // 상위 폴더 이름 추출 (구글 어스 폴더명은 보통 feature.layer.feature.properties.name 등에 담기거나 상위 구조에서 파싱됨)
+                // omnivore가 로드할 때 상위 폴더 정보를 갖는 경우 처리
+                let folderName = '기타 구역';
                 
-                this.eachLayer(function(layer) {
-                    let name = layer.feature.properties.name || '이름 없는 구역';
-                    let description = layer.feature.properties.description || '상세 정보가 없습니다.';
-                    
-                    // 기본 스타일 적용
-                    if (layer.setStyle) {
-                        layer.setStyle(defaultStyle);
+                // KML 구조상 상위 그룹/폴더 이름 확인 시도
+                if (layer.feature && layer.feature.properties) {
+                    // KML 스타일 상 상위 폴더명이 strokes나 layer 이름으로 들어오는 경우 방어 코드
+                    if (layer.feature.properties.folderName) {
+                        folderName = layer.feature.properties.folderName;
+                    } else if (layer.feature.properties.name) {
+                        // 만약 속성에 직접 폴더 정보가 없다면 상층부 레이어 그룹 이름 확인
+                        // 구글어스 KML의 폴더는 보통 parent layer의 name으로 지정됨
                     }
-
-                    zonesData.push({ name, description, layer });
-
-                    // 목록(HTML)에 항목 추가
-                    const row = document.createElement('div');
-                    row.className = 'item-row';
-                    row.innerText = name;
-                    
-                    // 우측 패널 목록을 클릭했을 때의 동작
-                    row.addEventListener('click', function(e) {
-                        e.stopPropagation(); // 지도 배경 클릭 이벤트로 전파되는 것 방지
-                        selectZone(name, description, layer);
-                        moveToZone(layer); // 지도 중앙으로 이동
-                    });
-
-                    // 지도 위 도형을 클릭했을 때의 동작
-                    layer.on('click', function(e) {
-                        L.DomEvent.stopPropagation(e); // 이벤트 버블링 차단
-                        selectZone(name, description, layer);
-                        moveToZone(layer); // 지도 중앙으로 이동
-                    });
-
-                    itemListEl.appendChild(row);
-                });
-
-                if (zonesData.length === 0) {
-                    itemListEl.innerHTML = '<div style="padding: 10px; color: #888; text-align: center;">표시할 구역이 없습니다.</div>';
                 }
-            })
-            .on('error', function(err) {
-                itemListEl.innerHTML = '<div style="padding: 10px; color: red; text-align: center;">KML 로드 실패</div>';
-                console.error("KML Load Error:", err);
-            })
-            .addTo(map);
 
-        // 지도 배경(도형 외의 빈 곳)을 클릭했을 때 모든 선택 해제
+                // * 대안: 만약 구글어스 KML 구조상 폴더명이 레이어 그룹에 속해있지 않다면, 
+                // description이나 특성 이름(예: 중랑구_OO구역) 규칙을 이용하거나 
+                // 아래처럼 omnivore가 파싱한 layer hierarchy를 순회합니다.
+            });
+
+            // 위 방식보다 더 확실하게 구글 어스 폴더 계층을 잡기 위해 
+            // omnivore.kml 이 생성하는 레이어 구조(LayerGroup 내의 LayerGroup들)를 순회합니다.
+            
+            let hasItems = false;
+
+            kmlLayer.eachLayer(function(groupOrLayer) {
+                // 구글 어스에서 폴더는 Leaflet 내부에서 L.LayerGroup 또는 L.FeatureGroup으로 한 번 더 감싸져 들어옵니다.
+                if (groupOrLayer instanceof L.LayerGroup || groupOrLayer.getLayers) {
+                    // 폴더로 추정되는 그룹
+                    // 폴더 이름 알아내기 (KML 폴더 이름이 지정된 경우)
+                    let folderName = groupOrLayer.feature && groupOrLayer.feature.properties && groupOrLayer.feature.properties.name 
+                                     ? groupOrLayer.feature.properties.name 
+                                     : '기타 폴더';
+
+                    // 폴더 UI 생성
+                    let folderGroupDiv = document.createElement('div');
+                    folderGroupDiv.className = 'folder-group';
+
+                    let folderTitleDiv = document.createElement('div');
+                    folderTitleDiv.className = 'folder-title';
+                    folderTitleDiv.innerHTML = `<span>📁 ${folderName}</span><span>▼</span>`;
+                    
+                    let folderItemsDiv = document.createElement('div');
+                    folderItemsDiv.className = 'folder-items';
+
+                    // 폴더 제목 클릭 시 펼치기/접기 토글 기능
+                    folderTitleDiv.addEventListener('click', function() {
+                        if (folderItemsDiv.style.display === 'none') {
+                            folderItemsDiv.style.display = 'block';
+                            folderTitleDiv.lastChild.innerText = '▼';
+                        } else {
+                            folderItemsDiv.style.display = 'none';
+                            folderTitleDiv.lastChild.innerText = '▶';
+                        }
+                    });
+
+                    folderGroupDiv.appendChild(folderTitleDiv);
+
+                    // 폴더 하위의 실제 도형들 순회
+                    groupOrLayer.eachLayer(function(layer) {
+                        hasItems = true;
+                        processLayer(layer, folderItemsDiv);
+                    });
+
+                    folderGroupDiv.appendChild(folderItemsDiv);
+                    folderListEl.appendChild(folderGroupDiv);
+
+                } else {
+                    // 폴더 없이 바로 최상단에 있는 도형인 경우
+                    if (!window._rootFolderDiv) {
+                        window._rootFolderDiv = document.createElement('div');
+                        window._rootFolderDiv.className = 'folder-group';
+                        window._rootFolderDiv.innerHTML = '<div class="folder-title"><span>📁 기본 폴더</span></div>';
+                        window._rootItemsDiv = document.createElement('div');
+                        window._rootItemsDiv.className = 'folder-items';
+                        window._rootFolderDiv.appendChild(window._rootItemsDiv);
+                        folderListEl.appendChild(window._rootFolderDiv);
+                    }
+                    hasItems = true;
+                    processLayer(groupOrLayer, window._rootItemsDiv);
+                }
+            });
+
+            if (!hasItems) {
+                folderListEl.innerHTML = '<div style="padding: 15px; color: #888; text-align: center;">표시할 구역이 없습니다.</div>';
+            }
+        })
+        .on('error', function(err) {
+            folderListEl.innerHTML = '<div style="padding: 15px; color: red; text-align: center;">KML 로드 실패 (경로 확인)</div>';
+            console.error("KML Load Error:", err);
+        })
+        .addTo(map);
+
+        // 개별 도형 처리 및 목록 아이템 연결 함수
+        function processLayer(layer, containerEl) {
+            let name = (layer.feature && layer.feature.properties && layer.feature.properties.name) ? layer.feature.properties.name : '이름 없는 구역';
+            let description = (layer.feature && layer.feature.properties && layer.feature.properties.description) ? layer.feature.properties.description : '상세 정보가 없습니다.';
+
+            // 기본 스타일 설정
+            if (layer.setStyle) {
+                layer.setStyle(defaultStyle);
+            }
+
+            // 우측 목록(HTML)에 행 추가
+            const row = document.createElement('div');
+            row.className = 'item-row';
+            row.innerText = `📍 ${name}`;
+
+            // 우측 목록 클릭 시
+            row.addEventListener('click', function(e) {
+                e.stopPropagation();
+                selectZone(name, description, layer);
+                moveToZone(layer);
+            });
+
+            // 지도 위 도형 클릭 시
+            layer.on('click', function(e) {
+                L.DomEvent.stopPropagation(e);
+                selectZone(name, description, layer);
+                moveToZone(layer);
+            });
+
+            containerEl.appendChild(row);
+        }
+
+        // 지도 빈 배경 클릭 시 선택 초기화
         map.on('click', function() {
             clearSelection();
         });
 
-        // 구역 선택 시 실행되는 함수
+        // 구역 선택 공통 함수
         function selectZone(name, description, layer) {
-            // 1. 기존에 선택되어 있던 도형이 있다면 원래 색상으로 복원
             if (currentlySelectedLayer && currentlySelectedLayer !== layer) {
                 if (currentlySelectedLayer.setStyle) {
                     currentlySelectedLayer.setStyle(defaultStyle);
                 }
             }
 
-            // 2. 현재 선택된 도형을 갱신하고 강조 스타일 적용
             currentlySelectedLayer = layer;
             if (layer.setStyle) {
                 layer.setStyle(selectedStyle);
             }
 
-            // 3. 상세 정보 창 업데이트
             detailContentEl.innerHTML = `<h4>${name}</h4><p>${description}</p>`;
 
-            // 4. 우측 목록 UI 활성화 상태 변경
+            // 모든 목록 활성화 해제 후 현재 것만 활성화
             document.querySelectorAll('.item-row').forEach(el => {
-                if (el.innerText === name) {
+                if (el.innerText.includes(name)) {
                     el.classList.add('active');
                 } else {
                     el.classList.remove('active');
@@ -230,7 +342,7 @@
             });
         }
 
-        // 선택 해제 및 색상 복원 함수
+        // 선택 초기화 함수
         function clearSelection() {
             if (currentlySelectedLayer) {
                 if (currentlySelectedLayer.setStyle) {
@@ -238,20 +350,17 @@
                 }
                 currentlySelectedLayer = null;
             }
-            // 우측 패널 내용 및 활성화 초기화
             detailContentEl.innerHTML = '지도의 구역이나 목록의 이름을 클릭하세요.';
             document.querySelectorAll('.item-row').forEach(el => {
                 el.classList.remove('active');
             });
         }
 
-        // 해당 구역으로 지도 이동시키는 함수
+        // 지도 이동 함수
         function moveToZone(layer) {
             if (layer.getBounds) {
-                // 폴리곤 등 영역이 있는 경우 영역에 맞춰서 줌/이동
                 map.fitBounds(layer.getBounds(), { padding: [50, 50] });
             } else if (layer.getLatLng) {
-                // 단일 마커인 경우 해당 좌표로 이동
                 map.setView(layer.getLatLng(), 16);
             }
         }
