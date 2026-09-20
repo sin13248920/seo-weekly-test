@@ -20,98 +20,101 @@
             flex-direction: column;
             height: 100vh;
             overflow: hidden;
+            background-color: #f8f9fa;
         }
         /* 어두운 헤더 */
         header {
-            background-color: #1a1a1a;
+            background-color: #111111;
             color: #ffffff;
-            padding: 15px 20px;
-            font-size: 1.2rem;
-            font-weight: bold;
+            padding: 16px 24px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
             z-index: 1000;
             flex-shrink: 0;
         }
-        /* 메인 레이아웃: 좌우 배치 (고정형) */
+        /* 메인 레이아웃: 좌우 배치 */
         .main-container {
             display: flex;
             flex: 1;
             width: 100%;
-            height: calc(100vh - 54px);
+            height: calc(100vh - 56px);
             overflow: hidden;
         }
-        /* 지도 영역 (데스크톱: 왼쪽) */
+        /* 지도 영역 */
         #map {
             flex: 1;
             height: 100%;
         }
-        /* 고정형 패널 (데스크톱: 오른쪽 너비 360px, 각진 테두리) */
+        /* 현대적인 우측 사이드 패널 (컨테이너 박스 느낌 탈피, 여백 중심) */
         .side-panel {
-            width: 360px;
+            width: 380px;
             background: #ffffff;
-            border-left: 1px solid #ddd;
+            border-left: 1px solid #eaeaea;
             display: flex;
             flex-direction: column;
-            padding: 20px;
-            box-shadow: -2px 0 5px rgba(0,0,0,0.05);
+            padding: 28px;
             z-index: 999;
             overflow: hidden;
-            border-radius: 0; /* 각지게 설정 */
         }
         .side-panel h3 {
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-            color: #333;
-            border-bottom: 2px solid #1a1a1a;
-            padding-bottom: 6px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #111;
+            letter-spacing: -0.5px;
         }
-        /* 각진 폴더 및 목록 컨테이너 */
+
+        /* 폴더 및 목록 스타일 (미니멀 & 모던) */
         #folder-list {
             flex: 1;
             overflow-y: auto;
-            border: 1px solid #ddd;
-            border-radius: 0; /* 각지게 설정 */
-            background: #fff;
+            padding-right: 4px;
         }
-        /* 폴더 그룹 스타일 */
         .folder-group {
-            border-bottom: 1px solid #eee;
+            margin-bottom: 24px;
         }
         .folder-title {
-            background-color: #f1f2f6;
-            padding: 10px 12px;
-            font-weight: bold;
-            font-size: 0.95rem;
-            color: #2f3542;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #f0f0f0;
+            margin-bottom: 8px;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-radius: 0;
         }
         .folder-title:hover {
-            background-color: #dfe4ea;
+            color: #111;
         }
         .folder-items {
-            display: block;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
-        /* 개별 구역 아이템 스타일 */
         .item-row {
-            padding: 8px 12px 8px 24px;
-            font-size: 0.9rem;
+            padding: 12px 14px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #333;
             cursor: pointer;
-            border-bottom: 1px solid #f8f9fa;
-            transition: background 0.2s;
-            border-radius: 0;
+            border-radius: 6px;
+            transition: all 0.2s ease;
         }
         .item-row:hover {
-            background-color: #f0f0f0;
+            background-color: #f4f5f7;
+            color: #000;
         }
         .item-row.active {
-            background-color: #1a1a1a;
+            background-color: #111;
             color: #fff;
         }
 
-        /* 뷰 전환용 클래스 (목록 뷰 vs 상세 뷰) */
+        /* 뷰 전환 클래스 */
         .view-section {
             display: none;
             flex: 1;
@@ -124,48 +127,61 @@
 
         /* 뒤로가기 버튼 스타일 */
         .back-btn-container {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         .back-btn {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: #f1f2f6;
-            border: 1px solid #ddd;
-            padding: 8px 14px;
-            font-size: 0.9rem;
-            font-weight: bold;
-            color: #333;
+            background: transparent;
+            border: none;
+            padding: 0;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #111;
             cursor: pointer;
-            border-radius: 0; /* 각지게 */
-            transition: background 0.2s;
+            transition: opacity 0.2s;
         }
         .back-btn:hover {
-            background: #dfe4ea;
+            opacity: 0.6;
         }
-        /* 180도 회전한 화살표 이미지 스타일 */
+        /* rarrow.png 180도 회전 적용 */
         .back-arrow-img {
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
             transform: rotate(180deg);
         }
 
-        /* 상세 정보 내용 칸 (각진 디자인) */
+        /* 상세 정보 내용 칸 (현대적인 여백과 타이포그래피) */
         .detail-content-box {
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 0; /* 각지게 */
-            border: 1px solid #e1e1e1;
-            font-size: 0.95rem;
-            overflow-y: auto;
             flex: 1;
-            color: #555;
-            line-height: 1.5;
+            overflow-y: auto;
+            padding-right: 4px;
+            color: #444;
+            line-height: 1.6;
+            font-size: 0.95rem;
         }
         .detail-content-box h4 {
-            color: #1a1a1a;
-            margin-bottom: 10px;
-            font-size: 1.1rem;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #111;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+        /* 구역 정보 상단에 위치할 이미지 스타일 */
+        .detail-image-wrapper {
+            width: 100%;
+            max-height: 220px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            background: #eee;
+        }
+        .detail-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
 
         /* 📱 모바일 환경 대응 (너비 768px 이하) */
@@ -185,11 +201,10 @@
             }
             .side-panel {
                 width: 100%;
-                height: 400px; /* 모바일에서 패널 고정 높이 */
+                height: 450px;
                 border-left: none;
-                border-top: 1px solid #ddd;
-                box-shadow: none;
-                padding: 15px;
+                border-top: 1px solid #eaeaea;
+                padding: 20px;
             }
         }
     </style>
@@ -206,27 +221,26 @@
         <!-- 지도 영역 -->
         <div id="map"></div>
 
-        <!-- 우측 고정형 패널 -->
+        <!-- 우측 사이드 패널 -->
         <div class="side-panel">
             
             <!-- 1. 구역 목록 뷰 -->
             <div id="listView" class="view-section active">
                 <h3>구역 목록</h3>
                 <div id="folder-list">
-                    <div style="padding: 15px; color: #888; text-align: center;">KML 파일을 불러오는 중...</div>
+                    <div style="padding: 20px; color: #888; text-align: center; font-size: 0.9rem;">데이터를 불러오는 중...</div>
                 </div>
             </div>
 
-            <!-- 2. 구역 상세 정보 뷰 (처음엔 숨겨짐) -->
+            <!-- 2. 구역 상세 정보 뷰 -->
             <div id="detailView" class="view-section">
                 <div class="back-btn-container">
                     <button class="back-btn" id="backBtn">
-                        <img src="assets/raroow.png" class="back-arrow-img" alt="뒤로가기"> 목록으로
+                        <img src="assets/rarrow.png" class="back-arrow-img" alt="뒤로가기"> 목록으로 돌아가기
                     </button>
                 </div>
-                <h3>구역 정보</h3>
                 <div class="detail-content-box" id="detail-content">
-                    <!-- 상세 내용이 동적으로 들어갑니다 -->
+                    <!-- 상세 내용 및 이미지가 동적으로 삽입됩니다 -->
                 </div>
             </div>
 
@@ -239,7 +253,10 @@
 
     <script>
         // 1. 지도 초기화
-        var map = L.map('map').setView([37.5665, 126.9780], 13);
+        var map = L.map('map', { zoomControl: false }).setView([37.5665, 126.9780], 13);
+        
+        // 줌 컨트롤 위치 우측 하단으로 이동 (모던한 느낌)
+        L.control.zoom({ position: 'bottomright' }).addTo(map);
 
         // 2. 배경 지도 타일 추가
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -255,16 +272,14 @@
         
         let currentlySelectedLayer = null;
         const defaultStyle = { color: '#3388ff', fillColor: '#3388ff', fillOpacity: 0.2 };
-        const selectedStyle = { color: '#ff4757', fillColor: '#ff6b81', fillOpacity: 0.5 };
+        const selectedStyle = { color: '#111111', fillColor: '#111111', fillOpacity: 0.4, weight: 2 };
 
-        // 폴더 구조 객체
         let foldersData = {
             "동대문구": { title: "동대문구", el: null, itemsEl: null },
             "중랑구": { title: "중랑구", el: null, itemsEl: null },
             "기타 구역": { title: "기타 구역", el: null, itemsEl: null }
         };
 
-        // UI에 폴더 구조 미리 생성 (이모지 제거)
         function initFoldersUI() {
             folderListEl.innerHTML = '';
             for (let key in foldersData) {
@@ -273,19 +288,18 @@
 
                 let folderTitleDiv = document.createElement('div');
                 folderTitleDiv.className = 'folder-title';
-                folderTitleDiv.innerHTML = `<span>${foldersData[key].title}</span><span>▼</span>`;
+                folderTitleDiv.innerHTML = `<span>${foldersData[key].title}</span><span>—</span>`;
                 
                 let folderItemsDiv = document.createElement('div');
                 folderItemsDiv.className = 'folder-items';
 
-                // 폴더 토글 기능
                 folderTitleDiv.addEventListener('click', function() {
                     if (folderItemsDiv.style.display === 'none') {
-                        folderItemsDiv.style.display = 'block';
-                        folderTitleDiv.lastChild.innerText = '▼';
+                        folderItemsDiv.style.display = 'flex';
+                        folderTitleDiv.lastChild.innerText = '—';
                     } else {
                         folderItemsDiv.style.display = 'none';
-                        folderTitleDiv.lastChild.innerText = '▶';
+                        folderTitleDiv.lastChild.innerText = '+';
                     }
                 });
 
@@ -295,7 +309,7 @@
                 folderListEl.appendChild(folderGroupDiv);
                 foldersData[key].el = folderGroupDiv;
                 foldersData[key].itemsEl = folderItemsDiv;
-                folderGroupDiv.style.display = 'none'; // 초기엔 숨김
+                folderGroupDiv.style.display = 'none';
             }
         }
 
@@ -314,7 +328,6 @@
                         layer.setStyle(defaultStyle);
                     }
 
-                    // 지역 분류 (동대문구 / 중랑구 / 기타)
                     let targetFolder = "기타 구역";
                     if (description.includes("동대문구")) {
                         targetFolder = "동대문구";
@@ -325,53 +338,47 @@
                     hasAnyItem = true;
                     foldersData[targetFolder].el.style.display = 'block';
 
-                    // 목록 아이템 생성 (이모지 제거, 각진 디자인)
                     const row = document.createElement('div');
                     row.className = 'item-row';
                     row.innerText = name;
 
-                    // 목록 클릭 시: 상세 뷰로 전환 및 지도 이동
                     row.addEventListener('click', function(e) {
                         e.stopPropagation();
                         selectZone(name, description, layer);
                         moveToZone(layer);
-                        showDetailView(); // 화면 전환
+                        showDetailView();
                     });
 
-                    // 지도 위 도형 클릭 시: 상세 뷰로 전환 및 지도 이동
                     layer.on('click', function(e) {
                         L.DomEvent.stopPropagation(e);
                         selectZone(name, description, layer);
                         moveToZone(layer);
-                        showDetailView(); // 화면 전환
+                        showDetailView();
                     });
 
                     foldersData[targetFolder].itemsEl.appendChild(row);
                 });
 
                 if (!hasAnyItem) {
-                    folderListEl.innerHTML = '<div style="padding: 15px; color: #888; text-align: center;">표시할 구역이 없습니다.</div>';
+                    folderListEl.innerHTML = '<div style="padding: 20px; color: #888; text-align: center; font-size: 0.9rem;">표시할 구역이 없습니다.</div>';
                 }
             })
             .on('error', function(err) {
-                folderListEl.innerHTML = '<div style="padding: 15px; color: red; text-align: center;">KML 로드 실패 (경로 확인)</div>';
+                folderListEl.innerHTML = '<div style="padding: 20px; color: #ff4757; text-align: center; font-size: 0.9rem;">KML 로드 실패 (경로 확인)</div>';
                 console.error("KML Load Error:", err);
             })
             .addTo(map);
 
-        // 뒤로가기 버튼 클릭 시 목록 뷰로 복귀 및 도형 선택 해제
         backBtn.addEventListener('click', function() {
             showListView();
             clearSelection();
         });
 
-        // 지도 빈 배경 클릭 시 선택 해제 및 목록 뷰로 전환
         map.on('click', function() {
             clearSelection();
             showListView();
         });
 
-        // 화면 전환 함수들
         function showDetailView() {
             listViewEl.classList.remove('active');
             detailViewEl.classList.add('active');
@@ -382,7 +389,6 @@
             listViewEl.classList.add('active');
         }
 
-        // 구역 선택 공통 함수
         function selectZone(name, description, layer) {
             if (currentlySelectedLayer && currentlySelectedLayer !== layer) {
                 if (currentlySelectedLayer.setStyle) {
@@ -395,7 +401,36 @@
                 layer.setStyle(selectedStyle);
             }
 
-            detailContentEl.innerHTML = `<h4>${name}</h4><p>${description || '상세 정보가 없습니다.'}</p>`;
+            // 구글 어스 KML 설명 속성에서 이미지 태그나 URL 추출하여 최상단에 배치
+            let imageHtml = '';
+            
+            // 1. description 내에 이미 <img> 태그가 포함되어 있는 경우
+            let imgTagMatch = description.match(/<img[^>]+src="([^">]+)"/i) || description.match(/<img[^>]+src='([^'>]+)'/i);
+            
+            // 2. 태그 형태가 아니라 일반 이미지 링크 주소만 있는 경우 처리용 정규식 (http로 시작하는 이미지 확장자)
+            let urlMatch = description.match(/(https?:\/\/[^\s]+\.(png|jpg|jpeg|gif|webp))/i);
+
+            let imageUrl = null;
+            if (imgTagMatch && imgTagMatch[1]) {
+                imageUrl = imgTagMatch[1];
+                // description 안의 이미지 태그는 중복 출력을 막기 위해 본문에서 제거
+                description = description.replace(/<img[^>]*>/gi, '');
+            } else if (urlMatch && urlMatch[1]) {
+                imageUrl = urlMatch[1];
+                description = description.replace(urlMatch[1], ''); // 링크 텍스트 제거
+            }
+
+            if (imageUrl) {
+                imageHtml = `<div class="detail-image-wrapper"><img src="${imageUrl}" alt="${name} 이미지"></div>`;
+            }
+
+            detailContentEl.innerHTML = `
+                ${imageHtml}
+                <h4>${name}</h4>
+                <div style="color: #666; font-size: 0.9rem; word-break: break-all;">
+                    ${description.trim() ? description : '상세 정보가 없습니다.'}
+                </div>
+            `;
 
             document.querySelectorAll('.item-row').forEach(el => {
                 if (el.innerText === name) {
@@ -406,7 +441,6 @@
             });
         }
 
-        // 선택 초기화 함수
         function clearSelection() {
             if (currentlySelectedLayer) {
                 if (currentlySelectedLayer.setStyle) {
@@ -419,10 +453,9 @@
             });
         }
 
-        // 지도 이동 함수
         function moveToZone(layer) {
             if (layer.getBounds) {
-                map.fitBounds(layer.getBounds(), { padding: [50, 50] });
+                map.fitBounds(layer.getBounds(), { padding: [60, 60], maxZoom: 16 });
             } else if (layer.getLatLng) {
                 map.setView(layer.getLatLng(), 16);
             }
