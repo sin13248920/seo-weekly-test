@@ -3,378 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>서울 동북권 정비사업 지도 | 서오일보</title>
+    <title>사이트 - 재개발·재건축 정보</title>
     
-    <!-- Leaflet CSS 링크 -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
     <style>
-        /* 공통 초기화 및 스타일 */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
-            background-color: #f8f9fa;
-            color: #333333;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* 헤더 스타일 */
-        .large-header {
-            width: 100%;
-            background-color: #ffffff;
-            border-bottom: 1px solid #d1d8dd;
-        }
-
-        .header-main-bar {
-            height: 75px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #ffffff;
-        }
-
-        .header-container {
-            max-width: 1100px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .logo-link {
-            display: block;
-            text-decoration: none;
-        }
-
-        .logo-img-large {
-            height: 40px;
-            width: auto;
-            display: block;
-        }
-
-        .sub-info-bar {
-            background-color: #ffffff;
-            border-top: 1px solid #f1f3f5;
-            border-bottom: 1px solid #e1e4e8;
-            font-size: 12px;
-            color: #555555;
-            height: 36px;
-            display: flex;
-            align-items: center;
-        }
-
-        .sub-info-inner {
-            max-width: 1100px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* 메인 콘텐츠 영역 */
-        .main-container {
-            max-width: 1100px;
-            width: 100%;
-            margin: 40px auto;
-            padding: 0 20px;
-            flex: 1;
-        }
-
-        .page-title {
-            font-size: 28px;
-            font-weight: 700;
-            color: #111111;
-            margin-bottom: 24px;
-            letter-spacing: -0.5px;
-        }
-
-        /* 지도가 들어갈 영역 */
-        .map-container {
-            width: 100%;
-            height: 550px;
-            background-color: #ffffff;
-            border: 1px solid #d1d8dd;
-            border-radius: 8px;
+            height: 100vh;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
-
-        /* 지도 아랫부분 정보 박스 스타일 */
-        .info-box {
-            margin-top: 20px;
-            padding: 20px;
-            background-color: #ffffff;
-            border: 1px solid #d1d8dd;
+        /* 어두운 헤더 */
+        header {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            padding: 15px 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            z-index: 1000;
+        }
+        /* 메인 컨테이너 (지도 + 플로팅 패널) */
+        .main-container {
+            position: relative;
+            flex: 1;
+            width: 100%;
+        }
+        /* 지도 영역 */
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+        /* 우측 플로팅 정보 패널 */
+        .floating-panel {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 320px;
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+            padding: 20px;
+            backdrop-filter: blur(5px);
         }
-
-        .info-box h3 {
-            font-size: 18px;
-            color: #111111;
-            margin-bottom: 8px;
+        .floating-panel h3 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: #333;
+            border-bottom: 2px solid #1a1a1a;
+            padding-bottom: 8px;
         }
-
-        .info-box p {
-            font-size: 15px;
-            color: #555555;
-            line-height: 1.5;
+        /* 도형 목록 스타일 */
+        #item-list {
+            max-height: 150px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
         }
-
-        /* 푸터 스타일 */
-        <footer>
-            <div class="footer-inner">
-                <div class="footer-top">
-                    <div class="footer-logo-area">
-                        <img src="assets/seologo.png" alt="서오일보 로고" class="footer-logo-img">
-                    </div>
-                    <div class="footer-info">
-                        <div class="footer-row">
-                            <span>주소 : 서울특별시 용산구 한일로 301 (우) 01201</span>
-                            <span class="footer-bar">|</span>
-                            <span>전화 : 02-123-4567</span>
-                            <span class="footer-bar">|</span>
-                            <span>등록번호 : 서울 아 00000</span>
-                            <span class="footer-bar">|</span>
-                            <span>등록일자 : 2026.09.11</span>
-                            <span class="footer-bar">|</span>
-                            <span>발행인·편집인 : 김서오</span>
-                        </div>
-                        <div class="footer-row">
-                            <span>사업자명 : 서오일보(주)</span>
-                            <span class="footer-bar">|</span>
-                            <span>사업자등록번호 : 123-45-6789</span>
-                            <span class="footer-bar">|</span>
-                            <span>대표자명 : 김서오</span>
-                            <span class="footer-bar">|</span>
-                            <span>통신판매업신고번호 : 2026-서울용산-0123</span>
-                        </div>
-                        <div class="footer-row footer-desc">
-                            서오일보의 모든 콘텐츠(기사)는 저작권법의 보호를 받는바, 무단 전재, 복사, 배포 등을 금합니다.
-                        </div>
-                        <div class="footer-row footer-copyright">
-                            Copyright by SeoIlbo Co., Ltd. All Rights Reserved
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </footer>
-
-        <style>
-            footer {
-                background-color: #222222;
-                color: #aaaaaa;
-                padding: 40px 0;
-                font-size: 12px;
-                line-height: 1.6;
-                margin-top: 60px;
-            }
-            .footer-inner {
-                max-width: 1100px;
-                margin: 0 auto;
-                padding: 0 20px;
-            }
-            .footer-top {
-                display: flex;
-                flex-direction: column;
-                gap: 20px;
-            }
-            .footer-logo-img {
-                height: 30px;
-                filter: grayscale(100%) brightness(200%);
-            }
-            .footer-info {
-                display: flex;
-                flex-direction: column;
-                gap: 6px;
-            }
-            .footer-row {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 8px;
-                align-items: center;
-            }
-            .footer-bar {
-                color: #555555;
-            }
-            .footer-desc {
-                margin-top: 10px;
-                color: #888888;
-            }
-            .footer-copyright {
-                color: #777777;
-            }
-        </style>
-
-        <!-- 반응형 디자인 -->
-        @media (max-width: 768px) {
-            .sub-info-bar {
-                display: none;
-            }
-            .page-title {
-                font-size: 22px;
-                margin-bottom: 16px;
-            }
-            .map-container {
-                height: 400px;
-            }
+        .item-row {
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s;
+        }
+        .item-row:hover {
+            background-color: #f0f0f0;
+        }
+        .item-row.active {
+            background-color: #1a1a1a;
+            color: #fff;
+        }
+        /* 상세 정보 표시 칸 */
+        .detail-box {
+            background: #f9f9f9;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #e1e1e1;
+            font-size: 0.9rem;
+            min-height: 80px;
+            color: #555;
+        }
+        .detail-box h4 {
+            color: #1a1a1a;
+            margin-bottom: 5px;
         }
     </style>
 </head>
 <body>
 
-    <!-- 헤더 영역 -->
-    <div class="large-header" id="largeHeader">
-        <div class="header-main-bar">
-            <div class="header-container">
-                <a href="index.html" class="logo-link">
-                    <img src="assets/seologo.png" alt="서오일보 로고" class="logo-img-large">
-                </a>
+    <!-- 헤더 -->
+    <header>
+        사이트
+    </header>
+
+    <!-- 메인 콘텐츠 영역 -->
+    <div class="main-container">
+        <!-- 지도 -->
+        <div id="map"></div>
+
+        <!-- 우측 플로팅 정보 패널 -->
+        <div class="floating-panel">
+            <h3>구역 목록</h3>
+            <div id="item-list">
+                <div style="padding: 10px; color: #888; text-align: center;">KML 파일을 불러오는 중...</div>
             </div>
-        </div>
-        <div class="sub-info-bar">
-            <div class="sub-info-inner">
-                <span class="current-date" id="headerDate"></span>
+            
+            <h3>상세 정보</h3>
+            <div class="detail-box" id="detail-content">
+                지도의 구역이나 목록의 이름을 클릭하세요.
             </div>
         </div>
     </div>
 
-    <!-- 메인 콘텐츠 영역 -->
-    <main class="main-container">
-        <h1 class="page-title">서울 동북권 정비사업 지도</h1>
-        <!-- 지도가 렌더링될 div -->
-        <div id="map" class="map-container"></div>
-
-        <!-- 지도 하단 정보 표시 박스 -->
-        <div class="info-box">
-            <h3 id="infoTitle">정비사업 구역 안내</h3>
-            <p id="infoDesc">지도의 구역(도형)을 클릭하시면 해당 정비사업 구역의 상세 정보가 이 곳에 표시됩니다.</p>
-        </div>
-    </main>
-
-    <!-- 푸터 영역 -->
-    <footer>
-        <div class="footer-inner">
-            <div class="footer-top">
-                <div class="footer-logo-area">
-                    <img src="assets/seologo.png" alt="서오일보 로고" class="footer-logo-img">
-                </div>
-                <div class="footer-info">
-                    <div class="footer-row">
-                        <span>주소 : 서울특별시 용산구 한일로 301 (우) 01201</span>
-                        <span class="footer-bar">|</span>
-                        <span>전화 : 02-123-4567</span>
-                        <span class="footer-bar">|</span>
-                        <span>등록번호 : 서울 아 00000</span>
-                        <span class="footer-bar">|</span>
-                        <span>등록일자 : 2026.09.11</span>
-                        <span class="footer-bar">|</span>
-                        <span>발행인·편집인 : 김서오</span>
-                    </div>
-                    <div class="footer-row">
-                        <span>사업자명 : 서오일보(주)</span>
-                        <span class="footer-bar">|</span>
-                        <span>사업자등록번호 : 123-45-6789</span>
-                        <span class="footer-bar">|</span>
-                        <span>대표자명 : 김서오</span>
-                        <span class="footer-bar">|</span>
-                        <span>통신판매업신고번호 : 2026-서울용산-0123</span>
-                    </div>
-                    <div class="footer-row footer-desc">
-                        서오일보의 모든 콘텐츠(기사)는 저작권법의 보호를 받는바, 무단 전재, 복사, 배포 등을 금합니다.
-                    </div>
-                    <div class="footer-row footer-copyright">
-                        Copyright by SeoIlbo Co., Ltd. All Rights Reserved
-                    </div>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Leaflet JS 및 KML 로더 플러그인 -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- Leaflet JS 및 Omnivore (KML 로더) 라이브러리 -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js'></script>
 
-    <!-- 스크립트 영역 -->
     <script>
-        window.addEventListener('DOMContentLoaded', function() {
-            // 날짜 동적 세팅
-            const dateEl = document.getElementById('headerDate');
-            if(dateEl) {
-                const now = new Date();
-                const year = now.getFullYear();
-                const month = String(now.getMonth() + 1).padStart(2, '0');
-                const day = String(now.getDate()).padStart(2, '0');
-                const week = ['일', '월', '화', '수', '목', '금', '토'][now.getDay()];
-                dateEl.innerText = `${year}.${month}.${day} (${week})`;
-            }
+        // 1. 지도 초기화 (기본 중심 좌표 및 줌 레벨 설정 - 예: 서울 중심)
+        var map = L.map('map').setView([37.5665, 126.9780], 13);
 
-            // 1. 지도 초기화
-            const map = L.map('map').setView([37.6064, 127.0275], 13);
+        // 2. 배경 지도 타일 추가 (OpenStreetMap 사용 - API 키 불필요)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
 
-            // 2. 오픈스트리트맵 타일 레이어 추가
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
+        const itemListEl = document.getElementById('item-list');
+        const detailContentEl = document.getElementById('detail-content');
+        
+        let zonesData = [];
 
-            // 3. 구역별 상세 정보를 관리하는 객체 (나중에 도형이 여러 개가 되면 여기에 계속 추가하시면 됩니다!)
-            const zoneInfoDatabase = {
-                "장안1구역": {
-                    title: "장안1구역 재개발 정비사업",
-                    desc: "장안동 일대의 노후 주거지를 정비하여 공동주택 및 부대복리시설을 건립하는 정비사업입니다. 현재 추진 단계 및 구역계가 지정되어 있습니다."
-                },
-                // 나중에 구역이 추가되면 아래처럼 계속 늘려주시면 됩니다.
-                // "이문1구역": {
-                //     title: "이문1구역 재개발",
-                //     desc: "설명 내용..."
-                // }
-            };
-
-            // 4. assets/jae.kml 파일 불러와서 도형마다 이벤트 처리하기
-            omnivore.kml('assets/jae.kml')
-                .on('ready', function() {
-                    map.fitBounds(this.getBounds());
-                })
-                .on('layeradd', function(e) {
-                    const layer = e.layer;
+        // 3. assets/jae.kml 파일 불러오기
+        omnivore.kml('assets/jae.kml')
+            .on('ready', function(layer) {
+                itemListEl.innerHTML = ''; // 로딩 문구 제거
+                
+                this.eachLayer(function(layer) {
+                    // KML 내부의 이름(name) 및 설명(description) 가져오기
+                    let name = layer.feature.properties.name || '이름 없는 구역';
+                    let description = layer.feature.properties.description || '상세 정보가 없습니다.';
                     
-                    // KML 파일에 적힌 도형 이름을 가져옴 (없으면 기본값 지정)
-                    const rawName = layer.feature && layer.feature.properties && layer.feature.properties.name 
-                                    ? layer.feature.properties.name.trim() 
-                                    : "장안1구역"; // 임시 기본값
+                    zonesData.push({ name, description, layer });
 
-                    // 도형 클릭 시 동작
-                    layer.on('click', function() {
-                        const titleEl = document.getElementById('infoTitle');
-                        const descEl = document.getElementById('infoDesc');
-
-                        // 데이터베이스에 등록된 정보가 있다면 불러오고, 없으면 기본 타이틀 출력
-                        if (zoneInfoDatabase[rawName]) {
-                            titleEl.innerText = zoneInfoDatabase[rawName].title;
-                            descEl.innerText = zoneInfoDatabase[rawName].desc;
-                        } else {
-                            titleEl.innerText = rawName + " 정비사업 구역";
-                            descEl.innerText = "선택하신 " + rawName + "에 대한 상세 정비사업 정보입니다.";
-                        }
-
-                        // (선택) 클릭한 도형 시각적 효과 (색상 강조 등)
-                        layer.setStyle({ color: '#ff7800', weight: 4 });
+                    // 목록(HTML)에 항목 추가
+                    const row = document.createElement('div');
+                    row.className = 'item-row';
+                    row.innerText = name;
+                    
+                    // 목록 이름을 클릭했을 때의 동작
+                    row.addEventListener('click', function() {
+                        selectZone(name, description, layer);
                     });
-                })
-                .on('error', function(err) {
-                    console.error("jae.kml 파일 로드 실패:", err);
-                })
-                .addTo(map);
-        });
+
+                    // 지도 위 도형을 클릭했을 때의 동작
+                    layer.on('click', function() {
+                        selectZone(name, description, layer);
+                        // 해당 도형 위치로 지도 이동 (폴리곤인 경우 중심점 계산)
+                        if (layer.getBounds) {
+                            map.fitBounds(layer.getBounds());
+                        } else if (layer.getLatLng) {
+                            map.setView(layer.getLatLng(), 15);
+                        }
+                    });
+
+                    itemListEl.appendChild(row);
+                });
+
+                if (zonesData.length === 0) {
+                    itemListEl.innerHTML = '<div style="padding: 10px; color: #888; text-align: center;">표시할 구역이 없습니다.</div>';
+                }
+            })
+            .on('error', function(err) {
+                itemListEl.innerHTML = '<div style="padding: 10px; color: red; text-align: center;">KML 로드 실패 (경로 확인 필요)</div>';
+                console.error("KML Load Error:", err);
+            })
+            .addTo(map);
+
+        // 구역 선택 시 실행되는 공통 함수
+        function selectZone(name, description, layer) {
+            // 상세 정보 창 업데이트
+            detailContentEl.innerHTML = `<h4>${name}</h4><p>${description}</p>`;
+
+            // 목록 UI 활성화 상태 변경
+            document.querySelectorAll('.item-row').forEach(el => {
+                if (el.innerText === name) {
+                    el.classList.add('active');
+                } else {
+                    el.classList.remove('active');
+                }
+            });
+
+            // 도형 스타일 강조 (선택사항: 클릭 시 색상 변경 등)
+            layer.setStyle({ color: '#ff4757', fillColor: '#ff6b81', fillOpacity: 0.5 });
+        }
     </script>
 </body>
 </html>
