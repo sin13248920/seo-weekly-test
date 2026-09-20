@@ -149,7 +149,6 @@
             color: inherit;
         }
 
-        /* 주요 리드 기사 호버 시 제목 옅은 회색으로 변경 (애니메이션 없음) */
         .main-lead-article:hover .main-lead-title {
             color: #777777;
         }
@@ -200,7 +199,6 @@
             display: block;
         }
 
-        /* 서브 뉴스 호버 시 옅은 회색으로 변경 */
         .sub-news-item:hover .sub-news-title {
             color: #777777;
         }
@@ -246,7 +244,6 @@
             align-items: center;
         }
 
-        /* 카테고리 타이틀 링크 스타일 (화살표 이미지 간격 및 옅은 회색 호버) */
         .category-col-title a {
             text-decoration: none;
             color: inherit;
@@ -263,7 +260,7 @@
         .category-title-inner {
             display: flex;
             align-items: center;
-            gap: 6px; /* 카테고리명과 화살표 사이 간격 */
+            gap: 6px;
         }
 
         .category-arrow-img {
@@ -293,7 +290,6 @@
             padding-bottom: 0;
         }
 
-        /* 카테고리 기사 호버 시 옅은 회색으로 변경 */
         .category-article-card:hover .cat-art-title {
             color: #777777;
         }
@@ -318,10 +314,104 @@
             padding: 30px 0;
         }
 
+        /* ---------------- 서오스토리 최상위 섹션 스타일 ---------------- */
+        .seoh-story-section {
+            margin-top: 60px;
+        }
+
+        .seoh-story-main-title {
+            font-size: 20px;
+            font-weight: 900;
+            color: #111111;
+            border-bottom: 3px solid #111111;
+            padding-bottom: 12px;
+            margin-bottom: 30px;
+        }
+
+        /* 서오스토리 하위: 도시재정비 섹션 스타일 */
+        .urban-renewal-container {
+            background-color: #fcfcfc;
+            border: 1px solid #e1e4e8;
+            padding: 25px;
+        }
+
+        .urban-renewal-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .urban-renewal-left {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            border-right: 1px solid #e1e4e8;
+            padding-right: 30px;
+        }
+
+        .urban-renewal-intro-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: #111111;
+            line-height: 1.4;
+        }
+
+        .urban-renewal-map-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-decoration: none;
+            background-color: #111111;
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 10px 16px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+            width: fit-content;
+        }
+
+        .urban-renewal-map-btn:hover {
+            background-color: #333333;
+        }
+
+        .urban-renewal-map-btn img {
+            filter: brightness(0) invert(1);
+            width: 12px;
+            height: 12px;
+        }
+
+        .urban-renewal-right {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .urban-renewal-article-item {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 8px 12px;
+            background-color: #ffffff;
+            border: 1px solid #e1e4e8;
+            border-radius: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .urban-renewal-article-item:hover {
+            color: #777777;
+            border-color: #d1d8dd;
+        }
+
         /* 푸터 영역 */
         footer {
             background-color: #f2f4f6;
-            border-top: none; 
             padding: 30px 20px;
             font-size: 12px;
             color: #666666;
@@ -400,6 +490,16 @@
                 grid-template-columns: 1fr;
                 gap: 20px;
             }
+            .urban-renewal-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .urban-renewal-left {
+                border-right: none;
+                border-bottom: 1px solid #e1e4e8;
+                padding-right: 0;
+                padding-bottom: 15px;
+            }
             .main-container {
                 margin: 20px auto 40px auto;
                 padding: 0 15px;
@@ -430,7 +530,7 @@
         </div>
         <div class="sub-info-bar">
             <div class="sub-info-inner">
-                <span class="current-date" id="headerDate">2026.09.12 (토)</span>
+                <span class="current-date" id="headerDate">2026.09.20 (일)</span>
             </div>
         </div>
     </div>
@@ -450,7 +550,7 @@
         <!-- 주요 뉴스 섹션 -->
         <div class="main-section-title">주요 뉴스</div>
         <div class="top-news-grid" id="topNewsGrid">
-            <div style="grid-column: 1 / -1; text-align: center; color: #888; padding: 40px 0;">기사를 불러오는 중입니다...</div>
+            <div style="grid-column: 1 / -1; text-align: center; color: #888; padding: 40px 0;">기사가 존재하지 않습니다.</div>
         </div>
 
         <!-- 카테고리별 섹션 (사회, 경제, 문화) -->
@@ -496,6 +596,30 @@
                 </div>
                 <div class="category-article-list" id="cultureArticleList">
                     <div class="no-article-notice">기사가 존재하지 않습니다.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 서오스토리 최상위 섹션 -->
+        <div class="seoh-story-section">
+            <div class="seoh-story-main-title">서오스토리</div>
+            
+            <!-- 하위 섹션: 도시재정비 (서울 동북권) -->
+            <div class="urban-renewal-container">
+                <div class="main-section-title" style="margin-top: 0; font-size: 16px; border-bottom: 2px solid #C91C1C; padding-bottom: 8px; margin-bottom: 15px;">도시재정비 (서울 동북권)</div>
+                <div class="urban-renewal-grid">
+                    <!-- 왼쪽: 소개 및 지도보기 버튼 -->
+                    <div class="urban-renewal-left">
+                        <div class="urban-renewal-intro-title">서울 동북권 지역 정비사업 및 개발 현황을 확인하세요.</div>
+                        <a href="jae.html" class="urban-renewal-map-btn">
+                            <span>지도보기</span>
+                            <img src="assets/rarrow.png" alt="화살표">
+                        </a>
+                    </div>
+                    <!-- 오른쪽: 관련 기사 공간 (최대 3개, 인덱스 3개가 존재하지 않을 경우 문구 표시) -->
+                    <div class="urban-renewal-right" id="urbanRenewalArticleList">
+                        <div class="no-article-notice" style="padding: 10px 0; text-align: left;">기사가 존재하지 않습니다.</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -562,7 +686,7 @@
         async function fetchArticles() {
             let articles = [];
             
-            // 등록된 기사 파일명(확장자 제외)을 여기에 직접 나열해 주세요. (최신순)
+            // 등록된 기사 파일명(확장자 제외) 목록
             const articleIds = ["26091501", "26091301", "26091102", "26091101"]; 
             
             for (let id of articleIds) {
@@ -585,6 +709,7 @@
 
             renderMainNews(articles);
             renderCategoryNews(articles);
+            renderUrbanRenewalNews(articles);
         }
 
         // 주요 뉴스 렌더링 (최신기사 기준)
@@ -649,11 +774,36 @@
             }
 
             let html = '';
-            list.slice(0, 4).forEach(art => {
+            list.slice(0, 3).forEach(art => {
                 html += `
                     <a href="viewer.html?id=${art.id}" class="category-article-card">
                         <div class="cat-art-title">${art.title}</div>
                         <div class="cat-art-date">${art.date || ''}</div>
+                    </a>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // 도시재정비 섹션 기사 렌더링 (인덱스 3개 체크 및 데이터 없을 시 '기사가 존재하지 않습니다' 처리)
+        function renderUrbanRenewalNews(articles) {
+            const container = document.getElementById('urbanRenewalArticleList');
+            if (!container) return;
+
+            const renewalArticles = articles.filter(art => (art.category && art.category.includes('도시재정비')) || (art.title && art.title.includes('재정비')));
+
+            // 조건: 도시재정비 기사가 3개 미만이거나 전혀 존재하지 않을 때 문구 출력 검증
+            if (renewalArticles.length === 0) {
+                container.innerHTML = `<div class="no-article-notice" style="padding: 10px 0; text-align: left;">기사가 존재하지 않습니다.</div>`;
+                return;
+            }
+
+            let html = '';
+            // 최대 3개의 인덱스까지 슬라이싱하여 노출
+            renewalArticles.slice(0, 3).forEach(art => {
+                html += `
+                    <a href="viewer.html?id=${art.id}" class="urban-renewal-article-item">
+                        · ${art.title}
                     </a>
                 `;
             });
