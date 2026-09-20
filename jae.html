@@ -46,7 +46,7 @@
             flex: 1;
             height: 100%;
         }
-        /* 현대적인 우측 사이드 패널 (컨테이너 박스 느낌 탈피, 여백 중심) */
+        /* 현대적인 우측 사이드 패널 */
         .side-panel {
             width: 380px;
             background: #ffffff;
@@ -56,6 +56,7 @@
             padding: 28px;
             z-index: 999;
             overflow: hidden;
+            border-radius: 0;
         }
         .side-panel h3 {
             font-size: 1.25rem;
@@ -65,11 +66,12 @@
             letter-spacing: -0.5px;
         }
 
-        /* 폴더 및 목록 스타일 (미니멀 & 모던) */
+        /* 폴더 및 목록 스타일 (각진 디자인) */
         #folder-list {
             flex: 1;
             overflow-y: auto;
             padding-right: 4px;
+            border-radius: 0;
         }
         .folder-group {
             margin-bottom: 24px;
@@ -87,6 +89,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-radius: 0;
         }
         .folder-title:hover {
             color: #111;
@@ -102,7 +105,7 @@
             font-weight: 500;
             color: #333;
             cursor: pointer;
-            border-radius: 6px;
+            border-radius: 0; /* 각지게 수정 */
             transition: all 0.2s ease;
         }
         .item-row:hover {
@@ -152,27 +155,32 @@
             transform: rotate(180deg);
         }
 
-        /* 상세 정보 내용 칸 (현대적인 여백과 타이포그래피) */
+        /* 상세 정보 내용 칸 (모든 글씨 검정색 적용) */
         .detail-content-box {
             flex: 1;
             overflow-y: auto;
             padding-right: 4px;
-            color: #444;
+            color: #000000 !important; /* 모든 글씨 검정색 고정 */
             line-height: 1.6;
             font-size: 0.95rem;
         }
         .detail-content-box h4 {
             font-size: 1.4rem;
             font-weight: 700;
-            color: #111;
+            color: #000000 !important;
             margin-bottom: 16px;
             letter-spacing: -0.5px;
         }
+        .detail-content-box p, 
+        .detail-content-box div {
+            color: #000000 !important;
+        }
+
         /* 구역 정보 상단에 위치할 이미지 스타일 */
         .detail-image-wrapper {
             width: 100%;
             max-height: 220px;
-            border-radius: 8px;
+            border-radius: 0; /* 각지게 수정 */
             overflow: hidden;
             margin-bottom: 20px;
             background: #eee;
@@ -255,7 +263,7 @@
         // 1. 지도 초기화
         var map = L.map('map', { zoomControl: false }).setView([37.5665, 126.9780], 13);
         
-        // 줌 컨트롤 위치 우측 하단으로 이동 (모던한 느낌)
+        // 줌 컨트롤 위치 우측 하단으로 이동
         L.control.zoom({ position: 'bottomright' }).addTo(map);
 
         // 2. 배경 지도 타일 추가
@@ -272,7 +280,9 @@
         
         let currentlySelectedLayer = null;
         const defaultStyle = { color: '#3388ff', fillColor: '#3388ff', fillOpacity: 0.2 };
-        const selectedStyle = { color: '#111111', fillColor: '#111111', fillOpacity: 0.4, weight: 2 };
+        
+        // 도형 클릭 시 빨간색으로 변하도록 설정
+        const selectedStyle = { color: '#ff0000', fillColor: '#ff4757', fillOpacity: 0.5, weight: 3 };
 
         let foldersData = {
             "동대문구": { title: "동대문구", el: null, itemsEl: null },
@@ -401,23 +411,18 @@
                 layer.setStyle(selectedStyle);
             }
 
-            // 구글 어스 KML 설명 속성에서 이미지 태그나 URL 추출하여 최상단에 배치
+            // 웹 URL 이미지 파싱 처리 (상단 배치)
             let imageHtml = '';
-            
-            // 1. description 내에 이미 <img> 태그가 포함되어 있는 경우
             let imgTagMatch = description.match(/<img[^>]+src="([^">]+)"/i) || description.match(/<img[^>]+src='([^'>]+)'/i);
-            
-            // 2. 태그 형태가 아니라 일반 이미지 링크 주소만 있는 경우 처리용 정규식 (http로 시작하는 이미지 확장자)
             let urlMatch = description.match(/(https?:\/\/[^\s]+\.(png|jpg|jpeg|gif|webp))/i);
 
             let imageUrl = null;
             if (imgTagMatch && imgTagMatch[1]) {
                 imageUrl = imgTagMatch[1];
-                // description 안의 이미지 태그는 중복 출력을 막기 위해 본문에서 제거
                 description = description.replace(/<img[^>]*>/gi, '');
             } else if (urlMatch && urlMatch[1]) {
                 imageUrl = urlMatch[1];
-                description = description.replace(urlMatch[1], ''); // 링크 텍스트 제거
+                description = description.replace(urlMatch[1], '');
             }
 
             if (imageUrl) {
@@ -427,7 +432,7 @@
             detailContentEl.innerHTML = `
                 ${imageHtml}
                 <h4>${name}</h4>
-                <div style="color: #666; font-size: 0.9rem; word-break: break-all;">
+                <div style="color: #000000; font-size: 0.95rem; word-break: break-all;">
                     ${description.trim() ? description : '상세 정보가 없습니다.'}
                 </div>
             `;
