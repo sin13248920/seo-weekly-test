@@ -687,21 +687,64 @@
             let articles = [];
             
             // 등록된 기사 파일명(확장자 제외) 목록
-            const articleIds = ["26091501", "26091301", "26091102", "26091101", "26591509"]; 
+            //const articleIds = ["26091501", "26091301", "26091102", "26091101", "26591509"]; 
             
-            for (let id of articleIds) {
-                try {
-                    let response = await fetch(`articles/${id}.json`);
-                    if (response.ok) {
-                        let data = await response.json();
+            //for (let id of articleIds) {
+            //    try {
+            //        let response = await fetch(`articles/${id}.json`);
+            //        if (response.ok) {
+            //            let data = await response.json();
+            //            articles.push({
+            //                id: id,
+            //                ...data
+            //            });
+            //        }
+            //    } catch (e) {
+            //        console.error(`${id}.json 파일을 불러오지 못했습니다.`, e);
+            //    }
+            //}
+
+            const articles = [];
+
+            try {
+                const response = await fetch(
+                    "https://api.github.com/repos/sin13248920/seo-weekly-test/contents/articles"
+                );
+
+                if (!response.ok) {
+                    throw new Error(`GitHub API 오류: ${response.status}`);
+                }
+
+                const files = await response.json();
+
+                const jsonFiles = files
+                    .filter(file => file.type === "file" && file.name.toLowerCase().endsWith(".json"))
+                    .sort((a, b) => b.name.localeCompare(a.name));
+
+                for (const file of jsonFiles) {
+                    try {
+                        const articleResponse = await fetch(file.download_url);
+
+                        if (!articleResponse.ok) {
+                            console.warn(`${file.name} 파일을 불러오지 못했습니다.`);
+                            continue;
+                        }
+
+                        const data = await articleResponse.json();
+                        const id = file.name.replace(/\.json$/i, "");
+
                         articles.push({
                             id: id,
                             ...data
                         });
+                    } catch (e) {
+                        console.error(`${file.name} 파일을 불러오지 못했습니다.`, e);
                     }
-                } catch (e) {
-                    console.error(`${id}.json 파일을 불러오지 못했습니다.`, e);
                 }
+
+                console.log(`총 ${articles.length}개의 기사를 불러왔습니다.`, articles);
+            } catch (e) {
+                console.error("articles 폴더를 불러오지 못했습니다.", e);
             }
 
             // 파일 이름 번호가 큰 순서(최신순)로 정렬
