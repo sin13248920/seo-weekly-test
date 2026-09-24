@@ -280,6 +280,15 @@
             border: 1px solid #e1e4e8;
         }
 
+        /* 이미지 설명(캡션) 스타일 추가 */
+        .article-image-caption {
+            font-size: 13px;
+            color: #666666;
+            margin-top: 8px;
+            line-height: 1.4;
+            text-align: left;
+        }
+
         .article-content {
             font-size: 18px;
             color: #2c3e50;
@@ -520,9 +529,10 @@
             .page-wrapper { padding: 0 15px; }
             .widget-ads-grid { grid-template-columns: 1fr; }
 
-            /* 모바일 고정 헤더 설정 (로고 숨김, 유틸리티 바 꽉 채우기) */
-            .fixed-small-header .header-container { display: none; }
-            .fixed-small-header .mobile-utility-bar { display: flex; }
+            /* 모바일 고정 헤더 설정 (유틸리티 바 및 프로세스바 숨기고 로고만 표시) */
+            .fixed-small-header .header-container { display: flex; }
+            .fixed-small-header .mobile-utility-bar { display: none !important; }
+            .scroll-progress-bar { display: none !important; }
 
             /* 모바일 푸터 정렬 대응 */
             .footer-top {
@@ -720,34 +730,22 @@
                         throw new Error('기사 데이터를 찾을 수 없습니다.');
                     }
                     return response.json();
-
-                    // --- 여기서부터 카카오톡 공유 미리보기(OG 태그) 동적 변경 코드 ---
-        
-                    // 1. 기사 제목을 공유 제목으로 설정 (+ 뒤에 | 서오일보 추가 등 원하시는 대로)
-                    document.getElementById('ogTitle').setAttribute('content', data.title);
-        
-                    // 2. 설명란은 무조건 원하시는 문구로 고정
-                    document.getElementById('ogDesc').setAttribute('content', "여기를 눌러 링크를 확인하세요.");
-        
-                   // 3. 기사 대표 이미지 설정 (기사에 이미지가 있으면 그 이미지, 없으면 기본 로고)
-                   if (data.image && data.image.trim() !== "") {
-                   // 메신저 봇은 '상대 경로'를 못 읽을 수 있으므로 전체 절대 경로(domain + path)로 넣어주는 것이 안전합니다.
-                   const absoluteImageUrl = window.location.origin + "/" + data.image.replace(/^\//, '');
-                   document.getElementById('ogImage').setAttribute('content', absoluteImageUrl);
-        }
-        
-        // 4. 현재 페이지 주소 설정
-        document.getElementById('ogUrl').setAttribute('content', window.location.href);
-        
-        // -------------------------------------------------------------
                 })
                 .then(data => {
+                    // 카카오톡 공유 미리보기(OG 태그) 동적 변경
+                    document.getElementById('ogTitle').setAttribute('content', data.title);
+                    document.getElementById('ogDesc').setAttribute('content', "여기를 눌러 링크를 확인하세요.");
+                    if (data.image && data.image.trim() !== "") {
+                        const absoluteImageUrl = window.location.origin + "/" + data.image.replace(/^\//, '');
+                        document.getElementById('ogImage').setAttribute('content', absoluteImageUrl);
+                    }
+                    document.getElementById('ogUrl').setAttribute('content', window.location.href);
+
                     document.getElementById('pageTitle').innerText = data.title + " | 서오일보";
                     
                     const categoryEl = document.getElementById('articleCategory');
                     categoryEl.innerText = data.category;
                     
-                    // 1. 카테고리 클릭 시 category.html?type=... 로 이동하도록 매핑
                     let categoryType = 'society';
                     if (data.category === '경제') categoryType = 'economy';
                     else if (data.category === '문화') categoryType = 'culture';
@@ -758,13 +756,9 @@
                     document.getElementById('articleReporter').innerText = data.reporter; 
                     document.getElementById('articleDate').innerText = "입력 : " + data.date;
                     
-                    // 2. 사진이 없을 경우 사진 칸(컨테이너)을 아예 삭제/미생성하도록 처리
+                    // 상단 대표 이미지 영역 초기화 (본문 내 다중 이미지 구조 활용 시 비워둠)
                     const imageArea = document.getElementById('articleImageArea');
-                    if (data.image && data.image.trim() !== "") {
-                        imageArea.innerHTML = `<div class="article-image-container"><img src="${data.image}" alt="기사 대표 이미지"></div>`;
-                    } else {
-                        imageArea.innerHTML = '';
-                    }
+                    imageArea.innerHTML = '';
 
                     document.getElementById('reporterAvatar').src = data.reporterAvatar;
                     document.getElementById('reporterName').innerText = data.reporter;
@@ -773,21 +767,37 @@
                     const contentContainer = document.getElementById('articleBody');
                     contentContainer.innerHTML = '';
 
-                    data.content.forEach((paragraph, index) => {
-                        const p = document.createElement('p');
-                        p.innerText = paragraph;
-                        contentContainer.appendChild(p);
+                    // 다중 이미지 및 캡션을 지원하도록 content 순회 로직 수정
+                    data.content.forEach((item, index) => {
+                        if (typeof item === 'object' && item !== null && item.type === 'image') {
+                            if (item.url && item.url.trim() !== "") {
+                                const imgContainer = document.createElement('div');
+                                imgContainer.className = 'article-image-container';
+                                
+                                let imgHTML = `<img src="${item.url}" alt="기사 이미지">`;
+                                if (item.caption && item.caption.trim() !== "") {
+                                    imgHTML += `<div class="article-image-caption">${item.caption}</div>`;
+                                }
+                                imgContainer.innerHTML = imgHTML;
+                                contentContainer.appendChild(imgContainer);
+                            }
+                        } else {
+                            const p = document.createElement('p');
+                            p.innerText = item;
+                            contentContainer.appendChild(p);
 
-                        if (index === 1) {
-                            const adBox = document.createElement('div');
-                            adBox.className = 'ad-box';
-                            adBox.innerHTML = `
-                                <a href="#" id="adLink" target="_blank" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
-                                    <img id="randomAdImage" src="" alt="추천 광고">
-                                </a>
-                            `;
-                            contentContainer.appendChild(adBox);
-                            loadRandomAd();
+                            // 기존 중간 광고 삽입 로직 유지 (2번째 문단 뒤)
+                            if (index === 1) {
+                                const adBox = document.createElement('div');
+                                adBox.className = 'ad-box';
+                                adBox.innerHTML = `
+                                    <a href="#" id="adLink" target="_blank" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
+                                        <img id="randomAdImage" src="" alt="추천 광고">
+                                    </a>
+                                `;
+                                contentContainer.appendChild(adBox);
+                                loadRandomAd();
+                            }
                         }
                     });
 
@@ -907,6 +917,7 @@
                         h1 { font-size: 24pt; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
                         p { font-size: 12pt; margin-bottom: 15px; }
                         .article-image-container img { width: 100%; height: auto; max-height: 500px; object-fit: cover; }
+                        .article-image-caption { font-size: 10pt; color: #666; margin-top: 6px; text-align: left; }
 
                         .ad-box, .reporter-section, .widget-ads-container {
                             display: none !important;
