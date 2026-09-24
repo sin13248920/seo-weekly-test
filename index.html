@@ -684,26 +684,8 @@
         });
 
         async function fetchArticles() {
-            let articles = [];
             
-            // 등록된 기사 파일명(확장자 제외) 목록
-            //const articleIds = ["26091501", "26091301", "26091102", "26091101", "26591509"]; 
-            
-            //for (let id of articleIds) {
-            //    try {
-            //        let response = await fetch(`articles/${id}.json`);
-            //        if (response.ok) {
-            //            let data = await response.json();
-            //            articles.push({
-            //                id: id,
-            //                ...data
-            //            });
-            //        }
-            //    } catch (e) {
-            //        console.error(`${id}.json 파일을 불러오지 못했습니다.`, e);
-            //    }
-            //}
-
+            // 내가 처 고침 이제 const articles = []; 에다가 입력안해도 파일이름.json이 파일안에 있으면 자동으로 뜸
             const articles = [];
 
             try {
