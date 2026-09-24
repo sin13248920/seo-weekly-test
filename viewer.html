@@ -303,13 +303,14 @@
 
         .article-content {
             font-size: 18px;
-            color: #2c3e50;
+            color: #000000; /* 기사 내용 글씨를 검정색으로 변경 */
             line-height: 1.85;
             margin-bottom: 40px;
         }
 
         .article-content p {
             margin-bottom: 28px;
+            color: #000000; /* 본문 문단 글씨도 명확한 검정색 적용 */
         }
 
         .ad-box {
@@ -762,11 +763,12 @@
                     document.getElementById('articleReporter').innerText = data.reporter; 
                     document.getElementById('articleDate').innerText = "입력 : " + data.date;
                     
+                    // 메인 이미지 및 캡션 처리 (문자열 및 객체 모두 지원)
                     const imageArea = document.getElementById('articleImageArea');
                     if (data.image) {
                         if (typeof data.image === 'string' && data.image.trim() !== "") {
                             imageArea.innerHTML = `<div class="article-image-container"><img src="${data.image}" alt="기사 대표 이미지"></div>`;
-                        } else if (typeof data.image === 'object' && data.image !== null && data.image.url) {
+                        } else if (typeof data.image === 'object' && data.image.url) {
                             let mainImgHtml = `<div class="article-image-container"><img src="${data.image.url}" alt="기사 대표 이미지">`;
                             if (data.image.caption) {
                                 mainImgHtml += `<div class="article-img-caption">${data.image.caption}</div>`;
@@ -962,7 +964,7 @@
                         }
 
                         @media print {
-                            .print-header { display: now !important; }
+                            .print-header { display: none !important; }
                             body { padding-top: 0; }
                         }
                     </style>
