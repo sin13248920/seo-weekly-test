@@ -268,7 +268,7 @@
 
         .article-image-container {
             width: 100%;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
         }
 
         .article-image-container img {
@@ -280,7 +280,22 @@
             border: 1px solid #e1e4e8;
         }
 
-        .image-caption {
+        /* 추가된 다중 이미지 및 설명 스타일 */
+        .article-inline-image-wrap {
+            margin: 30px 0;
+            width: 100%;
+        }
+
+        .article-inline-image-wrap img {
+            width: 100%;
+            height: auto;
+            max-height: 500px;
+            object-fit: cover;
+            display: block;
+            border: 1px solid #e1e4e8;
+        }
+
+        .article-image-caption {
             font-size: 14px;
             color: #666666;
             margin-top: 8px;
@@ -451,6 +466,7 @@
             opacity: 0.85;
         }
 
+        /* 인덱스 푸터 스타일 적용 (Category/Index의 최신 푸터 구조 반영 및 맨 밑 구분선 제거) */
         footer {
             background-color: #f2f4f6;
             border-top: none;
@@ -521,14 +537,13 @@
             .header-main-bar { height: 60px; }
             .logo-img-large { height: 32px; }
             
+            /* 좁은 화면에서 왼쪽 유틸리티 사이드바 확실하게 숨김 */
             .utility-sidebar { display: none !important; }
             
             .page-wrapper { padding: 0 15px; }
             .widget-ads-grid { grid-template-columns: 1fr; }
 
-            .fixed-small-header .header-container { display: none; }
-            .fixed-small-header .mobile-utility-bar { display: flex; }
-
+            /* 모바일 푸터 정렬 대응 */
             .footer-top {
                 flex-direction: column;
                 gap: 20px;
@@ -562,12 +577,14 @@
 
     <!-- 2. 일정 수준 이상 스크롤했을 때 위에서 스르륵 나타나는 고정 소형 헤더 -->
     <header class="fixed-small-header" id="fixedSmallHeader">
-        <div class="header-container">
+        <!-- PC용 고정 헤더 (로고 정가운데) / 모바일 위로 스크롤 시 로고만 표시되는 헤더 -->
+        <div class="header-container" id="fixedHeaderLogoContainer">
             <a href="index.html" class="logo-link">
                 <img src="assets/seologo.png" alt="서오일보 로고" class="logo-img-small">
             </a>
         </div>
-        <div class="mobile-utility-bar">
+        <!-- 모바일 아래로 스크롤 시 나타나는 유틸리티 바 (텍스트 제거 및 이미지 적용) -->
+        <div class="mobile-utility-bar" id="fixedHeaderUtilityContainer">
             <button class="util-btn" onclick="changeFontSize(1)">A+</button>
             <button class="util-btn" onclick="changeFontSize(-1)">A-</button>
             <button class="util-btn" onclick="openPrintWindow()"><img src="assets/print.png" alt="인쇄" class="util-icon"></button>
@@ -578,6 +595,7 @@
 
     <!-- 메인 래퍼 -->
     <div class="page-wrapper">
+        <!-- PC용 유틸리티 사이드바 -->
         <aside class="utility-sidebar" id="utilitySidebar">
             <div class="utility-container">
                 <button class="util-btn" title="글자 키우기" onclick="changeFontSize(1)">A+</button>
@@ -590,6 +608,7 @@
         </aside>
 
         <main>
+            <!-- 정상 기사 영역 -->
             <div id="articleContainer">
                 <div class="article-header">
                     <a href="#" class="article-category" id="articleCategory">카테고리</a>
@@ -635,6 +654,7 @@
                 </div>
             </div>
 
+            <!-- 에러 화면 영역 -->
             <div id="errorContainer" class="error-container">
                 <span class="article-category">[ 알림 ]</span>
                 <div class="error-message">
@@ -650,6 +670,7 @@
         </main>
     </div>
 
+    <!-- 인덱스 푸터 적용 (맨 밑 구분선 없음) -->
     <footer>
         <div class="footer-inner">
             <div class="footer-top">
@@ -688,8 +709,10 @@
         </div>
     </footer>
 
+    <!-- 스크립트 영역 -->
     <script>
         window.addEventListener('DOMContentLoaded', function() {
+            // 날짜 세팅 추가
             const dateEl = document.getElementById('headerDate');
             if(dateEl) {
                 const now = new Date();
@@ -718,6 +741,15 @@
                     return response.json();
                 })
                 .then(data => {
+                    // 카카오톡 공유 미리보기(OG 태그) 동적 변경
+                    document.getElementById('ogTitle').setAttribute('content', data.title);
+                    document.getElementById('ogDesc').setAttribute('content', "여기를 눌러 링크를 확인하세요.");
+                    if (data.image && data.image.trim() !== "") {
+                        const absoluteImageUrl = window.location.origin + "/" + data.image.replace(/^\//, '');
+                        document.getElementById('ogImage').setAttribute('content', absoluteImageUrl);
+                    }
+                    document.getElementById('ogUrl').setAttribute('content', window.location.href);
+
                     document.getElementById('pageTitle').innerText = data.title + " | 서오일보";
                     
                     const categoryEl = document.getElementById('articleCategory');
@@ -733,15 +765,9 @@
                     document.getElementById('articleReporter').innerText = data.reporter; 
                     document.getElementById('articleDate').innerText = "입력 : " + data.date;
                     
-                    // 대표 이미지 처리 (기존 호환)
                     const imageArea = document.getElementById('articleImageArea');
                     if (data.image && data.image.trim() !== "") {
-                        let imgHtml = `<div class="article-image-container"><img src="${data.image}" alt="기사 대표 이미지">`;
-                        if (data.imageCaption && data.imageCaption.trim() !== "") {
-                            imgHtml += `<div class="image-caption">${data.imageCaption}</div>`;
-                        }
-                        imgHtml += `</div>`;
-                        imageArea.innerHTML = imgHtml;
+                        imageArea.innerHTML = `<div class="article-image-container"><img src="${data.image}" alt="기사 대표 이미지"></div>`;
                     } else {
                         imageArea.innerHTML = '';
                     }
@@ -753,40 +779,42 @@
                     const contentContainer = document.getElementById('articleBody');
                     contentContainer.innerHTML = '';
 
-                    // 본문 내용 및 특정 문단 뒤 다중 이미지 처리 지원 (JSON 내 images 배열 [{ afterParagraph: index, url: '...', caption: '...' }] 형태 지원)
-                    data.content.forEach((paragraph, index) => {
-                        const p = document.createElement('p');
-                        p.innerText = paragraph;
-                        contentContainer.appendChild(p);
+                    // 본문 내용 및 다중 이미지 렌더링 지원 (JSON 내에 inlineImages 배열이 존재할 경우 특정 문단 뒤에 삽입)
+                    if (data.content && Array.isArray(data.content)) {
+                        data.content.forEach((paragraph, index) => {
+                            const p = document.createElement('p');
+                            p.innerText = paragraph;
+                            contentContainer.appendChild(p);
 
-                        // 다중 이미지 삽입 체크
-                        if (data.extraImages && Array.isArray(data.extraImages)) {
-                            data.extraImages.forEach(imgObj => {
-                                if (imgObj.afterParagraph === index) {
-                                    const extraImgContainer = document.createElement('div');
-                                    extraImgContainer.className = 'article-image-container';
-                                    let extraHtml = `<img src="${imgObj.url}" alt="추가 이미지">`;
-                                    if (imgObj.caption && imgObj.caption.trim() !== "") {
-                                        extraHtml += `<div class="image-caption">${imgObj.caption}</div>`;
+                            // JSON에서 inlineImages가 정의되어 있고, 특정 문단 index 뒤에 매칭되는 이미지가 있는 경우 처리
+                            if (data.inlineImages && Array.isArray(data.inlineImages)) {
+                                const matchedImage = data.inlineImages.find(img => img.afterParagraph === index);
+                                if (matchedImage && matchedImage.url) {
+                                    const imgWrap = document.createElement('div');
+                                    imgWrap.className = 'article-inline-image-wrap';
+                                    
+                                    let imgHtml = `<img src="${matchedImage.url}" alt="${matchedImage.caption || '본문 이미지'}">`;
+                                    if (matchedImage.caption && matchedImage.caption.trim() !== "") {
+                                        imgHtml += `<div class="article-image-caption">${matchedImage.caption}</div>`;
                                     }
-                                    extraImgContainer.innerHTML = extraHtml;
-                                    contentContainer.appendChild(extraImgContainer);
+                                    imgWrap.innerHTML = imgHtml;
+                                    contentContainer.appendChild(imgWrap);
                                 }
-                            });
-                        }
+                            }
 
-                        if (index === 1) {
-                            const adBox = document.createElement('div');
-                            adBox.className = 'ad-box';
-                            adBox.innerHTML = `
-                                <a href="#" id="adLink" target="_blank" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
-                                    <img id="randomAdImage" src="" alt="추천 광고">
-                                </a>
-                            `;
-                            contentContainer.appendChild(adBox);
-                            loadRandomAd();
-                        }
-                    });
+                            if (index === 1) {
+                                const adBox = document.createElement('div');
+                                adBox.className = 'ad-box';
+                                adBox.innerHTML = `
+                                    <a href="#" id="adLink" target="_blank" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
+                                        <img id="randomAdImage" src="" alt="추천 광고">
+                                    </a>
+                                `;
+                                contentContainer.appendChild(adBox);
+                                loadRandomAd();
+                            }
+                        });
+                    }
 
                     document.getElementById('articleContainer').style.display = 'block';
                     document.getElementById('errorContainer').style.display = 'none';
@@ -810,13 +838,16 @@
             document.getElementById('errorContainer').style.display = 'block';
         }
 
+        // 스크롤 방향 및 위치 감지 로직 (모바일 헤더 전환 기능 구현)
         let lastScrollTop = 0;
         window.addEventListener('scroll', function() {
             const fixedHeader = document.getElementById('fixedSmallHeader');
             const largeHeader = document.getElementById('largeHeader');
             const progressBar = document.getElementById('scrollProgressBar');
+            const logoContainer = document.getElementById('fixedHeaderLogoContainer');
+            const utilityContainer = document.getElementById('fixedHeaderUtilityContainer');
             
-            const winScroll = window.documentElement.scrollTop || document.body.scrollTop;
+            const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
             const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
             const scrolled = (winScroll / height) * 100;
             
@@ -826,24 +857,30 @@
 
             const threshold = largeHeader ? largeHeader.offsetHeight : 111;
 
-            // 모바일 환경에서의 스크롤 방향 감지 및 헤더 토글
-            if (window.innerWidth <= 768) {
-                if (winScroll > lastScrollTop && winScroll > threshold) {
-                    // 아래로 스크롤 시: 소형 헤더(유틸리티바) 등장
-                    fixedHeader.classList.add('active');
+            if (winScroll > threshold) {
+                fixedHeader.classList.add('active');
+                
+                // 모바일 환경(폭 768px 이하) 체크
+                if (window.innerWidth <= 768) {
+                    const st = window.pageYOffset || document.documentElement.scrollTop;
+                    if (st < lastScrollTop) {
+                        // 위로 스크롤: 로고만 있는 헤더로 전환
+                        if(logoContainer) logoContainer.style.display = 'flex';
+                        if(utilityContainer) utilityContainer.style.display = 'none';
+                    } else {
+                        // 아래로 내릴 때: 기존 스크롤 프로세서와 유틸리티 표시
+                        if(logoContainer) logoContainer.style.display = 'none';
+                        if(utilityContainer) utilityContainer.style.display = 'flex';
+                    }
+                    lastScrollTop = st <= 0 ? 0 : st;
                 } else {
-                    // 위로 스크롤 시: 소형 헤더 숨김 (로고만 있는 기본 큰 헤더 영역 노출)
-                    fixedHeader.classList.remove('active');
+                    // PC 버전은 기존 방식 유지
+                    if(logoContainer) logoContainer.style.display = 'flex';
+                    if(utilityContainer) utilityContainer.style.display = 'none';
                 }
             } else {
-                // PC 환경 기존 로직 유지
-                if (winScroll > threshold) {
-                    fixedHeader.classList.add('active');
-                } else {
-                    fixedHeader.classList.remove('active');
-                }
+                fixedHeader.classList.remove('active');
             }
-            lastScrollTop = winScroll <= 0 ? 0 : winScroll;
         });
 
         let currentFontSize = 18;
@@ -917,8 +954,7 @@
                         }
                         h1 { font-size: 24pt; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
                         p { font-size: 12pt; margin-bottom: 15px; }
-                        .article-image-container img { width: 100%; height: auto; max-height: 500px; object-fit: cover; }
-                        .image-caption { font-size: 11pt; color: #666; margin-top: 6px; text-align: center; }
+                        .article-image-container img, .article-inline-image-wrap img { width: 100%; height: auto; max-height: 500px; object-fit: cover; }
 
                         .ad-box, .reporter-section, .widget-ads-container {
                             display: none !important;
