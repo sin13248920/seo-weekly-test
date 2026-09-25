@@ -575,7 +575,6 @@
             <button class="util-btn" onclick="changeFontSize(1)">A+</button>
             <button class="util-btn" onclick="changeFontSize(-1)">A-</button>
             <button class="util-btn" onclick="openPrintWindow()"><img src="assets/print.png" alt="인쇄" class="util-icon"></button>
-            <!-- 모바일 공유 버튼에 copyShareUrl 적용 -->
             <button class="util-btn" onclick="copyShareUrl()"><img src="assets/share.png" alt="공유" class="util-icon"></button>
         </div>
         <div class="scroll-progress-bar" id="scrollProgressBar"></div>
@@ -591,7 +590,6 @@
                 <div class="util-divider"></div>
                 <button class="util-btn" title="인쇄하기" onclick="openPrintWindow()"><img src="assets/print.png" alt="인쇄" class="util-icon"></button>
                 <div class="util-divider"></div>
-                <!-- PC 공유 버튼에 copyShareUrl 적용 -->
                 <button class="util-btn" title="공유하기" onclick="copyShareUrl()"><img src="assets/share.png" alt="공유" class="util-icon"></button>
             </div>
         </aside>
@@ -700,21 +698,7 @@
 
     <!-- 스크립트 영역 -->
     <script>
-        // 프로젝트 저장소 이름 설정 ('seo-weekly-test')
-        const REPO_NAME = 'seo-weekly-test';
-
-        // GitHub Pages 등에서 하위 경로를 자동으로 처리하는 함수
-        function getBasePath() {
-            const pathSegments = window.location.pathname.split('/').filter(Boolean);
-            if (pathSegments.length > 0 && pathSegments[0] === REPO_NAME) {
-                return '/' + REPO_NAME;
-            }
-            return '';
-        }
-
         window.addEventListener('DOMContentLoaded', function() {
-            const basePath = getBasePath();
-
             const dateEl = document.getElementById('headerDate');
             if(dateEl) {
                 const now = new Date();
@@ -733,8 +717,7 @@
                 return;
             }
 
-            // 경로 누락 문제 방지를 위해 프로젝트 이름 폴더 구조 반영
-            const jsonFilePath = basePath ? `${basePath}/articles/${articleId}.json` : `articles/${articleId}.json`;
+            const jsonFilePath = `articles/${articleId}.json`;
 
             fetch(jsonFilePath)
                 .then(response => {
@@ -753,8 +736,7 @@
                     if (data.category === '경제') categoryType = 'economy';
                     else if (data.category === '문화') categoryType = 'culture';
                     else if (data.category === '사회') categoryType = 'society';
-                    
-                    categoryEl.href = basePath ? `${basePath}/category.html?type=${categoryType}` : `category.html?type=${categoryType}`;
+                    categoryEl.href = `category.html?type=${categoryType}`;
 
                     document.getElementById('articleTitle').innerText = data.title;
                     document.getElementById('articleReporter').innerText = data.reporter; 
@@ -838,7 +820,7 @@
                     document.getElementById('ogDesc').setAttribute('content', summaryText);
 
                     if (mainImgUrl && mainImgUrl.trim() !== "") {
-                        const absoluteImageUrl = window.location.origin + basePath + "/" + mainImgUrl.replace(/^\//, '');
+                        const absoluteImageUrl = window.location.origin + "/" + mainImgUrl.replace(/^\//, '');
                         document.getElementById('ogImage').setAttribute('content', absoluteImageUrl);
                     }
                     
@@ -1028,7 +1010,7 @@
             }
         }
 
-        // 공유 버튼을 눌렀을 때 /post/ID 주소를 클립보드에 복사해 주는 함수
+        // 공유 버튼을 눌렀을 때 프로젝트 이름(seo-weekly-test)을 포함한 ?id= 주소를 클립보드에 복사
         function copyShareUrl() {
             const urlParams = new URLSearchParams(window.location.search);
             const articleId = urlParams.get('id');
@@ -1038,8 +1020,7 @@
                 return;
             }
 
-            const basePath = getBasePath();
-            const shareUrl = `${window.location.origin}${basePath}/post/${articleId}`;
+            const shareUrl = `${window.location.origin}/seo-weekly-test/viewer.html?id=${articleId}`;
 
             navigator.clipboard.writeText(shareUrl).then(() => {
                 alert('기사 공유 링크가 복사되었습니다!\n카카오톡 등에 붙여넣어 보세요.');
