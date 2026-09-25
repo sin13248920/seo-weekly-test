@@ -2,51 +2,54 @@ const fs = require('fs');
 const path = require('path');
 
 exports.handler = async function(event, context) {
-    // 1. URL에서 글 번호(id) 가져오기 (예: /api/og?id=1)
+    // 1. URL에서 글 번호(id) 가져오기 (예: /api/og?id=1 또는 _redirects를 통한 /post/1)
     const id = event.queryStringParameters.id;
     
-    // 기본값 설정 (id가 없을 때)
-    let title = "내 사이트 제목";
-    let description = "내 사이트 설명";
-    let image = "https://기본로고주소.png";
-    let url = event.headers.host;
+    // 기본값 설정 (id가 없거나 잘못되었을 때)
+    let title = "사이트 기본 제목";
+    let description = "사이트 기본 설명 문구";
+    let image = "https://여러분의도메인주소.netlify.app/images/default-logo.png"; // 기본 로고 이미지 절대경로
+    let host = event.headers.host || "여러분의도메인주소.netlify.app";
 
-    try {
-        // 2. JSON 파일 읽어오기 (경로는 프로젝트 구조에 맞게 수정 필요)
-        const jsonPath = path.resolve(__dirname, '../../data.json'); 
-        const jsonData = fs.readFileSync(jsonPath, 'utf-8');
-        const items = JSON.parse(jsonData);
+    if (id) {
+        try {
+            // 2. articles 폴더 안에서 해당 id에 맞는 JSON 파일 읽기 (예: articles/1.json)
+            // __dirname 기준 상위로 두 번 올라가서 articles 폴더로 접근
+            const jsonPath = path.resolve(__dirname, `../../articles/${id}.json`);
+            
+            if (fs.existsSync(jsonPath)) {
+                const jsonData = fs.readFileSync(jsonPath, 'utf-8');
+                const targetItem = JSON.parse(jsonData);
 
-        // 3. 요청된 id와 일치하는 데이터 찾기
-        const targetItem = items.find(item => item.id == id); // json의 key 이름이 id가 아니라면 수정하세요 (예: item.no)
-
-        if (targetItem) {
-            title = targetItem.title;
-            description = targetItem.content ? targetItem.content.substring(0, 100) : description; // 내용 앞부분 100자
-            image = targetItem.image || image;
+                // JSON 내부 키 이름(title, content, image 등)에 맞춰 수정하세요
+                title = targetItem.title || title;
+                description = targetItem.content ? targetItem.content.substring(0, 100) : description;
+                image = targetItem.image || image;
+            }
+        } catch (error) {
+            console.error(`JSON 파일 로딩 에러 (id: ${id}):`, error);
         }
-    } catch (error) {
-        console.error("JSON 로딩 에러:", error);
     }
 
-    // 4. 카카오톡 크롤러에게 보여줄 동적 HTML 반환
+    // 3. 카카오톡 크롤러에게 보여줄 동적 HTML 반환
     const html = `
     <!DOCTYPE html>
     <html lang="ko">
     <head>
         <meta charset="UTF-8">
         <title>${title}</title>
-        <!-- 카카오톡/페이스북 등 오픈그래프(OG) 태그 -->
+        
+        <!-- 카카오톡/페이스북 등 오픈그래프(OG) 메타 태그 -->
         <meta property="og:title" content="${title}">
         <meta property="og:description" content="${description}">
         <meta property="og:image" content="${image}">
-        <meta property="og:url" content="https://${url}">
+        <meta property="og:url" content="https://${host}/post/${id || ''}">
         
-        <!-- 일반 사용자가 접속했을 때 원래 웹사이트(index.html)로 튕겨주기 위한 리다이렉트 -->
-        <meta http-equiv="refresh" content="0;url=/index.html?id=${id}">
+        <!-- 일반 사용자가 접속했을 때 실제 본문 페이지(예: detail.html 또는 index.html)로 이동시키기 -->
+        <meta http-equiv="refresh" content="0;url=/detail.html?id=${id}">
     </head>
     <body>
-        <p>페이지를 이동 중입니다...</p>
+        <p>게시글을 불러오는 중입니다...</p>
     </body>
     </html>
     `;
