@@ -748,7 +748,8 @@
                     return response.json();
                 })
                 .then(data => {
-                    document.getElementById('pageTitle').innerText = data.title + " | 서오일보";
+                    // 1. 브라우저 창 이름을 (서오일보 | 기사제목)으로 설정
+                    document.getElementById('pageTitle').innerText = "서오일보 | " + data.title;
                     
                     const categoryEl = document.getElementById('articleCategory');
                     categoryEl.innerText = data.category;
@@ -765,10 +766,14 @@
                     
                     // 메인 이미지 및 캡션 처리 (문자열 및 객체 모두 지원)
                     const imageArea = document.getElementById('articleImageArea');
+                    let mainImgUrl = ""; // 공유(OG)용 맨 위 이미지 경로 저장 변수
+
                     if (data.image) {
                         if (typeof data.image === 'string' && data.image.trim() !== "") {
+                            mainImgUrl = data.image;
                             imageArea.innerHTML = `<div class="article-image-container"><img src="${data.image}" alt="기사 대표 이미지"></div>`;
                         } else if (typeof data.image === 'object' && data.image.url) {
+                            mainImgUrl = data.image.url;
                             let mainImgHtml = `<div class="article-image-container"><img src="${data.image.url}" alt="기사 대표 이미지">`;
                             if (data.image.caption) {
                                 mainImgHtml += `<div class="article-img-caption">${data.image.caption}</div>`;
@@ -825,6 +830,28 @@
                             loadRandomAd();
                         }
                     });
+
+                    // 2. 링크 공유(OG) 시 제목을 기사 제목으로 설정
+                    document.getElementById('ogTitle').setAttribute('content', data.title);
+
+                    // 3. 링크 공유(OG) 시 설명에 기사 내용(첫 번째 문단)이 나오도록 설정
+                    let summaryText = "서오일보 기사 내용";
+                    if (data.content && data.content.length > 0) {
+                        if (typeof data.content[0] === 'string') {
+                            summaryText = data.content[0];
+                        } else if (typeof data.content[0] === 'object' && data.content[0].value) {
+                            summaryText = data.content[0].value;
+                        }
+                    }
+                    document.getElementById('ogDesc').setAttribute('content', summaryText);
+
+                    // 4. 링크 공유(OG) 시 이미지를 기사 맨 위의 이미지로 설정
+                    if (mainImgUrl && mainImgUrl.trim() !== "") {
+                        const absoluteImageUrl = window.location.origin + "/" + mainImgUrl.replace(/^\//, '');
+                        document.getElementById('ogImage').setAttribute('content', absoluteImageUrl);
+                    }
+                    
+                    document.getElementById('ogUrl').setAttribute('content', window.location.href);
 
                     document.getElementById('articleContainer').style.display = 'block';
                     document.getElementById('errorContainer').style.display = 'none';
