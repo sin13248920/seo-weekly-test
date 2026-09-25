@@ -303,14 +303,14 @@
 
         .article-content {
             font-size: 18px;
-            color: #000000; /* 기사 내용 글씨를 검정색으로 변경 */
+            color: #000000;
             line-height: 1.85;
             margin-bottom: 40px;
         }
 
         .article-content p {
             margin-bottom: 28px;
-            color: #000000; /* 본문 문단 글씨도 명확한 검정색 적용 */
+            color: #000000;
         }
 
         .ad-box {
@@ -465,7 +465,6 @@
             opacity: 0.85;
         }
 
-        /* 인덱스 푸터 스타일 적용 (Category/Index의 최신 푸터 구조 반영 및 맨 밑 구분선 제거) */
         footer {
             background-color: #f2f4f6;
             border-top: none;
@@ -530,37 +529,20 @@
             font-weight: 500;
         }
 
-        /* 반응형 모바일 설정 (768px 이하) */
         @media (max-width: 768px) {
             .sub-info-bar { display: none; }
             .header-main-bar { height: 60px; }
             .logo-img-large { height: 32px; }
-            
-            /* 좁은 화면에서 왼쪽 유틸리티 사이드바 확실하게 숨김 */
             .utility-sidebar { display: none !important; }
-            
             .page-wrapper { padding: 0 15px; }
             .widget-ads-grid { grid-template-columns: 1fr; }
-
-            /* 모바일 고정 헤더 설정 (기본 상태는 유틸리티 바 숨김, JS 및 클래스로 제어) */
             .fixed-small-header .header-container { display: flex; }
             .fixed-small-header .mobile-utility-bar { display: none; }
-
-            /* 모바일에서 스크롤 다운 시 유틸리티 바가 나타나도록 하는 클래스 제어용 */
             .fixed-small-header.mobile-scrolled-down .header-container { display: none; }
             .fixed-small-header.mobile-scrolled-down .mobile-utility-bar { display: flex; }
-
-            /* 모바일 푸터 정렬 대응 */
-            .footer-top {
-                flex-direction: column;
-                gap: 20px;
-            }
-            .footer-bar {
-                margin: 0 6px;
-            }
-            footer {
-                padding: 20px 15px;
-            }
+            .footer-top { flex-direction: column; gap: 20px; }
+            .footer-bar { margin: 0 6px; }
+            footer { padding: 20px 15px; }
         }
     </style>
 </head>
@@ -584,18 +566,17 @@
 
     <!-- 2. 일정 수준 이상 스크롤했을 때 위에서 스르륵 나타나는 고정 소형 헤더 -->
     <header class="fixed-small-header" id="fixedSmallHeader">
-        <!-- PC 및 모바일(위로 스크롤 시)용 고정 헤더 (로고 정가운데) -->
         <div class="header-container">
             <a href="index.html" class="logo-link">
                 <img src="assets/seologo.png" alt="서오일보 로고" class="logo-img-small">
             </a>
         </div>
-        <!-- 모바일 스크롤 다운 시 나타나는 유틸리티 바 -->
         <div class="mobile-utility-bar">
             <button class="util-btn" onclick="changeFontSize(1)">A+</button>
             <button class="util-btn" onclick="changeFontSize(-1)">A-</button>
             <button class="util-btn" onclick="openPrintWindow()"><img src="assets/print.png" alt="인쇄" class="util-icon"></button>
-            <button class="util-btn" onclick="alert('기사 링크가 복사되었습니다.')"><img src="assets/share.png" alt="공유" class="util-icon"></button>
+            <!-- 모바일 공유 버튼에 copyShareUrl 적용 -->
+            <button class="util-btn" onclick="copyShareUrl()"><img src="assets/share.png" alt="공유" class="util-icon"></button>
         </div>
         <div class="scroll-progress-bar" id="scrollProgressBar"></div>
     </header>
@@ -610,7 +591,8 @@
                 <div class="util-divider"></div>
                 <button class="util-btn" title="인쇄하기" onclick="openPrintWindow()"><img src="assets/print.png" alt="인쇄" class="util-icon"></button>
                 <div class="util-divider"></div>
-                <button class="util-btn" title="공유하기" onclick="alert('기사 링크가 복사되었습니다.')"><img src="assets/share.png" alt="공유" class="util-icon"></button>
+                <!-- PC 공유 버튼에 copyShareUrl 적용 -->
+                <button class="util-btn" title="공유하기" onclick="copyShareUrl()"><img src="assets/share.png" alt="공유" class="util-icon"></button>
             </div>
         </aside>
 
@@ -677,7 +659,7 @@
         </main>
     </div>
 
-    <!-- 인덱스 푸터 적용 (맨 밑 구분선 없음) -->
+    <!-- 푸터 -->
     <footer>
         <div class="footer-inner">
             <div class="footer-top">
@@ -719,7 +701,6 @@
     <!-- 스크립트 영역 -->
     <script>
         window.addEventListener('DOMContentLoaded', function() {
-            // 날짜 세팅 추가
             const dateEl = document.getElementById('headerDate');
             if(dateEl) {
                 const now = new Date();
@@ -748,7 +729,6 @@
                     return response.json();
                 })
                 .then(data => {
-                    // 1. 브라우저 창 이름을 (서오일보 | 기사제목)으로 설정
                     document.getElementById('pageTitle').innerText = "서오일보 | " + data.title;
                     
                     const categoryEl = document.getElementById('articleCategory');
@@ -764,9 +744,8 @@
                     document.getElementById('articleReporter').innerText = data.reporter; 
                     document.getElementById('articleDate').innerText = "입력 : " + data.date;
                     
-                    // 메인 이미지 및 캡션 처리 (문자열 및 객체 모두 지원)
                     const imageArea = document.getElementById('articleImageArea');
-                    let mainImgUrl = ""; // 공유(OG)용 맨 위 이미지 경로 저장 변수
+                    let mainImgUrl = "";
 
                     if (data.image) {
                         if (typeof data.image === 'string' && data.image.trim() !== "") {
@@ -795,7 +774,6 @@
                     contentContainer.innerHTML = '';
 
                     data.content.forEach((item, index) => {
-                        // 문자열인 경우 기존 문단 처리, 객체(문단 및 이미지/설명 포함)인 경우 복수 이미지 렌더링 지원
                         if (typeof item === 'string') {
                             const p = document.createElement('p');
                             p.innerText = item;
@@ -831,10 +809,8 @@
                         }
                     });
 
-                    // 2. 링크 공유(OG) 시 제목을 기사 제목으로 설정
                     document.getElementById('ogTitle').setAttribute('content', data.title);
 
-                    // 3. 링크 공유(OG) 시 설명에 기사 내용(첫 번째 문단)이 나오도록 설정
                     let summaryText = "서오일보 기사 내용";
                     if (data.content && data.content.length > 0) {
                         if (typeof data.content[0] === 'string') {
@@ -845,7 +821,6 @@
                     }
                     document.getElementById('ogDesc').setAttribute('content', summaryText);
 
-                    // 4. 링크 공유(OG) 시 이미지를 기사 맨 위의 이미지로 설정
                     if (mainImgUrl && mainImgUrl.trim() !== "") {
                         const absoluteImageUrl = window.location.origin + "/" + mainImgUrl.replace(/^\//, '');
                         document.getElementById('ogImage').setAttribute('content', absoluteImageUrl);
@@ -894,13 +869,10 @@
             if (winScroll > threshold) {
                 fixedHeader.classList.add('active');
                 
-                // 모바일 환경 헤더 스크롤 방향 감지 (위로 스크롤: 로고만, 아래로 스크롤: 프로세서 바 및 유틸리티)
                 if (window.innerWidth <= 768) {
                     if (winScroll < lastScrollTop) {
-                        // 위로 스크롤
                         fixedHeader.classList.remove('mobile-scrolled-down');
                     } else {
-                        // 아래로 스크롤
                         fixedHeader.classList.add('mobile-scrolled-down');
                     }
                 }
@@ -1038,6 +1010,26 @@
                 imgElement.src = adImages[randomIndex];
                 linkElement.href = adLinks[randomIndex];
             }
+        }
+
+        // 공유 버튼을 눌렀을 때 /post/ID 주소를 클립보드에 복사해 주는 함수 추가 완료
+        function copyShareUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const articleId = urlParams.get('id');
+            
+            if (!articleId) {
+                alert('기사 주소를 찾을 수 없습니다.');
+                return;
+            }
+
+            const shareUrl = `${window.location.origin}/post/${articleId}`;
+
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                alert('기사 공유 링크가 복사되었습니다!\n카카오톡 등에 붙여넣어 보세요.');
+            }).catch(err => {
+                console.error('링크 복사 실패:', err);
+                alert('링크 복사에 실패했습니다.');
+            });
         }
     </script>
 
