@@ -52,15 +52,39 @@ if (fs.existsSync(articlesDir)) {
             const articleId = path.basename(file, '.json');
             const articleData = JSON.parse(fs.readFileSync(path.join(articlesDir, file), 'utf8'));
 
-            // 각 기사 전용 HTML 생성 (OG 태그 포함 + 실제 내용은 viewer.html과 연동하거나 리다이렉트)
+            // ★ [수정됨] content가 배열이든 문자열이든 에러 안 나게 안전하게 글자 추출하는 로직
+            let summaryText = "";
+            if (Array.isArray(articleData.content) && articleData.content.length > 0) {
+                const firstItem = articleData.content[0];
+                if (typeof firstItem === 'string') {
+                    summaryText = firstItem;
+                } else if (typeof firstItem === 'object' && firstItem !== null && firstItem.value) {
+                    summaryText = firstItem.value;
+                }
+            } else if (typeof articleData.content === 'string') {
+                summaryText = articleData.content;
+            }
+            summaryText = summaryText.substring(0, 100);
+
+            // 이미지 경로 안전하게 처리 (문자열 혹은 객체 대응)
+            let imgUrl = 'https://your-domain.netlify.app/images/default-logo.png';
+            if (articleData.image) {
+                if (typeof articleData.image === 'string') {
+                    imgUrl = articleData.image;
+                } else if (typeof articleData.image === 'object' && articleData.image.url) {
+                    imgUrl = articleData.image.url;
+                }
+            }
+
+            // 각 기사 전용 HTML 생성
             const htmlContent = `<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>${articleData.title} - 서오일보</title>
     <meta property="og:title" content="${articleData.title}">
-    <meta property="og:description" content="${articleData.content ? articleData.content.substring(0, 100) : ''}">
-    <meta property="og:image" content="${articleData.image || 'https://your-domain.netlify.app/images/default-logo.png'}">
+    <meta property="og:description" content="${summaryText}">
+    <meta property="og:image" content="${imgUrl}">
     <meta property="og:url" content="https://your-domain.netlify.app/post/${articleId}.html">
     <meta http-equiv="refresh" content="0;url=/viewer.html?id=${articleId}">
 </head>
