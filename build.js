@@ -85,7 +85,7 @@ if (fs.existsSync(articlesDir)) {
     <meta property="og:title" content="${articleData.title}">
     <meta property="og:description" content="${summaryText}">
     <meta property="og:image" content="${imgUrl}">
-    <meta property="og:url" content="https://your-domain.netlify.app/post/${articleId}.html">
+    <meta property="og:url" content="https://sin13248920.github.io/seo-weekly-test/post/${articleId}.html">
     <meta http-equiv="refresh" content="0;url=/viewer.html?id=${articleId}">
 </head>
 <body>
