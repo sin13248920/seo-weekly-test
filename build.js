@@ -2,8 +2,8 @@ const fs = require('fs');
 const path = require('path');
 
 // ★ [설정] 본인의 깃허브 아이디와 저장소(프로젝트) 이름으로 수정해주세요!
-const GITHUB_USER = '김서오 아이디(예: seoo)'; // 예: 'seoo'
-const REPO_NAME = 'seo-weekly-test';           // 예: 'seo-weekly-test'
+const GITHUB_USER = 'seoo';              // 본인의 깃허브 아이디
+const REPO_NAME = 'seo-weekly-test';     // 본인의 저장소 이름
 
 // GitHub Pages 전용 기본 URL (예: https://seoo.github.io/seo-weekly-test)
 const BASE_URL = `https://${GITHUB_USER}.github.io/${REPO_NAME}`;
@@ -41,7 +41,6 @@ if (fs.existsSync(path.join(__dirname, 'articles'))) {
 if (fs.existsSync(path.join(__dirname, 'images'))) {
     copyRecursiveSync(path.join(__dirname, 'images'), path.join(distDir, 'images'));
 }
-// 추가로 assets 폴더가 있다면 복사
 if (fs.existsSync(path.join(__dirname, 'assets'))) {
     copyRecursiveSync(path.join(__dirname, 'assets'), path.join(distDir, 'assets'));
 }
@@ -74,8 +73,8 @@ if (fs.existsSync(articlesDir)) {
             }
             summaryText = summaryText.substring(0, 100);
 
-            // 이미지 주소 정밀 가공 (post/ 폴더 안에 위치해도 절대 경로로 완벽하게 찾아가도록 수정)
-            let imgUrl = `${BASE_URL}/images/default-logo.png`; // 기본 이미지
+            // ★ [핵심 수정] post/ 경로가 절대 끼어들지 않도록 최상위 절대 URL로 깔끔하게 조합
+            let imgUrl = `${BASE_URL}/images/default-logo.png`; 
             if (articleData.image) {
                 let rawImg = "";
                 if (typeof articleData.image === 'string') {
@@ -88,17 +87,16 @@ if (fs.existsSync(articlesDir)) {
                     if (rawImg.startsWith('http://') || rawImg.startsWith('https://')) {
                         imgUrl = rawImg;
                     } else {
-                        // 맨 앞의 슬래시(/)나 불필요한 상대경로 기호들을 깔끔하게 정리
-                        const cleanPath = rawImg.replace(/^(\.\/|\/)+/, '');
-                        // 무조건 BASE_URL을 기준으로 절대 경로 완성 (post/ 경로에 영향을 받지 않음)
-                        imgUrl = `${BASE_URL}/${cleanPath}`;
+                        // 맨 앞에 붙을 수 있는 슬래시나 불필요한 상대경로 기호를 깔끔하게 정리
+                        const cleanImgPath = rawImg.replace(/^(\.\/|\/)+/, '');
+                        imgUrl = `${BASE_URL}/${cleanImgPath}`;
                     }
                 }
             }
 
-            // 각 기사별 페이지 주소 (프로젝트 이름 포함)
+            // 각 기사별 페이지 주소
             const postUrl = `${BASE_URL}/post/${articleId}.html`;
-            // 리다이렉트될 뷰어 주소 (프로젝트 이름 포함)
+            // 리다이렉트될 뷰어 주소
             const redirectUrl = `/${REPO_NAME}/viewer.html?id=${articleId}`;
 
             // 기사별 HTML 내용 생성
@@ -121,5 +119,5 @@ if (fs.existsSync(articlesDir)) {
             fs.writeFileSync(path.join(postDir, `${articleId}.html`), htmlContent);
         }
     });
-    console.log('✨ 프로젝트 경로가 반영된 기사별 OG HTML 생성 완료!');
+    console.log('✨ 이미지가 루트 경로로 정확히 연결된 OG HTML 생성 완료!');
 }
