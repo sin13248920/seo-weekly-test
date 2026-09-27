@@ -74,7 +74,7 @@ if (fs.existsSync(articlesDir)) {
             }
             summaryText = summaryText.substring(0, 100);
 
-            // 이미지 주소 정밀 가공 (프로젝트 이름이 빠지지 않도록 절대 경로로 조합)
+            // 이미지 주소 정밀 가공 (post/ 폴더 안에 위치해도 절대 경로로 완벽하게 찾아가도록 수정)
             let imgUrl = `${BASE_URL}/images/default-logo.png`; // 기본 이미지
             if (articleData.image) {
                 let rawImg = "";
@@ -88,8 +88,10 @@ if (fs.existsSync(articlesDir)) {
                     if (rawImg.startsWith('http://') || rawImg.startsWith('https://')) {
                         imgUrl = rawImg;
                     } else {
-                        // 상대 경로인 경우 앞에 올바른 BASE_URL과 프로젝트 경로 결합
-                        imgUrl = `${BASE_URL}/${rawImg.replace(/^\//, '')}`;
+                        // 맨 앞의 슬래시(/)나 불필요한 상대경로 기호들을 깔끔하게 정리
+                        const cleanPath = rawImg.replace(/^(\.\/|\/)+/, '');
+                        // 무조건 BASE_URL을 기준으로 절대 경로 완성 (post/ 경로에 영향을 받지 않음)
+                        imgUrl = `${BASE_URL}/${cleanPath}`;
                     }
                 }
             }
