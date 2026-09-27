@@ -1,8 +1,11 @@
 {
     "id": "26091102",
     "category": "사회",
-    "title": "장안동의 대표아파트 장안현대홈타운",
-    "image": "images/hometownjang.jpg", 
+    "title": "장안동 장안현대홈타운 1차 아파트",
+    "image": {
+         "url": "images/hometownjang.jpg",
+         "caption": "중랑천에서 촬영한 장안현대홈타운1차 아파트 전경"
+     }, 
     "reporter": "서오일보",
     "date": "2026-09-11 14:24",
     "content": [
