@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 // ★ [설정] 본인의 깃허브 아이디와 저장소(프로젝트) 이름으로 수정해주세요!
-const GITHUB_USER = 'seoo';              // 본인의 깃허브 아이디
+const GITHUB_USER = 'sin13248920';              // 본인의 깃허브 아이디
 const REPO_NAME = 'seo-weekly-test';     // 본인의 저장소 이름
 
 // GitHub Pages 전용 기본 URL (예: https://seoo.github.io/seo-weekly-test)
