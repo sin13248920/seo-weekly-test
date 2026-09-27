@@ -1,58 +1,76 @@
 const fs = require('fs');
 const path = require('path');
 
-// 폴더 경로 설정 (본인 프로젝트 구조에 맞게 폴더 이름 확인)
-const articlesDir = path.join(__dirname, 'articles');
-const postsDir = path.join(__dirname, 'posts');
-const templatePath = path.join(__dirname, 'template.html');
-
-// posts 폴더가 없으면 자동 생성
-if (!fs.existsSync(postsDir)) {
-    fs.mkdirSync(postsDir, { recursive: true });
+// 1. 출력할 'dist' 폴더 생성 (여기가 넷플리파이 publish directory가 됩니다)
+const distDir = path.join(__dirname, 'dist');
+if (!fs.existsSync(distDir)){
+    fs.mkdirSync(distDir, { recursive: true });
 }
 
-// 템플릿 읽기
-const templateHtml = fs.readFileSync(templatePath, 'utf-8');
-
-// articles 폴더 안의 모든 JSON 파일 읽기
-fs.readdir(articlesDir, (err, files) => {
-    if (err) {
-        console.error('articles 폴더를 읽지 못했습니다:', err);
-        return;
+// 2. 기본 파일들(index.html, articles 폴더, images 등)을 dist 폴더로 복사
+function copyRecursiveSync(src, dest) {
+    const exists = fs.existsSync(src);
+    const stats = exists && fs.statSync(src);
+    if (stats && stats.isDirectory()) {
+        if (!fs.existsSync(dest)) fs.mkdirSync(dest);
+        fs.readdirSync(src).forEach(childItemName => {
+            copyRecursiveSync(path.join(src, childItemName), path.join(dest, childItemName));
+        });
+    } else {
+        fs.copyFileSync(src, dest);
     }
+}
 
+// index.html 복사
+if (fs.existsSync(path.join(__dirname, 'index.html'))) {
+    fs.copyFileSync(path.join(__dirname, 'index.html'), path.join(distDir, 'index.html'));
+}
+// viewer.html 복사
+if (fs.existsSync(path.join(__dirname, 'viewer.html'))) {
+    fs.copyFileSync(path.join(__dirname, 'viewer.html'), path.join(distDir, 'viewer.html'));
+}
+// articles 폴더 복사
+if (fs.existsSync(path.join(__dirname, 'articles'))) {
+    copyRecursiveSync(path.join(__dirname, 'articles'), path.join(distDir, 'articles'));
+}
+// images 폴더 복사
+if (fs.existsSync(path.join(__dirname, 'images'))) {
+    copyRecursiveSync(path.join(__dirname, 'images'), path.join(distDir, 'images'));
+}
+
+// 3. articles 안의 JSON들을 읽어서 각 기사별 전용 HTML(OG 태그가 박힌 파일) 생성
+const articlesDir = path.join(__dirname, 'articles');
+const postDir = path.join(distDir, 'post');
+if (!fs.existsSync(postDir)) {
+    fs.mkdirSync(postDir, { recursive: true });
+}
+
+if (fs.existsSync(articlesDir)) {
+    const files = fs.readdirSync(articlesDir);
     files.forEach(file => {
         if (path.extname(file) === '.json') {
-            const jsonFilePath = path.join(articlesDir, file);
-            const rawData = fs.readFileSync(jsonFilePath, 'utf-8');
-            const article = JSON.parse(rawData);
+            const articleId = path.basename(file, '.json');
+            const articleData = JSON.parse(fs.readFileSync(path.join(articlesDir, file), 'utf8'));
 
-            // content 배열을 <p> 태그 HTML로 변환
-            const contentHtml = article.content
-                .map(paragraph => `<p>${paragraph}</p>`)
-                .join('\n');
+            // 각 기사 전용 HTML 생성 (OG 태그 포함 + 실제 내용은 viewer.html과 연동하거나 리다이렉트)
+            const htmlContent = `<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>${articleData.title} - 서오일보</title>
+    <meta property="og:title" content="${articleData.title}">
+    <meta property="og:description" content="${articleData.content ? articleData.content.substring(0, 100) : ''}">
+    <meta property="og:image" content="${articleData.image || 'https://your-domain.netlify.app/images/default-logo.png'}">
+    <meta property="og:url" content="https://your-domain.netlify.app/post/${articleId}.html">
+    <meta http-equiv="refresh" content="0;url=/viewer.html?id=${articleId}">
+</head>
+<body>
+    <p>기사 페이지로 이동 중입니다...</p>
+</body>
+</html>`;
 
-            // OG 태그용 요약문 (본문 첫 줄 활용)
-            const description = article.content[0] || "서오일보 기사 내용";
-
-            // 템플릿의 빈칸을 JSON 데이터로 치환
-            let html = templateHtml
-                .replace(/{{TITLE}}/g, article.title)
-                .replace(/{{CATEGORY}}/g, article.category)
-                .replace(/{{DATE}}/g, article.date)
-                .replace(/{{REPORTER}}/g, article.reporter)
-                .replace(/{{REPORTER_AVATAR}}/g, article.reporterAvatar)
-                .replace(/{{REPORTER_BIO}}/g, article.reporterBio)
-                .replace(/{{IMAGE_URL}}/g, article.image.url)
-                .replace(/{{IMAGE_CAPTION}}/g, article.image.caption || '')
-                .replace(/{{CONTENT_HTML}}/g, contentHtml)
-                .replace(/{{DESCRIPTION}}/g, description)
-                .replace(/{{OG_URL}}/g, `https://여러분의넷플리파이주소.netlify.app/posts/${article.id}.html`);
-
-            // posts 폴더 안에 id 이름으로 HTML 파일 생성 (예: posts/26092401.html)
-            const outputFilePath = path.join(postsDir, `${article.id}.html`);
-            fs.writeFileSync(outputFilePath, html, 'utf-8');
-            console.log(`[성공] 기사 페이지 생성 완료: ${article.id}.html`);
+            fs.writeFileSync(path.join(postDir, `${articleId}.html`), htmlContent);
         }
     });
-});
+    console.log('✨ 기사별 OG HTML 생성 완료!');
+}
