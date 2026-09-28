@@ -47,6 +47,9 @@ if (fs.existsSync(path.join(__dirname, 'assets'))) {
 if (fs.existsSync(path.join(__dirname, 'category.html'))) {
     copyRecursiveSync(path.join(__dirname, 'category.html'), path.join(distDir, 'category.html'));
 }
+if (fs.existsSync(path.join(__dirname, 'ad'))) {
+    copyRecursiveSync(path.join(__dirname, 'ad'), path.join(distDir, 'ad'));
+}
 
 // 3. 각 기사별 전용 HTML(OG 태그 포함) 생성
 const articlesDir = path.join(__dirname, 'articles');
