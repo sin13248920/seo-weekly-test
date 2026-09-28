@@ -227,7 +227,7 @@
         main {
             flex: 1;
             min-width: 0;
-            background-color: #ffffff; /* 컨테이너 배경 비침 방지 */
+            background-color: #ffffff;
         }
 
         .article-header {
@@ -283,7 +283,6 @@
             border: 1px solid #e1e4e8;
         }
 
-        /* 추가 이미지 및 설명 스타일 */
         .article-image-wrap {
             margin: 30px 0;
             width: 100%;
@@ -305,7 +304,7 @@
             line-height: 1.4;
         }
 
-        /* 광고 영역 스타일 (배경 비침 방지 및 캡션 포함) */
+        /* 광고 영역 스타일 (ADVERTISEMENT 캡션 가운데 정렬) */
         .ad-wrapper {
             margin: 45px auto;
             width: 100%;
@@ -319,6 +318,7 @@
             letter-spacing: 1px;
             margin-bottom: 6px;
             text-transform: uppercase;
+            text-align: center; /* 가운데 정렬 적용 */
         }
         .ad-box {
             width: 100%;
@@ -389,7 +389,7 @@
             line-height: 1.5;
         }
 
-        /* 관련 기사 위젯 영역 스타일 (이미지 첨부 참고 형식) */
+        /* 같은 카테고리 기사 위젯 영역 스타일 */
         .related-articles-container {
             margin-top: 60px;
             border-top: 2px solid #111111;
@@ -571,7 +571,7 @@
 </head>
 <body>
 
-    <!-- 1. 페이지와 함께 스크롤되어 올라가는 큰 헤더 (날짜 바 포함) -->
+    <!-- 1. 페이지와 함께 스크롤되어 올라가는 큰 헤더 -->
     <div class="large-header" id="largeHeader">
         <div class="header-main-bar">
             <div class="header-container">
@@ -587,7 +587,7 @@
         </div>
     </div>
 
-    <!-- 2. 일정 수준 이상 스크롤했을 때 위에서 스르륵 나타나는 고정 소형 헤더 -->
+    <!-- 2. 일정 수준 이상 스크롤했을 때 나타나는 고정 소형 헤더 -->
     <header class="fixed-small-header" id="fixedSmallHeader">
         <div class="header-container">
             <a href="index.html" class="logo-link">
@@ -736,7 +736,6 @@
                     return response.json();
                 })
                 .then(data => {
-                    // 1. 창 이름을 '기사제목 | 서오일보'의 형태로 설정
                     document.getElementById('pageTitle').innerText = data.title + " | 서오일보";
                     
                     const categoryEl = document.getElementById('articleCategory');
@@ -804,7 +803,7 @@
                             }
                         }
 
-                        // 본문 내 ad2/file.jpg 광고 삽입 및 ADVERTISEMENT 캡션 적용
+                        // 본문 내 ad2/file.jpg 광고 삽입 (ADVERTISEMENT 캡션 가운데 정렬)
                         if (index === 1) {
                             const adWrapper = document.createElement('div');
                             adWrapper.className = 'ad-wrapper';
@@ -855,9 +854,9 @@
                 });
         });
 
-        // 같은 카테고리의 다른 기사들을 불러오는 함수 (index.json 또는 메타데이터 구조 가정)
+        // 같은 카테고리의 다른 기사들을 불러와 하단 위젯에 렌더링하는 함수
         function loadRelatedArticles(currentCategory, currentId) {
-            const indexJsonPath = 'articles/index.json'; // 기사 목록이 포함된 인덱스 파일 경로 가정 (환경에 맞게 조정 가능)
+            const indexJsonPath = 'articles/index.json';
             
             fetch(indexJsonPath)
                 .then(response => {
@@ -1049,7 +1048,6 @@
             printWindow.focus();
         }
 
-        // 공유 버튼 클릭 시 안내 문구 및 지정된 링크 형식으로 복사
         function copyShareUrl() {
             const urlParams = new URLSearchParams(window.location.search);
             const articleId = urlParams.get('id');
