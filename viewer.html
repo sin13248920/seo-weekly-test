@@ -727,7 +727,8 @@
                     return response.json();
                 })
                 .then(data => {
-                    document.getElementById('pageTitle').innerText = "서오일보 | " + data.title;
+                    // 1. 창 이름을 '기사제목 | 서오일보'의 형태로 설정
+                    document.getElementById('pageTitle').innerText = data.title + " | 서오일보";
                     
                     const categoryEl = document.getElementById('articleCategory');
                     categoryEl.innerText = data.category;
@@ -1010,7 +1011,7 @@
             }
         }
 
-        // 공유 버튼을 눌렀을 때 프로젝트 이름(seo-weekly-test)을 포함한 ?id= 주소를 클립보드에 복사
+        // 2, 3. 공유 버튼 클릭 시 안내 문구 변경 및 지정된 링크 형식으로 복사
         function copyShareUrl() {
             const urlParams = new URLSearchParams(window.location.search);
             const articleId = urlParams.get('id');
@@ -1020,10 +1021,11 @@
                 return;
             }
 
-            const shareUrl = `${window.location.origin}/seo-weekly-test/viewer.html?id=${articleId}`;
+            // 요구하신 형식의 공유 링크 생성
+            const shareUrl = `${window.location.origin}/seo-weekly-test/post/${articleId}`;
 
             navigator.clipboard.writeText(shareUrl).then(() => {
-                alert('기사 공유 링크가 복사되었습니다!\n카카오톡 등에 붙여넣어 보세요.');
+                alert('서오일보 기사 링크가 클립보드에 복사되었습니다! 원하는 곳에 붙여넣어 보세요.');
             }).catch(err => {
                 console.error('링크 복사 실패:', err);
                 alert('링크 복사에 실패했습니다.');
