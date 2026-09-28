@@ -819,8 +819,8 @@
                         }
                     });
 
-                    // 같은 카테고리 기사 목록 로드 (category.html 방식과 유사하게 전체 ID 목록 기반으로 안전하게 구현)
-                    loadRelatedArticles(data.category, articleId);
+                    // GitHub API를 이용해 articles 폴더 내 기사들을 자동으로 불러와 같은 카테고리 기사 구성
+                    loadRelatedArticlesAutomatically(data.category, articleId);
 
                     document.getElementById('ogTitle').setAttribute('content', data.title);
 
@@ -854,60 +854,82 @@
                 });
         });
 
-        // 404 에러가 나던 index.json 대신 미리 정의된 기사 ID 배열 또는 동적 방식으로 대체하여 안전하게 구동되도록 개선
-        function loadRelatedArticles(currentCategory, currentId) {
-            // 예시 기사 ID 풀 (프로젝트 환경에 맞는 기사 ID들로 구성)
-            // 만약 실제 기사 목록이 있다면 해당 파일들을 순회하거나 가져오도록 구성합니다.
-            const sampleArticleIds = ['26092401', '26092402', '26092403', '26092404']; 
+        // GitHub API를 활용해 articles 폴더 안의 JSON 파일들을 자동으로 스캔하고 같은 카테고리 기사 목록 표시
+        function loadRelatedArticlesAutomatically(currentCategory, currentId) {
             const container = document.getElementById('relatedArticlesGrid');
             const wrapper = document.getElementById('relatedArticlesContainer');
             const titleEl = document.getElementById('relatedArticlesTitle');
             
             titleEl.innerText = `서오일보에서 선정한 ${currentCategory} 주요뉴스`;
 
-            const validArticles = [];
-            
-            // 각 기사 JSON을 비동기로 확인하여 같은 카테고리인 기사만 수집
-            const promises = sampleArticleIds
-                .filter(id => id !== currentId)
-                .map(id => {
-                    return fetch(`articles/${id}.json`)
-                        .then(res => res.ok ? res.json() : null)
-                        .then(article => {
-                            if (article && article.category === currentCategory) {
-                                validArticles.push({ id: id, ...article });
-                            }
-                        })
-                        .catch(() => {});
-                });
+            // ★ 아래 'sin1348920'(계정명)과 'seo-weekly-test'(저장소명)를 본인의 환경에 맞게 수정하세요!
+            const owner = 'sin1348920'; 
+            const repo = 'seo-weekly-test';
+            const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/articles`;
 
-            Promise.all(promises).then(() => {
-                if (validArticles.length > 0) {
-                    container.innerHTML = '';
-                    validArticles.slice(0, 3).forEach(art => {
-                        const item = document.createElement('a');
-                        item.className = 'related-article-item';
-                        item.href = `viewer.html?id=${art.id}`;
-                        
-                        let thumbImg = 'assets/seologo.png';
-                        if (art.image) {
-                            if (typeof art.image === 'string') thumbImg = art.image;
-                            else if (typeof art.image === 'object' && art.image.url) thumbImg = art.image.url;
-                        }
-                        
-                        item.innerHTML = `
-                            <div class="related-article-thumb">
-                                <img src="${thumbImg}" alt="${art.title}">
-                            </div>
-                            <div class="related-article-text">${art.title}</div>
-                        `;
-                        container.appendChild(item);
+            fetch(apiUrl)
+                .then(res => {
+                    if (!res.ok) throw new Error('GitHub API 호출 실패');
+                    return res.json();
+                })
+                .then(files => {
+                    // .json 파일들만 추출하고 현재 읽고 있는 기사는 제외
+                    const jsonFiles = files.filter(file => file.name.endsWith('.json') && file.name !== `${currentId}.json`);
+                    
+                    if (jsonFiles.length === 0) {
+                        wrapper.style.display = 'none';
+                        return;
+                    }
+
+                    // 각 JSON 파일을 가져와서 카테고리가 일치하는지 확인
+                    const promises = jsonFiles.map(file => {
+                        return fetch(file.download_url)
+                            .then(res => res.ok ? res.json() : null)
+                            .then(article => {
+                                if (article && article.category === currentCategory) {
+                                    // 파일 이름에서 .json을 떼어내어 ID로 사용
+                                    const artId = file.name.replace('.json', '');
+                                    return { id: artId, ...article };
+                                }
+                                return null;
+                            })
+                            .catch(() => null);
                     });
-                    wrapper.style.display = 'block';
-                } else {
+
+                    Promise.all(promises).then(results => {
+                        const validArticles = results.filter(art => art !== null);
+
+                        if (validArticles.length > 0) {
+                            container.innerHTML = '';
+                            validArticles.slice(0, 3).forEach(art => {
+                                const item = document.createElement('a');
+                                item.className = 'related-article-item';
+                                item.href = `viewer.html?id=${art.id}`;
+                                
+                                let thumbImg = 'assets/seologo.png';
+                                if (art.image) {
+                                    if (typeof art.image === 'string') thumbImg = art.image;
+                                    else if (typeof art.image === 'object' && art.image.url) thumbImg = art.image.url;
+                                }
+                                
+                                item.innerHTML = `
+                                    <div class="related-article-thumb">
+                                        <img src="${thumbImg}" alt="${art.title}">
+                                    </div>
+                                    <div class="related-article-text">${art.title}</div>
+                                `;
+                                container.appendChild(item);
+                            });
+                            wrapper.style.display = 'block';
+                        } else {
+                            wrapper.style.display = 'none';
+                        }
+                    });
+                })
+                .catch(err => {
+                    console.warn('자동 기사 목록 불러오기 중 예외 발생:', err);
                     wrapper.style.display = 'none';
-                }
-            });
+                });
         }
 
         function showErrorState() {
