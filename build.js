@@ -2,8 +2,8 @@ const fs = require('fs');
 const path = require('path');
 
 // ★ [설정] 본인의 깃허브 아이디와 저장소(프로젝트) 이름으로 수정해주세요!
-const GITHUB_USER = 'sin13248920';              // 본인의 깃허브 아이디
-const REPO_NAME = 'seo-weekly-test';     // 본인의 저장소 이름
+const GITHUB_USER = 'sin13248920';             // 본인의 깃허브 아이디
+const REPO_NAME = 'seo-weekly-test';    // 본인의 저장소 이름
 
 // GitHub Pages 전용 기본 URL (예: https://seoo.github.io/seo-weekly-test)
 const BASE_URL = `https://${GITHUB_USER}.github.io/${REPO_NAME}`;
@@ -73,8 +73,8 @@ if (fs.existsSync(articlesDir)) {
             }
             summaryText = summaryText.substring(0, 100);
 
-            // ★ [핵심 수정] post/ 경로가 절대 끼어들지 않도록 최상위 절대 URL로 깔끔하게 조합
-            let imgUrl = `${BASE_URL}/images/default-logo.png`; 
+            // ★ [수정 완료] 이미지가 없거나 비어있을 때 기본으로 assets/thum.jpg 지정
+            let imgUrl = `${BASE_URL}/assets/thum.jpg`; 
             if (articleData.image) {
                 let rawImg = "";
                 if (typeof articleData.image === 'string') {
@@ -119,5 +119,5 @@ if (fs.existsSync(articlesDir)) {
             fs.writeFileSync(path.join(postDir, `${articleId}.html`), htmlContent);
         }
     });
-    console.log('✨ 이미지가 루트 경로로 정확히 연결된 OG HTML 생성 완료!');
+    console.log('✨ 이미지가 없으면 assets/thum.jpg로 연결되는 OG HTML 생성 완료!');
 }
