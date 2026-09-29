@@ -147,14 +147,14 @@
 
         .main-lead-article {
             display: grid;
-            grid-template-columns: 1.2fr 1fr; /* PC에서 좌측 텍스트, 우측 사진 */
+            grid-template-columns: 1.1fr 1.2fr;
             gap: 30px;
             text-decoration: none;
             color: inherit;
             background-color: transparent;
             border: none;
             padding: 0;
-            align-items: start; /* 수직 정렬을 가운데가 아닌 위쪽으로 수정 */
+            align-items: start;
         }
 
         .main-lead-article:hover .main-lead-title {
@@ -184,7 +184,7 @@
 
         .main-lead-thumb {
             width: 100%;
-            height: 320px;
+            aspect-ratio: 16 / 10;
             background-color: #f8f9fa;
             border: 1px solid #e1e4e8;
             overflow: hidden;
@@ -227,7 +227,7 @@
 
         .bottom-news-thumb {
             width: 100%;
-            height: 130px;
+            aspect-ratio: 16 / 9;
             background-color: #f8f9fa;
             border: 1px solid #e1e4e8;
             overflow: hidden;
@@ -271,7 +271,7 @@
             overflow: hidden;
         }
 
-        /* 광고 영역 */
+        /* 광고 영역 (배경 투명 처리 및 원본 비율 유지) */
         .advertisement-section {
             margin: 30px 0;
             text-align: center;
@@ -288,28 +288,27 @@
 
         .ad-container {
             width: 100%;
-            background-color: #f8f9fa;
-            border: 1px solid #e1e4e8;
-            border-radius: 6px;
+            background-color: transparent; /* 배경 투명으로 변경 */
+            border: none; /* 테두리 제거 필요시 조정 가능 */
+            border-radius: 0;
             overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            max-height: 120px;
+            padding: 0;
         }
 
         .ad-container a {
-            display: block;
-            width: 100%;
-            height: 100%;
+            display: inline-block;
+            max-width: 100%;
         }
 
         .ad-container img {
-            width: 100%;
-            height: auto;
-            max-height: 120px;
-            object-fit: cover;
+            max-width: 100%;
+            height: auto; /* 원본 비율 유지 */
+            width: auto;
             display: block;
+            margin: 0 auto;
         }
 
         /* 카테고리별 섹션 */
@@ -575,7 +574,6 @@
             .header-main-bar { height: 60px; }
             .logo-img-large { height: 32px; }
             
-            /* 모바일 메인 카드: 제목/내용 위, 사진 아래 세로 배치 */
             .main-lead-article {
                 grid-template-columns: 1fr;
                 gap: 15px;
@@ -585,13 +583,12 @@
             }
             .main-lead-thumb {
                 order: 2;
-                height: 220px;
+                aspect-ratio: 16 / 9;
             }
             .main-lead-title {
                 font-size: 22px;
             }
 
-            /* 모바일 나머지 서브 카드: 모두 하나씩 수직(세로) 배치, 왼쪽 사진 / 오른쪽 기사 제목 형식 */
             .bottom-news-grid {
                 grid-template-columns: 1fr;
                 gap: 12px;
@@ -609,7 +606,8 @@
             }
             .bottom-news-thumb {
                 width: 120px !important;
-                height: 85px !important;
+                height: auto !important;
+                aspect-ratio: 16 / 9 !important;
                 flex-shrink: 0;
             }
 
@@ -679,13 +677,11 @@
             <div style="text-align: center; color: #888; padding: 40px 0;">기사가 존재하지 않습니다.</div>
         </div>
 
-        <!-- 주요 기사와 카테고리별 기사 사이 광고 영역 -->
+        <!-- 주요 기사와 카테고리별 기사 사이 광고 영역 (랜덤 복불복 출력, 배경 투명) -->
         <div class="advertisement-section">
             <div class="ad-caption">Advertisement</div>
-            <div class="ad-container">
-                <a href="#" target="_blank">
-                    <img src="assets/ad/banner.jpg" alt="광고 배너">
-                </a>
+            <div class="ad-container" id="randomAdContainer">
+                <!-- 자바스크립트에 의해 랜덤 광고가 이곳에 삽입됩니다 -->
             </div>
         </div>
 
@@ -810,10 +806,50 @@
                 dateEl.innerText = `${year}.${month}.${day} (${week})`;
             }
 
+            // 광고 복불복(랜덤) 출력 실행
+            renderRandomAd();
+
             fetchArticles();
         });
 
-        // 썸네일 URL을 안전하게 추출하는 헬퍼 함수
+        // 광고 목록 정의 (이전 광고와 신한증권 광고 중 랜덤 선택)
+        function renderRandomAd() {
+            const ads = [
+                {
+                    link: "https://googleads.g.doubleclick.net/pcs/click?xai=AKAOjsvHQNtwTVAjvEJi_sEVHXjfeVF7xAPG76Lf26zHp6LAkAM77eBZGzm0eg-az1xaUff4m7Tjl5CXT0qsZbXiv-CphOjGUf7lU2vrAsF-hiljX8XIDNQ1f7NRleTYEpZjYkj7jbKG9nwrfMbR4uT1o-JPKPVc1DhpJeAUHZzvzS8Gp_n3OCwryojqngbLT1gOa8aXGTkGJXSlrljCS7IvJQbfHtGQCqjIIDaSVkzZDQ-EYf2wLYvfirSrZWhP73RYhJBXsmPR708WdYPaegHYlLm7gCFCOibZ7Aj6Edb5brb1IyRKUK7_omHwCYo2vbjt9raGY4HgCsWujs9TyeH8xG6H30__efucur0ewib4PfrJXCEFT0lZenDUrI54079VMDqZwNf_o69mePoaY_PxGb76EUBc69QgrwYBGBZFMrs&sai=AMfl-YQJWv7s4falBYAzhDQqWP2tmkgr_ktuEIwXYZq_8_EUE-wTLzB2_YP401GQVch802VF7AWs5Digchsu7mcQ9c0BGEpZJlcpXNXHB60y3_oP1vuww2-X8k8JSHRBBQsk7KMyiZQ2674TvYJ3X2R6pSRuJ4FgQlis3kGQmh_7FS7TLh6HjWnmsop4WV9B_NI0cHRk-Dwz8VPuNl0SBbkaB-EYv2khEMgHzRqy4TBH5yQvGJGlzBgmAMtDkLtkuAaRQw_Viu-tgNToxswtcIEmlji_Q8SpDzpXAoRj0eK8DiPACn4T-5Q-4R-GVXnA11h35AC_6Jm16XcsYAb38ei0jQadM7HzlccdBmvQ4IZHw7Y-SyMJCoCo8YuqnnNhah1RDK4aJOT6nCO3bGj8BHyp0eYOXw&sig=Cg0ArKJSzEn-h8UHO7Tb&fbs_aeid=%5Bgw_fbsaeid%5D&adurl=https://www.shinhansec.com/&nm=8&nx=501&ny=-127&mb=2",
+                    img: "https://tpc.googlesyndication.com/simgad/9605667977763773549",
+                    alt: "신한증권 광고 배너"
+                },
+                {
+                    link: "https://googleads.g.doubleclick.net/pcs/click?xai=AKAOjsu15iI1OFa3VHzOdeNaVkvJth-zlNvDOGj3VATSMXdsK25gJChaTMxlMNK9bUTb0I9c4M5O84JBfD7_jqrdZFcI6wTbieIi-9g52VWLtnHTTQN-zxuXd10qEltnII_kqJkLdZgB8mW_Kb2dVwhn05rtR8rCUJWFL9-mvQd2yNMoiFfSGf5x2Pr7R_7OYWjGc8YjQqX39DOprTpUeMl2l0_HMqIIXCzX3IulA8dINX-r9QQNvQacbLJqZBlp2lq5tLOAqjePfR7sBwSX61SWr5qy1YoWHsX3yyiWXevvxDwMTbD-aOgo7vouZG7C0REmDDtDIB0_buqiNHAyncrIuW3QeaGy5uMmiRSiCF8rQUgBDaLc1WNNrvhi2-PlwW4IS6PmJo2kJ7msfjRUOOlubO6uj6mx7MMNGPqDc47o8aE&sai=AMfl-YTlUaUPukBflSXtuL6CojPztFZafNLGnLIE6zjIRDIPY0s5feIvUb1371Aq_Et0Co9yXlNJSkJAUTemkS-t4iFBYVNwEEE6oNeYXSRO9cWv2j_A6-ykfF7fcLjsSZcDt87XWUFbVIhxFFmYuTC0AGwdVAZ5ZgarRnVoNjS--4jXx9h55kKZfWbp5yaPnwXw0XtiPLxNjy_44rriPSNwtn_J5aM9OUyig2YK7XBBtjLxBwE1NjA7ZZ7HIsBG_IrvS5PLc5In0Vuzskt8XcLSqiP3SbgDoNTL2kFHVJXWF-YZwYc-EZ-h2BG7IHscHFp0EsYsCs8i3CMukk9gzFXtwlQHKN4r_E3RVo14ztzX-JpdCxw6zYsqjsKCkKD0ngFjFVl_BhrrZvtwgxwHfgg7K2fCFw&sig=Cg0ArKJSzJ7fu8V9uWUD&fbs_aeid=%5Bgw_fbsaeid%5D&adurl=https://www.youtube.com/%40uljugun&nm=2&nx=215&ny=-149&mb=2",
+                    img: "https://tpc.googlesyndication.com/simgad/9158774144409825383", 
+                    alt: "울산울주"
+                },
+                {
+                    link: "https://googleads.g.doubleclick.net/pcs/click?xai=AKAOjsstSCnI9a3K8BCcEHoMQ5K3iOqs3tXxhcv5-18az_nREEGffAlbrAmaT84jSGpelCqVh-SvtB_5EAqm3DqDtL1AQ24TBYJdwHl7cI8qvNwJvlbZPRomODASysCRDG-o9gyUic0j6aj7tBGmNIs_SkY8hZETVdi93Gj0sgHM4N-hVB8YiNcTdf4k6yccVIeFXh_hENDgAEjB--StovRJ_gLkfcM28OIg8DS0VRTtEVkYLVsujSVCzrCvRTkQ1I424Le0NYsmbbmhMyqFNC3EE-3dU9ktsuFRrXGXZroLwuIJu-rghJRcsojZl4Ylo03rEZhjH9BHVhZEwoBwv8IF_rd1J8npG-SWusxU8Yl1AnMVX1T2rxurdHxZ7l_eYXRdh7Id0-c0tFH-OPcQmpbnSEmIR8edF05H2lbxkC0Dqzs&sai=AMfl-YTHMpccsAqHDw6YXirHFxQvq-HKbTgE2yu257Yfpnf8RAwTAFnMKvOsqpGnsLZOE4QKqlyJtNdooi87KWkFnZ5anOp7EUaif9lHBguKoxFdv90dpck8W1alKJfPL8H2iAc2UVOxsh0KPQTWQaZatFZKXby5FFYyYAgZhh8U6Xx94r5foMjaZWYZU2vgofcLScqU3pzxzxffdRWbbhmpsTnCSK6BH2LSj-CoQW4x6sVTqeos0Af0Bp_pYiS2qxDgKlKDLhfJScRoCHz8h297hv9FEc5cqM5e5vPOGZF8ulzMDBYtKdvk19Wp22RzmBlG10mtxJbtdPiNgVdoy2v0eRdKVA8aRrJHj6AgIYOS95AMPSmrnd6Wr1Nv0pjI5SWMstbTZktCLmi_8hdn4UzHEEuHXA&sig=Cg0ArKJSzJJbzKHSMI5k&fbs_aeid=%5Bgw_fbsaeid%5D&adurl=https://www.iwest.co.kr/sites/iwest/index.do&nm=3&nx=223&ny=-66&mb=2",
+                    img: "https://tpc.googlesyndication.com/simgad/14283841163973536780", 
+                    alt: "서부발전"
+                },
+                {
+                    link: "https://googleads.g.doubleclick.net/pcs/click?xai=AKAOjss4-nWqsbgRwtf_n4xb1-iCJwSptwucr1pnhbjxl5zXadjXtjzk2rilXr2YsNPEt6QPFVRKu2zYSoGPZA4cbD8_rp_TTbtwlg4DJqGl8sPYHL5KAd-EKfJ9mW-znLoxbvbMtGoqknfuLPTO5kOENeOtYu6Ykvnh0tMgBqL9GsAg_SRorTmuCwNbQMHYGoW-m7D0NcA6Y59iz6mQzGIwXF52QSi4L0EBquMXFqIHtl5eJ9yFqnrvV_Fa_StvE7kQB3JQSKjGq-Y9NRwFmiSomDJ3kKEFAtg-OmQpVRKZ5UOS8L1_hxHSMgvCvLRyh1BbYg8YmAP-T8VjPBfvEyWFuSaZ1LKhkq2g79AXBFNb8rG8yJZGKfN1bVkduOl-3cUFUx5J-fpSln3xG7uPBWQbLrMagC_1NATW9GfprGL52HI&sai=AMfl-YRssAJnGc-0WTYd_I2NR6pc6gAnBHZg152aGuelAhZKYpCC1LHun5ea-UsbHHwqMWsma5kkc2XrhHqyW7IcpnRT3BAMcTzZLQT1LUYCwN0m-O4W5xmSAZoxOHUjA-BGphHAepnSFjAnoPtrsqWpbsNCD8RVng21q9vkwa2HWSKXhoJSwT6KmRewlu85Ryimjj5JsxD7Pzd1jpoW2FQ-xbXp5DEfJeGPHS3FBMHiRgPKVc64PdRFvB7hywz5xEpC8_m7HEM1uAOBp-ZUocGfAZZGBGPJ7hrQbPEFEYui5Is1Xt0_JTBvJ4VRSTf7ILmM4d9dnasmfiSjzDB3f5_pDEGO-SWQhZtyAwR3pEBOnsFFqMO87oNvTPIiEj4pOJqztC6d4KjXPaqeHjnUhjJO5jKowQ&sig=Cg0ArKJSzND4gP0VNGIj&fbs_aeid=%5Bgw_fbsaeid%5D&adurl=https://g-startupsummit.or.kr/&nm=3&nx=256&ny=-124&mb=2",
+                    img: "https://tpc.googlesyndication.com/simgad/2762908728988565592", 
+                    alt: "경기써밋"
+                }
+            ];
+
+            const container = document.getElementById('randomAdContainer');
+            if (!container) return;
+
+            const randomIndex = Math.floor(Math.random() * ads.length);
+            const selectedAd = ads[randomIndex];
+
+            container.innerHTML = `
+                <a href="${selectedAd.link}" target="_blank">
+                    <img src="${selectedAd.img}" alt="${selectedAd.alt}">
+                </a>
+            `;
+        }
+
         function getImageUrl(imageField) {
             if (!imageField) return null;
             if (typeof imageField === 'string') {
