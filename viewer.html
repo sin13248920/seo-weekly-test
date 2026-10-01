@@ -274,8 +274,8 @@
         .article-image-container img {
             width: 100%;
             height: auto;
-            max-height: 500px;
-            object-fit: contain;
+            /* max-height: 500px; */
+            /* object-fit: cover; */
             display: block;
             border: 1px solid #e1e4e8;
         }
@@ -288,8 +288,8 @@
         .article-image-wrap img {
             width: 100%;
             height: auto;
-            max-height: 500px;
-            object-fit: contain;
+            /* max-height: 500px; */
+            /* object-fit: cover; */
             display: block;
             border: 1px solid #e1e4e8;
         }
@@ -1032,7 +1032,7 @@
             const shareUrl = `${window.location.origin}/seo-weekly-test/post/${articleId}`;
 
             navigator.clipboard.writeText(shareUrl).then(() => {
-                alert('서오일보 기사 링크가 클립보드에 복사되었습니다! 원하는 곳에 붙여넣어 보세요.');
+                alert('링크가 클립보드에 복사되었습니다.');
             }).catch(err => {
                 console.error('링크 복사 실패:', err);
                 alert('링크 복사에 실패했습니다.');
