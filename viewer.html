@@ -296,6 +296,69 @@
             border-bottom: 2px solid #111111;
         }
 
+        /* 날짜: 수정 기록이 있으면 '업데이트: 날짜 ▾' 로 표시하고 눌러서 입력/수정 날짜를 펼쳐 봄 */
+        #articleDate {
+            position: relative;
+            display: inline-block;
+        }
+
+        .date-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .date-toggle:hover {
+            color: #333333;
+        }
+
+        .date-arrow {
+            width: 11px;
+            height: 11px;
+            object-fit: contain;
+            transform: rotate(90deg);
+        }
+
+        .date-toggle[aria-expanded="true"] .date-arrow {
+            transform: rotate(-90deg);
+        }
+
+        .date-popup {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 10px);
+            z-index: 20;
+            min-width: 210px;
+            background-color: #ffffff;
+            border: 1px solid #d1d8dd;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 12px 16px;
+            font-size: 13px;
+            color: #333333;
+            text-align: left;
+        }
+
+        .date-popup[hidden] {
+            display: none;
+        }
+
+        .date-popup-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            white-space: nowrap;
+        }
+
+        .date-popup-row + .date-popup-row {
+            margin-top: 8px;
+        }
+
+        .date-popup-label {
+            color: #888888;
+        }
+
         .article-image-container {
             width: 100%;
             margin-bottom: 40px;
@@ -946,7 +1009,7 @@
 
                     document.getElementById('articleTitle').innerText = data.title;
                     document.getElementById('articleReporter').innerText = data.reporter; 
-                    document.getElementById('articleDate').innerText = "입력 : " + data.date;
+                    renderArticleDate(data);
                     
                     const imageArea = document.getElementById('articleImageArea');
                     let mainImgUrl = "";
@@ -1280,6 +1343,90 @@
             if (bodyElem) bodyElem.style.fontSize = currentFontSize + 'px';
         }
 
+        // ===== 기사 날짜 (수정 기록이 있으면 접고 펼치는 날짜 표시) =====
+        // 수정 날짜 필드명: updated / updatedAt / modified 등 (아래 목록 중 하나), 또는 date 가 [입력, 수정] 배열
+        const UPDATED_DATE_KEYS = ['updated', 'updatedAt', 'updated_at', 'updateDate', 'update_date',
+                                   'modified', 'modifiedAt', 'modified_at', 'modifyDate', 'revised', 'editDate', 'edited'];
+
+        function renderArticleDate(data) {
+            const el = document.getElementById('articleDate');
+            el.innerHTML = '';
+
+            let posted = data.date;
+            let updated = '';
+
+            if (Array.isArray(data.date)) {
+                const list = data.date.map(d => String(d).trim()).filter(Boolean);
+                posted = list[0] || '';
+                if (list.length >= 2) updated = list[list.length - 1];
+            }
+            for (const key of UPDATED_DATE_KEYS) {
+                if (!updated && data[key] && String(data[key]).trim() !== '') {
+                    updated = String(data[key]).trim();
+                }
+            }
+
+            // 수정 기록이 없으면 기존처럼 표시
+            if (!updated || updated === posted) {
+                el.innerText = "입력 : " + posted;
+                return;
+            }
+
+            const toggle = document.createElement('span');
+            toggle.className = 'date-toggle';
+            toggle.setAttribute('role', 'button');
+            toggle.setAttribute('tabindex', '0');
+            toggle.setAttribute('aria-expanded', 'false');
+            toggle.setAttribute('aria-controls', 'datePopup');
+            toggle.appendChild(document.createTextNode('업데이트: ' + updated));
+
+            const arrow = document.createElement('img');
+            arrow.src = 'assets/rarrow.png';
+            arrow.alt = '';
+            arrow.className = 'date-arrow';
+            toggle.appendChild(arrow);
+
+            const popup = document.createElement('div');
+            popup.className = 'date-popup';
+            popup.id = 'datePopup';
+            popup.hidden = true;
+            [['입력', posted], ['수정', updated]].forEach(([label, value]) => {
+                const row = document.createElement('div');
+                row.className = 'date-popup-row';
+                const l = document.createElement('span');
+                l.className = 'date-popup-label';
+                l.innerText = label;
+                const v = document.createElement('span');
+                v.innerText = value;
+                row.appendChild(l);
+                row.appendChild(v);
+                popup.appendChild(row);
+            });
+
+            const setOpen = (open) => {
+                popup.hidden = !open;
+                toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+            };
+
+            toggle.addEventListener('click', () => setOpen(popup.hidden));
+            toggle.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setOpen(popup.hidden);
+                }
+            });
+            // 바깥을 누르거나 Esc 를 누르면 접기
+            document.addEventListener('click', (e) => {
+                if (!el.contains(e.target)) setOpen(false);
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') setOpen(false);
+            });
+
+            el.appendChild(toggle);
+            el.appendChild(popup);
+        }
+
         function openPrintWindow() {
             const printContent = document.getElementById('articleContainer').innerHTML;
             const printWindow = window.open('', '_blank', 'width=800,height=900');
@@ -1345,7 +1492,7 @@
                         .article-image-container img, .article-image-wrap img { width: 100%; height: auto; max-height: 500px; object-fit: cover; }
                         .article-img-caption { font-size: 10pt; color: #666; margin-top: 6px; text-align: center; }
 
-                        .ad-box, .reporter-section, .popular-aside, .utility-sidebar, .category-news {
+                        .ad-box, .reporter-section, .popular-aside, .utility-sidebar, .category-news, .date-popup, .date-arrow {
                             display: none !important;
                         }
 
