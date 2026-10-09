@@ -1,0 +1,23 @@
+{
+    "id": "000000",
+    "title": "테스트용 기사입니다.",
+    "category": "경제",
+    "date": "YYYY.MM.DD HH:MM",
+    "reporter": "테스트용 기사입니다.",
+    "reporterAvatar": "assets/basicprofile.jpg",
+    "reporterBio": "테스트용 기사입니다.",
+    "image": {
+        "url": "assets/thum_OG.jpg",
+        "caption": "테스트용 기사입니다."
+    },
+    "content": [
+        "(서울=서오일보) 테스트용 기사입니다.",
+        {
+            "type": "image",
+            "url": "assets/thum_OG.jpg",
+            "caption": "테스트용 기사입니다."
+        },
+        "테스트용 기사입니다.",
+        "테스트용 기사입니다."
+    ]
+}

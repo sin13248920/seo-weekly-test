@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{TITLE}} - 서오일보</title>
+    <link rel="icon" href="../assets/favi.png" type="image/png">
+
+    <!-- 카카오톡 등 공유 미리보기 OG 태그 (여기가 핵심입니다!) -->
+    <meta property="og:title" content="{{TITLE}}">
+    <meta property="og:description" content="{{DESCRIPTION}}">
+    <meta property="og:image" content="{{IMAGE_URL}}">
+    <meta property="og:url" content="{{OG_URL}}">
+    <meta property="og:type" content="article">
+
+    <!-- 기존 스타일 적용 (경로 주의: 상위로 나가지 않고 바로 연결된다면 경로를 맞춰주세요) -->
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        /* 기존 viewer.html에 있던 디자인 스타일을 여기에 그대로 복사해서 넣어주세요! */
+        body { font-family: 'Pretendard', sans-serif; color: #222; line-height: 1.8; margin: 0; padding: 0; }
+        .page-wrapper { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+        .article-title { font-size: 32px; font-weight: 800; margin-bottom: 20px; }
+        .article-category { color: #C91C1C; font-weight: 700; text-decoration: none; }
+        .article-image-container img { width: 100%; height: auto; max-height: 500px; object-fit: cover; }
+        .article-img-caption { font-size: 14px; color: #666; margin-top: 8px; text-align: center; }
+        .article-content { font-size: 18px; margin: 40px 0; }
+        .article-content p { margin-bottom: 28px; }
+        .reporter-section { border-top: 1px solid #d1d8dd; border-bottom: 1px solid #d1d8dd; padding: 24px 0; display: flex; align-items: center; margin-top: 40px; }
+        .reporter-avatar { width: 65px; height: 65px; border-radius: 50%; object-fit: cover; margin-right: 20px; }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <main>
+            <div class="article-header">
+                <a href="#" class="article-category">{{CATEGORY}}</a>
+                <h1 class="article-title">{{TITLE}}</h1>
+                <div class="article-info">
+                    <span>{{REPORTER}}</span>
+                    <span>입력 : {{DATE}}</span>
+                </div>
+            </div>
+
+            <!-- 대표 이미지 영역 -->
+            <div class="article-image-container">
+                <img src="../{{IMAGE_URL}}" alt="기사 대표 이미지">
+                <div class="article-img-caption">{{IMAGE_CAPTION}}</div>
+            </div>
+
+            <!-- 본문 내용 영역 -->
+            <div class="article-content">
+                {{CONTENT_HTML}}
+            </div>
+
+            <!-- 기자 소개 영역 -->
+            <div class="reporter-section">
+                <img src="../{{REPORTER_AVATAR}}" alt="기자 프로필" class="reporter-avatar">
+                <div class="reporter-info">
+                    <h3>{{REPORTER}}</h3>
+                    <p>{{REPORTER_BIO}}</p>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

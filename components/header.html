@@ -1,0 +1,108 @@
+<!-- header.html 또는 공통 헤더 영역 -->
+<header class="common-header" id="commonHeader">
+    <div class="header-main-bar">
+        <div class="header-container">
+            <a href="index.html" class="logo-link">
+                <!-- 로고 이미지가 항상 정가운데 오도록 설정 -->
+                <img src="assets/seologo.png" alt="서오일보 로고" class="logo-img">
+            </a>
+        </div>
+    </div>
+    <div class="sub-info-bar">
+        <div class="sub-info-inner">
+            <span class="current-date" id="headerDate">2026.09.11 (금)</span>
+        </div>
+    </div>
+</header>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .common-header {
+        width: 100%;
+        background-color: #ffffff;
+        border-bottom: 1px solid #d1d8dd;
+        position: relative;
+        z-index: 10;
+    }
+
+    .header-main-bar {
+        height: 75px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #ffffff;
+    }
+
+    .header-container {
+        max-width: 1100px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 0 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center; /* 로고를 무조건 정가운데로 배치 */
+        height: 100%;
+        position: relative;
+    }
+
+    .logo-link {
+        display: block;
+        text-decoration: none;
+    }
+
+    .logo-img {
+        height: 40px; 
+        width: auto;
+        display: block;
+    }
+
+    /* 날짜 및 주가 정보 바 */
+    .sub-info-bar {
+        background-color: #ffffff;
+        border-top: 1px solid #f1f3f5;
+        border-bottom: 1px solid #e1e4e8;
+        font-size: 12px;
+        color: #555555;
+        height: 36px;
+        display: flex;
+        align-items: center;
+    }
+
+    .sub-info-inner {
+        max-width: 1100px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 0 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .stock-market-ticker {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .market-item strong.up { color: #C91C1C; }
+    .market-item strong.down { color: #0055ff; }
+    .market-divider { color: #cccccc; }
+
+    /* 반응형 모바일 설정 (768px 이하) */
+    @media (max-width: 768px) {
+        .sub-info-bar { 
+            display: none; 
+        }
+        .header-main-bar { 
+            height: 60px; 
+        }
+        .logo-img { 
+            height: 32px; 
+        }
+    }
+</style>

@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사이트 - 재개발·재건축 정보</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            background-color: #f8f9fa;
+        }
+        /* 어두운 헤더 */
+        header {
+            background-color: #111111;
+            color: #ffffff;
+            padding: 16px 24px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            z-index: 1000;
+            flex-shrink: 0;
+        }
+        /* 메인 레이아웃: 좌우 배치 */
+        .main-container {
+            display: flex;
+            flex: 1;
+            width: 100%;
+            height: calc(100vh - 56px);
+            overflow: hidden;
+        }
+        /* 지도 영역 */
+        #map {
+            flex: 1;
+            height: 100%;
+        }
+        /* 현대적인 우측 사이드 패널 */
+        .side-panel {
+            width: 380px;
+            background: #ffffff;
+            border-left: 1px solid #eaeaea;
+            display: flex;
+            flex-direction: column;
+            padding: 28px;
+            z-index: 999;
+            overflow: hidden;
+            border-radius: 0;
+        }
+        .side-panel h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #111;
+            letter-spacing: -0.5px;
+        }
+
+        /* 폴더 및 목록 스타일 (각진 디자인) */
+        #folder-list {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 4px;
+            border-radius: 0;
+        }
+        .folder-group {
+            margin-bottom: 24px;
+        }
+        .folder-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #f0f0f0;
+            margin-bottom: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 0;
+        }
+        .folder-title:hover {
+            color: #111;
+        }
+        .folder-items {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .item-row {
+            padding: 12px 14px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #333;
+            cursor: pointer;
+            border-radius: 0; /* 각지게 수정 */
+            transition: all 0.2s ease;
+        }
+        .item-row:hover {
+            background-color: #f4f5f7;
+            color: #000;
+        }
+        .item-row.active {
+            background-color: #111;
+            color: #fff;
+        }
+
+        /* 뷰 전환 클래스 */
+        .view-section {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .view-section.active {
+            display: flex;
+        }
+
+        /* 뒤로가기 버튼 스타일 */
+        .back-btn-container {
+            margin-bottom: 20px;
+        }
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            border: none;
+            padding: 0;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #111;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .back-btn:hover {
+            opacity: 0.6;
+        }
+        /* rarrow.png 180도 회전 적용 */
+        .back-arrow-img {
+            width: 14px;
+            height: 14px;
+            transform: rotate(180deg);
+        }
+
+        /* 상세 정보 내용 칸 (모든 글씨 검정색 적용) */
+        .detail-content-box {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 4px;
+            color: #000000 !important; /* 모든 글씨 검정색 고정 */
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+        .detail-content-box h4 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #000000 !important;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+        .detail-content-box p, 
+        .detail-content-box div {
+            color: #000000 !important;
+        }
+
+        /* 구역 정보 상단에 위치할 이미지 스타일 */
+        .detail-image-wrapper {
+            width: 100%;
+            max-height: 220px;
+            border-radius: 0; /* 각지게 수정 */
+            overflow: hidden;
+            margin-bottom: 20px;
+            background: #eee;
+        }
+        .detail-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* 📱 모바일 환경 대응 (너비 768px 이하) */
+        @media (max-width: 768px) {
+            body {
+                overflow: auto;
+                height: auto;
+            }
+            .main-container {
+                flex-direction: column;
+                height: auto;
+            }
+            #map {
+                width: 100%;
+                height: calc(100vw * 9 / 16); /* 16:9 비율 유지 */
+                flex: none;
+            }
+            .side-panel {
+                width: 100%;
+                height: 450px;
+                border-left: none;
+                border-top: 1px solid #eaeaea;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 헤더 -->
+    <header>
+        사이트
+    </header>
+
+    <!-- 메인 콘텐츠 영역 -->
+    <div class="main-container">
+        <!-- 지도 영역 -->
+        <div id="map"></div>
+
+        <!-- 우측 사이드 패널 -->
+        <div class="side-panel">
+            
+            <!-- 1. 구역 목록 뷰 -->
+            <div id="listView" class="view-section active">
+                <h3>구역 목록</h3>
+                <div id="folder-list">
+                    <div style="padding: 20px; color: #888; text-align: center; font-size: 0.9rem;">데이터를 불러오는 중...</div>
+                </div>
+            </div>
+
+            <!-- 2. 구역 상세 정보 뷰 -->
+            <div id="detailView" class="view-section">
+                <div class="back-btn-container">
+                    <button class="back-btn" id="backBtn">
+                        <img src="assets/rarrow.png" class="back-arrow-img" alt="뒤로가기"> 목록으로 돌아가기
+                    </button>
+                </div>
+                <div class="detail-content-box" id="detail-content">
+                    <!-- 상세 내용 및 이미지가 동적으로 삽입됩니다 -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Leaflet JS 및 Omnivore (KML 로더) 라이브러리 -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js'></script>
+
+    <script>
+        // 1. 지도 초기화
+        var map = L.map('map', { zoomControl: false }).setView([37.5665, 126.9780], 13);
+        
+        // 줌 컨트롤 위치 우측 하단으로 이동
+        L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+        // 2. 배경 지도 타일 추가
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        const folderListEl = document.getElementById('folder-list');
+        const listViewEl = document.getElementById('listView');
+        const detailViewEl = document.getElementById('detailView');
+        const detailContentEl = document.getElementById('detail-content');
+        const backBtn = document.getElementById('backBtn');
+        
+        let currentlySelectedLayer = null;
+        const defaultStyle = { color: '#3388ff', fillColor: '#3388ff', fillOpacity: 0.2 };
+        
+        // 도형 클릭 시 빨간색으로 변하도록 설정
+        const selectedStyle = { color: '#ff0000', fillColor: '#ff4757', fillOpacity: 0.5, weight: 3 };
+
+        let foldersData = {
+            "동대문구": { title: "동대문구", el: null, itemsEl: null },
+            "중랑구": { title: "중랑구", el: null, itemsEl: null },
+            "기타 구역": { title: "기타 구역", el: null, itemsEl: null }
+        };
+
+        function initFoldersUI() {
+            folderListEl.innerHTML = '';
+            for (let key in foldersData) {
+                let folderGroupDiv = document.createElement('div');
+                folderGroupDiv.className = 'folder-group';
+
+                let folderTitleDiv = document.createElement('div');
+                folderTitleDiv.className = 'folder-title';
+                folderTitleDiv.innerHTML = `<span>${foldersData[key].title}</span><span>—</span>`;
+                
+                let folderItemsDiv = document.createElement('div');
+                folderItemsDiv.className = 'folder-items';
+
+                folderTitleDiv.addEventListener('click', function() {
+                    if (folderItemsDiv.style.display === 'none') {
+                        folderItemsDiv.style.display = 'flex';
+                        folderTitleDiv.lastChild.innerText = '—';
+                    } else {
+                        folderItemsDiv.style.display = 'none';
+                        folderTitleDiv.lastChild.innerText = '+';
+                    }
+                });
+
+                folderGroupDiv.appendChild(folderTitleDiv);
+                folderGroupDiv.appendChild(folderItemsDiv);
+                
+                folderListEl.appendChild(folderGroupDiv);
+                foldersData[key].el = folderGroupDiv;
+                foldersData[key].itemsEl = folderItemsDiv;
+                folderGroupDiv.style.display = 'none';
+            }
+        }
+
+        initFoldersUI();
+
+        // 3. KML 불러오기
+        omnivore.kml('assets/jae.kml')
+            .on('ready', function() {
+                let hasAnyItem = false;
+
+                this.eachLayer(function(layer) {
+                    let name = (layer.feature && layer.feature.properties && layer.feature.properties.name) ? layer.feature.properties.name : '이름 없는 구역';
+                    let description = (layer.feature && layer.feature.properties && layer.feature.properties.description) ? layer.feature.properties.description : '';
+
+                    if (layer.setStyle) {
+                        layer.setStyle(defaultStyle);
+                    }
+
+                    let targetFolder = "기타 구역";
+                    if (description.includes("동대문구")) {
+                        targetFolder = "동대문구";
+                    } else if (description.includes("중랑구")) {
+                        targetFolder = "중랑구";
+                    }
+
+                    hasAnyItem = true;
+                    foldersData[targetFolder].el.style.display = 'block';
+
+                    const row = document.createElement('div');
+                    row.className = 'item-row';
+                    row.innerText = name;
+
+                    row.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        selectZone(name, description, layer);
+                        moveToZone(layer);
+                        showDetailView();
+                    });
+
+                    layer.on('click', function(e) {
+                        L.DomEvent.stopPropagation(e);
+                        selectZone(name, description, layer);
+                        moveToZone(layer);
+                        showDetailView();
+                    });
+
+                    foldersData[targetFolder].itemsEl.appendChild(row);
+                });
+
+                if (!hasAnyItem) {
+                    folderListEl.innerHTML = '<div style="padding: 20px; color: #888; text-align: center; font-size: 0.9rem;">표시할 구역이 없습니다.</div>';
+                }
+            })
+            .on('error', function(err) {
+                folderListEl.innerHTML = '<div style="padding: 20px; color: #ff4757; text-align: center; font-size: 0.9rem;">KML 로드 실패 (경로 확인)</div>';
+                console.error("KML Load Error:", err);
+            })
+            .addTo(map);
+
+        backBtn.addEventListener('click', function() {
+            showListView();
+            clearSelection();
+        });
+
+        map.on('click', function() {
+            clearSelection();
+            showListView();
+        });
+
+        function showDetailView() {
+            listViewEl.classList.remove('active');
+            detailViewEl.classList.add('active');
+        }
+
+        function showListView() {
+            detailViewEl.classList.remove('active');
+            listViewEl.classList.add('active');
+        }
+
+        function selectZone(name, description, layer) {
+            if (currentlySelectedLayer && currentlySelectedLayer !== layer) {
+                if (currentlySelectedLayer.setStyle) {
+                    currentlySelectedLayer.setStyle(defaultStyle);
+                }
+            }
+
+            currentlySelectedLayer = layer;
+            if (layer.setStyle) {
+                layer.setStyle(selectedStyle);
+            }
+
+            // 웹 URL 이미지 파싱 처리 (상단 배치)
+            let imageHtml = '';
+            let imgTagMatch = description.match(/<img[^>]+src="([^">]+)"/i) || description.match(/<img[^>]+src='([^'>]+)'/i);
+            let urlMatch = description.match(/(https?:\/\/[^\s]+\.(png|jpg|jpeg|gif|webp))/i);
+
+            let imageUrl = null;
+            if (imgTagMatch && imgTagMatch[1]) {
+                imageUrl = imgTagMatch[1];
+                description = description.replace(/<img[^>]*>/gi, '');
+            } else if (urlMatch && urlMatch[1]) {
+                imageUrl = urlMatch[1];
+                description = description.replace(urlMatch[1], '');
+            }
+
+            if (imageUrl) {
+                imageHtml = `<div class="detail-image-wrapper"><img src="${imageUrl}" alt="${name} 이미지"></div>`;
+            }
+
+            detailContentEl.innerHTML = `
+                ${imageHtml}
+                <h4>${name}</h4>
+                <div style="color: #000000; font-size: 0.95rem; word-break: break-all;">
+                    ${description.trim() ? description : '상세 정보가 없습니다.'}
+                </div>
+            `;
+
+            document.querySelectorAll('.item-row').forEach(el => {
+                if (el.innerText === name) {
+                    el.classList.add('active');
+                } else {
+                    el.classList.remove('active');
+                }
+            });
+        }
+
+        function clearSelection() {
+            if (currentlySelectedLayer) {
+                if (currentlySelectedLayer.setStyle) {
+                    currentlySelectedLayer.setStyle(defaultStyle);
+                }
+                currentlySelectedLayer = null;
+            }
+            document.querySelectorAll('.item-row').forEach(el => {
+                el.classList.remove('active');
+            });
+        }
+
+        function moveToZone(layer) {
+            if (layer.getBounds) {
+                map.fitBounds(layer.getBounds(), { padding: [60, 60], maxZoom: 16 });
+            } else if (layer.getLatLng) {
+                map.setView(layer.getLatLng(), 16);
+            }
+        }
+    </script>
+</body>
+</html>

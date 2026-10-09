@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:url" content="https://sin13248920.github.io/seo-weekly-test">
+    <meta property="og:title" content="서오일보">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="assets/thum_OG.jpg">
+    <meta property="og:description" content="서오 최초의 온라인 뉴스서비스인 서오일보는 서오 최고의 언론사인 서오일보의 온라인 뉴스 제공 서비스입니다. ">
+    <title>서오일보</title>
+    <link rel="icon" href="assets/favi.png" type="image/png">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: #222222;
+            line-height: 1.6;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* 1. 기본 큰 헤더 */
+        .large-header {
+            width: 100%;
+            background-color: #ffffff;
+            border-bottom: 1px solid #d1d8dd;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header-main-bar {
+            height: 95px; /* 로고 크기 확대에 맞추어 메인 바 높이 조정 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ffffff;
+        }
+
+        .header-container {
+            max-width: 1160px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            position: relative;
+        }
+
+        .logo-link {
+            display: block;
+            text-decoration: none;
+        }
+
+        .logo-img-large {
+            height: 60px; /* 큰 헤더 로고 크기를 눈에 띄게 대폭 확대 */
+            width: auto;
+            display: block;
+        }
+
+        /* 날짜 정보 및 카테고리 바 */
+        .sub-info-bar {
+            background-color: #ffffff;
+            border-top: 1px solid #d1d8dd;
+            border-bottom: 1px solid #000000;
+            font-size: 12px;
+            color: #555555;
+            height: 36px;
+            display: flex;
+            align-items: center;
+        }
+
+        .sub-info-inner {
+            max-width: 1160px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .current-date {
+            flex-shrink: 0;
+        }
+
+        /* 카테고리 칸 (가운데 정렬) */
+        .sub-nav-categories {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .sub-nav-categories a {
+            text-decoration: none;
+            color: #333333;
+            font-size: 13px;
+            font-weight: 500;
+            transition: none; 
+        }
+
+        .sub-nav-categories a:hover {
+            color: #a61c1c;
+            font-weight: 700;
+        }
+
+        /* 2. 스크롤 시 위에서 나타나는 고정 소형 헤더 */
+        .fixed-small-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 56px; /* 소형 헤더 높이도 살짝 키움 */
+            background-color: #ffffff;
+            border-bottom: 1px solid #d1d8dd;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            transform: translateY(-100%);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .fixed-small-header.active {
+            transform: translateY(0);
+        }
+
+        .logo-img-small {
+            height: 32px; /* 소형 헤더 로고도 기존보다 키움 */
+            width: auto;
+            display: block;
+        }
+
+        /* 메인 컨테이너 레이아웃 */
+        .main-container {
+            max-width: 1160px;
+            width: 100%;
+            margin: 20px auto 50px auto;
+            padding: 0 10px;
+            flex: 1;
+        }
+
+        .section-title-small {
+            font-size: 14px;
+            font-weight: 800;
+            color: #a61c1c;
+            text-transform: uppercase;
+            letter-spacing: -0.3px;
+            margin-bottom: 8px;
+        }
+
+        .top-news-layout {
+            display: grid;
+            grid-template-columns: 8fr 2fr;
+            gap: 25px;
+            margin-bottom: 30px;
+            align-items: stretch;
+        }
+
+        .main-lead-article {
+            display: grid;
+            grid-template-columns: 1fr 1.3fr;
+            gap: 30px;
+            text-decoration: none;
+            color: inherit;
+            background-color: transparent;
+            border: none;
+            padding: 0;
+            align-items: start;
+            height: 100%;
+        }
+
+        .main-lead-article:hover .main-lead-title {
+            color: #777777;
+        }
+
+        .main-lead-content-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            order: 1;
+        }
+
+        .main-lead-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #111111;
+            line-height: 1.35;
+            margin-bottom: 12px;
+        }
+
+        .main-lead-desc {
+            font-size: 16px;
+            color: #555555;
+            line-height: 1.6;
+        }
+
+        .main-lead-thumb {
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            background-color: #f8f9fa;
+            border: 1px solid #e1e4e8;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            order: 2;
+        }
+
+        .main-lead-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .right-vertical-news {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            gap: 0;
+        }
+
+        .right-vertical-card {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            flex: 1;
+            padding: 10px 0;
+            border-bottom: 1px solid #d1d8dd;
+        }
+
+        .right-vertical-card:last-child {
+            border-bottom: none;
+        }
+
+        .right-vertical-card:hover .right-vertical-title {
+            color: #777777;
+        }
+
+        .right-vertical-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #111111;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .bottom-news-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+            padding-top: 25px;
+            border-top: 1px solid #d1d8dd;
+        }
+
+        .bottom-news-card {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            text-decoration: none;
+            color: inherit;
+            background-color: transparent;
+            border: none;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e1e4e8;
+        }
+
+        .bottom-news-card:hover .bottom-news-title {
+            color: #777777;
+        }
+
+        .bottom-news-thumb {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background-color: #f8f9fa;
+            border: 1px solid #e1e4e8;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .bottom-news-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .bottom-news-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            flex: 1;
+        }
+
+        .bottom-news-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #111111;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .advertisement-section {
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .ad-caption {
+            font-size: 11px;
+            font-weight: normal;
+            color: #888888;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .ad-container {
+            width: 100%;
+            background-color: transparent;
+            border: none;
+            border-radius: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+        }
+
+        .ad-container a {
+            display: inline-block;
+            max-width: 100%;
+        }
+
+        .ad-container img {
+            max-width: 100%;
+            height: auto;
+            width: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* 카테고리 섹터: 위 2개(사회, 경제) / 아래 3개(정치, 부동산, 문화) */
+        .category-top-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .category-bottom-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .category-column {
+            background-color: transparent;
+            border: none;
+            padding: 5px;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .category-col-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: #111111;
+            border-top: 2px solid #a61c1c;
+            padding-top: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .category-col-title a {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .category-col-title a:hover {
+            color: #777777;
+        }
+
+        .category-title-inner {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .category-arrow-img {
+            width: 12px;
+            height: 12px;
+            object-fit: contain;
+            display: inline-block;
+        }
+
+        .category-col-title a:hover .category-arrow-img {
+            opacity: 0.5;
+        }
+
+        .category-article-list {
+            flex: 1;
+        }
+
+        /* 위 2개 카테고리: 왼쪽 최신 기사(사진+제목+내용) / 오른쪽 나머지 기사(제목만) */
+        .cat-split {
+            display: grid;
+            grid-template-columns: 1.15fr 1fr;
+            gap: 20px;
+            align-items: stretch;
+        }
+
+        .cat-split.cat-split-single {
+            grid-template-columns: 1fr;
+        }
+
+        .cat-lead {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            min-width: 0;
+        }
+
+        .cat-lead-thumb {
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            background-color: #f1f3f5;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .cat-lead-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .cat-lead-title {
+            font-size: 17px;
+            font-weight: 800;
+            color: #111111;
+            line-height: 1.4;
+            margin-bottom: 6px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .cat-lead-desc {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #555555;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .cat-lead:hover .cat-lead-title {
+            color: #777777;
+        }
+
+        .cat-side-list {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .cat-side-item {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            padding: 12px 0;
+            border-bottom: 1px solid #d1d8dd;
+        }
+
+        .cat-side-item:first-child {
+            padding-top: 0;
+        }
+
+        .cat-side-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .cat-side-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #222222;
+            line-height: 1.45;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .cat-side-item:hover .cat-side-title {
+            color: #777777;
+        }
+
+        /* 기사가 부족해도 칸은 모두 표시 (내용은 비움) */
+        .cat-lead-empty {
+            display: block;
+            min-width: 0;
+        }
+
+        .cat-side-empty {
+            min-height: 41px;
+        }
+
+        .cat-side-item.has-thumb.cat-side-empty {
+            min-height: 81px;
+        }
+
+        /* 오른쪽 목록 높이를 왼쪽 최신 기사 높이에 맞춤 (기사 사이 간격을 균등 배분) */
+        .cat-side-fill {
+            justify-content: space-between;
+        }
+
+        .cat-side-fill .cat-side-item {
+            padding: 0;
+            border-bottom: none;
+        }
+
+        .cat-side-sep {
+            flex: 1 1 0;
+            min-height: 24px;
+            position: relative;
+        }
+
+        .cat-side-sep::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
+            border-top: 1px solid #d1d8dd;
+        }
+
+        /* 오피니언 섹터: 전체 너비, 왼쪽 최신 기사(큰 사진+제목+내용) / 오른쪽 4개(작은 사진+제목) */
+        .opinion-section {
+            margin-top: 30px;
+        }
+
+        .opinion-split {
+            display: grid;
+            grid-template-columns: 1fr 1.1fr;
+            gap: 30px;
+            align-items: stretch;
+        }
+
+        .opinion-split.cat-split-single {
+            grid-template-columns: 1fr;
+        }
+
+        .opinion-section .category-col-title {
+            border-top-color: #999999;
+        }
+
+        .opinion-section .cat-lead-thumb {
+            aspect-ratio: 16 / 9;
+        }
+
+        .opinion-section .cat-lead-title {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .opinion-section .cat-lead-desc {
+            font-size: 14px;
+            -webkit-line-clamp: 4;
+        }
+
+        .cat-side-item.has-thumb {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .cat-side-thumb {
+            flex-shrink: 0;
+            width: 130px;
+            aspect-ratio: 16 / 10;
+            background-color: #f1f3f5;
+            overflow: hidden;
+        }
+
+        .cat-side-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .opinion-section .cat-side-title {
+            font-size: 15px;
+        }
+
+        /* 아래 3개 카테고리: 최신 기사(사진+제목) 아래에 최신 2개(제목만) */
+        .category-bottom-row .cat-lead-title {
+            font-size: 15px;
+            margin-bottom: 0;
+        }
+
+        .category-bottom-row .cat-side-list {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #d1d8dd;
+        }
+
+        @media (max-width: 1000px) {
+            .cat-split,
+            .opinion-split {
+                grid-template-columns: 1fr;
+            }
+            .opinion-split {
+                gap: 20px;
+            }
+        }
+
+        .no-article-notice {
+            font-size: 13px;
+            color: #888888;
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        footer {
+            background-color: #f2f4f6;
+            padding: 30px 10px;
+            font-size: 12px;
+            color: #666666;
+            margin-top: auto;
+            line-height: 1.6;
+        }
+
+        .footer-inner {
+            max-width: 1160px;
+            margin: 0 auto;
+        }
+
+        .footer-top {
+            display: flex;
+            align-items: flex-start;
+            gap: 40px;
+        }
+
+        .footer-logo-area {
+            flex-shrink: 0;
+            padding-top: 2px;
+        }
+
+        .footer-logo-img {
+            height: 32px;
+            width: auto;
+            display: block;
+        }
+
+        .footer-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .footer-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0;
+            color: #555555;
+        }
+
+        .footer-bar {
+            margin: 0 8px;
+            color: #d1d5db;
+            font-size: 11px;
+        }
+
+        .footer-desc {
+            margin-top: 4px;
+            color: #666666;
+        }
+
+        .footer-copyright {
+            margin-top: 4px;
+            color: #888888;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .sub-info-bar { display: none; }
+            .header-main-bar { height: 70px; }
+            .logo-img-large { height: 40px; }
+            
+            .top-news-layout {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .main-lead-article {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .main-lead-content-box {
+                order: 1;
+            }
+            .main-lead-thumb {
+                order: 2;
+                aspect-ratio: 16 / 9;
+            }
+            .main-lead-title {
+                font-size: 22px;
+            }
+
+            .right-vertical-news {
+                border-top: 1px solid #d1d8dd;
+                padding-top: 15px;
+                margin-top: 15px;
+                gap: 12px;
+            }
+            .right-vertical-card {
+                padding-bottom: 12px;
+                border-bottom: 1px solid #f1f3f5;
+            }
+            .right-vertical-card:last-child {
+                border-bottom: none;
+                padding-bottom: 0;
+            }
+
+            .bottom-news-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                border-top: 1px solid #d1d8dd;
+                padding-top: 15px;
+            }
+
+            .bottom-news-card:nth-child(1) {
+                flex-direction: column !important;
+                gap: 10px;
+                align-items: stretch;
+                padding-bottom: 15px;
+                border-bottom: 1px solid #d1d8dd;
+            }
+            .bottom-news-card:nth-child(1) .bottom-news-thumb {
+                width: 100% !important;
+                aspect-ratio: 16 / 9 !important;
+            }
+
+            .bottom-news-card:nth-child(2),
+            .bottom-news-card:nth-child(3),
+            .bottom-news-card:nth-child(4) {
+                flex-direction: row !important;
+                gap: 12px;
+                align-items: center;
+                padding-bottom: 12px;
+                border-bottom: 1px solid #f1f3f5;
+            }
+            .bottom-news-card:nth-child(2) .bottom-news-thumb,
+            .bottom-news-card:nth-child(3) .bottom-news-thumb,
+            .bottom-news-card:nth-child(4) .bottom-news-thumb {
+                width: 120px !important;
+                height: auto !important;
+                aspect-ratio: 16 / 9 !important;
+                flex-shrink: 0;
+            }
+
+            .bottom-news-card:last-child {
+                border-bottom: none;
+                padding-bottom: 0;
+            }
+
+            .category-top-row,
+            .category-bottom-row {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .cat-side-item.has-thumb .cat-side-thumb {
+                width: 110px;
+            }
+            .cat-side-item.has-thumb.cat-side-empty {
+                min-height: 69px;
+            }
+            .main-container {
+                margin: 15px auto 30px auto;
+                padding: 0 8px;
+            }
+            .footer-top {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .footer-bar {
+                margin: 0 6px;
+            }
+            footer {
+                padding: 20px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. 기본 큰 헤더 -->
+    <div class="large-header" id="largeHeader">
+        <div class="header-main-bar">
+            <div class="header-container">
+                <a href="index.html" class="logo-link">
+                    <img src="assets/seologo.png" alt="서오일보 로고" class="logo-img-large">
+                </a>
+            </div>
+        </div>
+        <div class="sub-info-bar">
+            <div class="sub-info-inner">
+                <span class="current-date" id="headerDate">2026.09.29 (화)</span>
+                <nav class="sub-nav-categories">
+                    <a href="category.html?type=social">사회</a>
+                    <a href="category.html?type=economy">경제</a>
+                    <a href="category.html?type=politics">정치</a>
+                    <a href="category.html?type=realestate">부동산</a>
+                    <a href="category.html?type=culture">문화</a>
+                    <a href="category.html?type=opinion">오피니언</a>
+                    <a href="jae.html">동네개발맵</a>
+                    <a href="https://sin13248920.github.io/weekly-seo-e-viewer/">월간서오</a>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. 스크롤 시 위에서 스르륵 나타나는 고정 소형 헤더 -->
+    <header class="fixed-small-header" id="fixedSmallHeader">
+        <div class="header-container">
+            <a href="index.html" class="logo-link">
+                <img src="assets/seologo.png" alt="서오일보 로고" class="logo-img-small">
+            </a>
+        </div>
+    </header>
+
+    <!-- 메인 콘텐츠 영역 -->
+    <main class="main-container">
+        
+        <div id="topNewsGrid">
+            <div style="text-align: center; color: #888; padding: 40px 0;">기사가 존재하지 않습니다.</div>
+        </div>
+
+        <div class="advertisement-section">
+            <div class="ad-caption">Advertisement</div>
+            <div class="ad-container" id="randomAdContainer"></div>
+        </div>
+
+        <div class="category-top-row">
+            <div class="category-column">
+                <div class="category-col-title">
+                    <a href="category.html?type=social">
+                        <span class="category-title-inner">
+                            <span>사회</span>
+                            <img src="assets/rarrow.png" alt="바로가기" class="category-arrow-img">
+                        </span>
+                    </a>
+                </div>
+                <div class="category-article-list" id="societyArticleList"></div>
+            </div>
+            <div class="category-column">
+                <div class="category-col-title">
+                    <a href="category.html?type=economy">
+                        <span class="category-title-inner">
+                            <span>경제</span>
+                            <img src="assets/rarrow.png" alt="바로가기" class="category-arrow-img">
+                        </span>
+                    </a>
+                </div>
+                <div class="category-article-list" id="economyArticleList"></div>
+            </div>
+        </div>
+
+        <div class="category-bottom-row">
+            <div class="category-column">
+                <div class="category-col-title">
+                    <a href="category.html?type=politics">
+                        <span class="category-title-inner">
+                            <span>정치</span>
+                            <img src="assets/rarrow.png" alt="바로가기" class="category-arrow-img">
+                        </span>
+                    </a>
+                </div>
+                <div class="category-article-list" id="politicsArticleList"></div>
+            </div>
+            <div class="category-column">
+                <div class="category-col-title">
+                    <a href="category.html?type=realestate">
+                        <span class="category-title-inner">
+                            <span>부동산</span>
+                            <img src="assets/rarrow.png" alt="바로가기" class="category-arrow-img">
+                        </span>
+                    </a>
+                </div>
+                <div class="category-article-list" id="realestateArticleList"></div>
+            </div>
+            <div class="category-column">
+                <div class="category-col-title">
+                    <a href="category.html?type=culture">
+                        <span class="category-title-inner">
+                            <span>문화</span>
+                            <img src="assets/rarrow.png" alt="바로가기" class="category-arrow-img">
+                        </span>
+                    </a>
+                </div>
+                <div class="category-article-list" id="cultureArticleList"></div>
+            </div>
+        </div>
+
+        <div class="opinion-section">
+            <div class="category-column">
+                <div class="category-col-title">
+                    <a href="category.html?type=opinion">
+                        <span class="category-title-inner">
+                            <span>오피니언</span>
+                            <img src="assets/rarrow.png" alt="바로가기" class="category-arrow-img">
+                        </span>
+                    </a>
+                </div>
+                <div class="category-article-list" id="opinionArticleList"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-top">
+                <div class="footer-logo-area">
+                    <img src="assets/seologo.png" alt="서오일보 로고" class="footer-logo-img">
+                </div>
+                <div class="footer-info">
+                    <div class="footer-row">
+                        <span>주소 : 서울특별시 용산구 한일로 301 (우) 01201</span>
+                        <span class="footer-bar">|</span>
+                        <span>전화 : 02-123-4567</span>
+                        <span class="footer-bar">|</span>
+                        <span>등록번호 : 서울 아 00000</span>
+                        <span class="footer-bar">|</span>
+                        <span>등록일자 : 2026.09.11</span>
+                        <span class="footer-bar">|</span>
+                        <span>발행인·편집인 : 김서오</span>
+                    </div>
+                    <div class="footer-row">
+                        <span>사업자명 : 서오일보(주)</span>
+                        <span class="footer-bar">|</span>
+                        <span>사업자등록번호 : 123-45-6789</span>
+                        <span class="footer-bar">|</span>
+                        <span>대표자명 : 김서오</span>
+                        <span class="footer-bar">|</span>
+                        <span>통신판매업신고번호 : 2026-서울용산-0123</span>
+                    </div>
+                    <div class="footer-row footer-desc">
+                        서오일보의 모든 콘텐츠(기사)는 저작권법의 보호를 받는바, 무단 전재, 복사, 배포 등을 금합니다.
+                    </div>
+                    <div class="footer-row footer-copyright">
+                        Copyright by SeoIlbo Co., Ltd. All Rights Reserved
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            const dateEl = document.getElementById('headerDate');
+            if(dateEl) {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const week = ['일', '월', '화', '수', '목', '금', '토'][now.getDay()];
+                dateEl.innerText = `${year}.${month}.${day} (${week})`;
+            }
+
+            renderRandomAd();
+            fetchArticles();
+        });
+
+        function renderRandomAd() {
+            const ads = [
+                {
+                    link: "https://googleads.g.doubleclick.net/pcs/click?xai=AKAOjsvHQNtwTVAjvEJi_sEVHXjfeVF7xAPG76Lf26zHp6LAkAM77eBZGzm0eg-az1xaUff4m7Tjl5CXT0qsZbXiv-CphOjGUf7lU2vrAsF-hiljX8XIDNQ1f7NRleTYEpZjYkj7jbKG9nwrfMbR4uT1o-JPKPVc1DhpJeAUHZzvzS8Gp_n3OCwryojqngbLT1gOa8aXGTkGJXSlrljCS7IvJQbfHtGQCqjIIDaSVkzZDQ-EYf2wLYvfirSrZWhP73RYhJBXsmPR708WdYPaegHYlLm7gCFCOibZ7Aj6Edb5brb1IyRKUK7_omHwCYo2vbjt9raGY4HgCsWujs9TyeH8xG6H30__efucur0ewib4PfrJXCEFT0lZenDUrI54079VMDqZwNf_o69mePoaY_PxGb76EUBc69QgrwYBGBZFMrs&sai=AMfl-YQJWv7s4falBYAzhDQqWP2tmkgr_ktuEIwXYZq_8_EUE-wTLzB2_YP401GQVch802VF7AWs5Digchsu7mcQ9c0BGEpZJlcpXNXHB60y3_oP1vuww2-X8k8JSHRBBQsk7KMyiZQ2674TvYJ3X2R6pSRuJ4FgQlis3kGQmh_7FS7TLh6HjWnmsop4WV9B_NI0cHRk-Dwz8VPuNl0SBbkaB-EYv2khEMgHzRqy4TBH5yQvGJGlzBgmAMtDkLtkuAaRQw_Viu-tgNToxswtcIEmlji_Q8SpDzpXAoRj0eK8DiPACn4T-5Q-4R-GVXnA11h35AC_6Jm16XcsYAb38ei0jQadM7HzlccdBmvQ4IZHw7Y-SyMJCoCo8YuqnnNhah1RDK4aJOT6nCO3bGj8BHyp0eYOXw&sig=Cg0ArKJSzEn-h8UHO7Tb&fbs_aeid=%5Bgw_fbsaeid%5D&adurl=https://www.shinhansec.com/&nm=8&nx=501&ny=-127&mb=2",
+                    img: "https://tpc.googlesyndication.com/simgad/9605667977763773549",
+                    alt: "신한증권 광고 배너"
+                },
+                {
+                    link: "https://googleads.g.doubleclick.net/pcs/click?xai=AKAOjsu15iI1OFa3VHzOdeNaVkvJth-zlNvDOGj3VATSMXdsK25gJChaTMxlMNK9bUTb0I9c4M5O84JBfD7_jqrdZFcI6wTbieIi-9g52VWLtnHTTQN-zxuXd10qEltnII_kqJkLdZgB8mW_Kb2dVwhn05rtR8rCUJWFL9-mvQd2yNMoiFfSGf5x2Pr7R_7OYWjGc8YjQqX39DOprTpUeMl2l0_HMqIIXCzX3IulA8dINX-r9QQNvQacbLJqZBlp2lq5tLOAqjePfR7sBwSX61SWr5qy1YoWHsX3yyiWXevvxDwMTbD-aOgo7vouZG7C0REmDDtDIB0_buqiNHAyncrIuW3QeaGy5uMmiRSiCF8rQUgBDaLc1WNNrvhi2-PlwW4IS6PmJo2kJ7msfjRUOOlubO6uj6mx7MMNGPqDc47o8aE&sai=AMfl-YTlUaUPukBflSXtuL6CojPztFZafNLGnLIE6zjIRDIPY0s5feIvUb1371Aq_Et0Co9yXlNJSkJAUTemkS-t4iFBYVNwEEE6oNeYXSRO9cWv2j_A6-ykfF7fcLjsSZcDt87XWUFbVIhxFFmYuTC0AGwdVAZ5ZgarRnVoNjS--4jXx9h55kKZfWbp5yaPnwXw0XtiPLxNjy_44rriPSNwtn_J5aM9OUyig2YK7XBBtjLxBwE1NjA7ZZ7HIsBG_IrvS5PLc5In0Vuzskt8XcLSqiP3SbgDoNTL2kFHVJXWF-YZwYc-EZ-h2BG7IHscHFp0EsYsCs8i3CMukk9gzFXtwlQHKN4r_E3RVo14ztzX-JpdCxw6zYsqjsKCkKD0ngFjFVl_BhrrZvtwgxwHfgg7K2fCFw&sig=Cg0ArKJSzJ7fu8V9uWUD&fbs_aeid=%5Bgw_fbsaeid%5D&adurl=https://www.youtube.com/%40uljugun&nm=2&nx=215&ny=-149&mb=2",
+                    img: "https://tpc.googlesyndication.com/simgad/9158774144409825383", 
+                    alt: "울산울주"
+                },
+                {
+                    link: "https://googleads.g.doubleclick.net/pcs/click?xai=AKAOjsstSCnI9a3K8BCcEHoMQ5K3iOqs3tXxhcv5-18az_nREEGffAlbrAmaT84jSGpelCqVh-SvtB_5EAqm3DqDtL1AQ24TBYJdwHl7cI8qvNwJvlbZPRomODASysCRDG-o9gyUic0j6aj7tBGmNIs_SkY8hZETVdi93Gj0sgHM4N-hVB8YiNcTdf4k6yccVIeFXh_hENDgAEjB--StovRJ_gLkfcM28OIg8DS0VRTtEVkYLVsujSVCzrCvRTkQ1I424Le0NYsmbbmhMyqFNC3EE-3dU9ktsuFRrXGXZroLwuIJu-rghJRcsojZl4Ylo03rEZhjH9BHVhZEwoBwv8IF_rd1J8npG-SWusxU8Yl1AnMVX1T2rxurdHxZ7l_eYXRdh7Id0-c0tFH-OPcQmpbnSEmIR8edF05H2lbxkC0Dqzs&sai=AMfl-YTHMpccsAqHDw6YXirHFxQvq-HKbTgE2yu257Yfpnf8RAwTAFnMKvOsqpGnsLZOE4QKqlyJtNdooi87KWkFnZ5anOp7EUaif9lHBguKoxFdv90dpck8W1alKJfPL8H2iAc2UVOxsh0KPQTWQaZatFZKXby5FFYyYAgZhh8U6Xx94r5foMjaZWYZU2vgofcLScqU3pzxzxffdRWbbhmpsTnCSK6BH2LSj-CoQW4x6sVTqeos0Af0Bp_pYiS2qxDgKlKDLhfJScRoCHz8h297hv9FEc5cqM5e5vPOGZF8ulzMDBYtKdvk19Wp22RzmBlG10mtxJbtdPiNgVdoy2v0eRdKVA8aRrJHj6AgIYOS95AMPSmrnd6Wr1Nv0pjI5SWMstbTZktCLmi_8hdn4UzHEEuHXA&sig=Cg0ArKJSzJJbzKHSMI5k&fbs_aeid=%5Bgw_fbsaeid%5D&adurl=https://www.iwest.co.kr/sites/iwest/index.do&nm=3&nx=223&ny=-66&mb=2",
+                    img: "https://tpc.googlesyndication.com/simgad/14283841163973536780", 
+                    alt: "서부발전"
+                },
+                {
+                    link: "https://googleads.g.doubleclick.net/pcs/click?xai=AKAOjss4-nWqsbgRwtf_n4xb1-iCJwSptwucr1pnhbjxl5zXadjXtjzk2rilXr2YsNPEt6QPFVRKu2zYSoGPZA4cbD8_rp_TTbtwlg4DJqGl8sPYHL5KAd-EKfJ9mW-znLoxbvbMtGoqknfuLPTO5kOENeOtYu6Ykvnh0tMgBqL9GsAg_SRorTmuCwNbQMHYGoW-m7D0NcA6Y59iz6mQzGIwXF52QSi4L0EBquMXFqIHtl5eJ9yFqnrvV_Fa_StvE7kQB3JQSKjGq-Y9NRwFmiSomDJ3kKEFAtg-OmQpVRKZ5UOS8L1_hxHSMgvCvLRyh1BbYg8YmAP-T8VjPBfvEyWFuSaZ1LKhkq2g79AXBFNb8rG8yJZGKfN1bVkduOl-3cUFUx5J-fpSln3xG7uPBWQbLrMagC_1NATW9GfprGL52HI&sai=AMfl-YRssAJnGc-0WTYd_I2NR6pc6gAnBHZg152aGuelAhZKYpCC1LHun5ea-UsbHHwqMWsma5kkc2XrhHqyW7IcpnRT3BAMcTzZLQT1LUYCwN0m-O4W5xmSAZoxOHUjA-BGphHAepnSFjAnoPtrsqWpbsNCD8RVng21q9vkwa2HWSKXhoJSwT6KmRewlu85Ryimjj5JsxD7Pzd1jpoW2FQ-xbXp5DEfJeGPHS3FBMHiRgPKVc64PdRFvB7hywz5xEpC8_m7HEM1uAOBp-ZUocGfAZZGBGPJ7hrQbPEFEYui5Is1Xt0_JTBvJ4VRSTf7ILmM4d9dnasmfiSjzDB3f5_pDEGO-SWQhZtyAwR3pEBOnsFFqMO87oNvTPIiEj4pOJqztC6d4KjXPaqeHjnUhjJO5jKowQ&sig=Cg0ArKJSzND4gP0VNGIj&fbs_aeid=%5Bgw_fbsaeid%5D&adurl=https://g-startupsummit.or.kr/&nm=3&nx=256&ny=-124&mb=2",
+                    img: "https://tpc.googlesyndication.com/simgad/2762908728988565592", 
+                    alt: "경기써밋"
+                }
+            ];
+
+            const container = document.getElementById('randomAdContainer');
+            if (!container) return;
+
+            const randomIndex = Math.floor(Math.random() * ads.length);
+            const selectedAd = ads[randomIndex];
+
+            container.innerHTML = `
+                <a href="${selectedAd.link}" target="_blank">
+                    <img src="${selectedAd.img}" alt="${selectedAd.alt}">
+                </a>
+            `;
+        }
+
+        function getImageUrl(imageField) {
+            if (!imageField) return null;
+            if (typeof imageField === 'string') return imageField;
+            if (typeof imageField === 'object' && imageField.url) return imageField.url;
+            return null;
+        }
+
+        // 이미지가 없거나 불러오지 못하면 기본 썸네일 사용
+        const DEFAULT_THUMB = 'assets/thum_OG.jpg';
+        const THUMB_ONERROR = "this.onerror=null;this.src='" + DEFAULT_THUMB + "'";
+
+        function getThumbUrl(imageField) {
+            return getImageUrl(imageField) || DEFAULT_THUMB;
+        }
+
+        async function fetchArticles() {
+            const articles = [];
+            try {
+                const response = await fetch("https://api.github.com/repos/sin13248920/seo-weekly-test/contents/articles");
+                if (!response.ok) throw new Error(`GitHub API 오류: ${response.status}`);
+                const files = await response.json();
+
+                const jsonFiles = files
+                    .filter(file => file.type === "file" && file.name.toLowerCase().endsWith(".json"))
+                    .sort((a, b) => b.name.localeCompare(a.name));
+
+                for (const file of jsonFiles) {
+                    try {
+                        const articleResponse = await fetch(file.download_url);
+                        if (!articleResponse.ok) continue;
+                        const data = await articleResponse.json();
+                        articles.push({ id: file.name.replace(/\.json$/i, ""), ...data });
+                    } catch (e) {
+                        console.error(e);
+                    }
+                }
+            } catch (e) {
+                console.error(e);
+            }
+
+            articles.sort((a, b) => b.id.localeCompare(a.id));
+            renderMainNews(articles);
+            renderCategoryNews(articles);
+        }
+
+        function renderMainNews(articles) {
+            const container = document.getElementById('topNewsGrid');
+
+            // 대표 기사와 아래 작은 기사 4개에는 오피니언 기사를 제외 (오피니언은 오른쪽 세로 기사에서 표시)
+            const mainPool = articles.filter(art => !(art.category && art.category.includes('오피니언')));
+
+            if (mainPool.length === 0) {
+                container.innerHTML = `<div style="text-align: center; color: #888; padding: 40px 0;">기사가 존재하지 않습니다.</div>`;
+                return;
+            }
+
+            const leadArticle = mainPool[0]; 
+            const subArticles = mainPool.slice(1, 5); 
+            // 오른쪽 세로 기사: 최신 오피니언 카테고리 기사 3개
+            const verticalArticles = articles.filter(art => art.category && art.category.includes('오피니언')).slice(0, 3);
+
+            const leadThumbHtml = `<img src="${getThumbUrl(leadArticle.image)}" alt="대표 이미지" onerror="${THUMB_ONERROR}">`;
+
+            let html = `
+                <div class="top-news-layout">
+                    <a href="viewer.html?id=${leadArticle.id}" class="main-lead-article">
+                        <div class="main-lead-content-box">
+                            <div class="section-title-small" style="color: #a61c1c;">주요기사</div>
+                            <h2 class="main-lead-title">${leadArticle.title}</h2>
+                            <p class="main-lead-desc">${leadArticle.content && leadArticle.content[0] ? leadArticle.content[0] : ''}</p>
+                        </div>
+                        <div class="main-lead-thumb">${leadThumbHtml}</div>
+                    </a>
+                    
+                    <div class="right-vertical-news">
+            `;
+
+            for (let i = 0; i < 3; i++) {
+                if (verticalArticles[i]) {
+                    const art = verticalArticles[i];
+                    html += `
+                        <a href="viewer.html?id=${art.id}" class="right-vertical-card">
+                            <div class="right-vertical-title">${art.title}</div>
+                        </a>
+                    `;
+                } else {
+                    html += `
+                        <div class="right-vertical-card" style="visibility: hidden;">
+                            <div class="right-vertical-title">&nbsp;</div>
+                        </div>
+                    `;
+                }
+            }
+
+            html += `</div></div>`;
+
+            if (subArticles.length > 0) {
+                html += `<div class="bottom-news-grid">`;
+                subArticles.forEach(art => {
+                    const subThumbHtml = `<img src="${getThumbUrl(art.image)}" alt="썸네일" onerror="${THUMB_ONERROR}">`;
+                    html += `
+                        <a href="viewer.html?id=${art.id}" class="bottom-news-card">
+                            <div class="bottom-news-thumb">${subThumbHtml}</div>
+                            <div class="bottom-news-info">
+                                <div class="bottom-news-title">${art.title}</div>
+                            </div>
+                        </a>
+                    `;
+                });
+                html += `</div>`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function getArticleSummary(art) {
+            const content = art.content;
+            if (!Array.isArray(content)) return '';
+            for (const item of content) {
+                const text = typeof item === 'string' ? item : (item && item.type === 'text' ? item.value : '');
+                if (text && String(text).trim()) return String(text).trim();
+            }
+            return '';
+        }
+
+        function renderCategoryNews(articles) {
+            const hasCategory = (art, ...names) => art.category && names.some(n => art.category.includes(n));
+
+            // 헤더 메뉴 순서대로 (오피니언은 별도 처리 예정)
+            // wide: 위 2개 (왼쪽 최신 기사 사진+제목+내용 / 오른쪽 나머지 3개 제목만)
+            // compact: 아래 3개 (최신 기사 사진+제목 / 그 아래 최신 2개 제목만)
+            renderCategorySector('societyArticleList', articles.filter(a => hasCategory(a, '사회')), 'wide');
+            renderCategorySector('economyArticleList', articles.filter(a => hasCategory(a, '경제')), 'wide');
+            renderCategorySector('politicsArticleList', articles.filter(a => hasCategory(a, '정치')), 'compact');
+            renderCategorySector('realestateArticleList', articles.filter(a => hasCategory(a, '부동산')), 'compact');
+            renderCategorySector('cultureArticleList', articles.filter(a => hasCategory(a, '문화', '생활')), 'compact');
+            renderCategorySector('opinionArticleList', articles.filter(a => hasCategory(a, '오피니언')), 'opinion');
+        }
+
+        function buildLeadCard(art, withSummary) {
+            const thumbHtml = `<div class="cat-lead-thumb"><img src="${getThumbUrl(art.image)}" alt="${art.title}" onerror="${THUMB_ONERROR}"></div>`;
+            const summary = withSummary ? getArticleSummary(art) : '';
+            return `
+                <a href="viewer.html?id=${art.id}" class="cat-lead">
+                    ${thumbHtml}
+                    <div class="cat-lead-title">${art.title}</div>
+                    ${summary ? `<p class="cat-lead-desc">${summary}</p>` : ''}
+                </a>
+            `;
+        }
+
+        function buildEmptyLead() {
+            return `<div class="cat-lead cat-lead-empty"><div class="cat-lead-thumb"></div></div>`;
+        }
+
+        function buildSideList(list, options = {}) {
+            const fill = !!options.fill;
+            const withThumb = !!options.thumb;
+            const slots = options.slots || list.length;
+
+            // 기사가 부족하면 빈 칸으로 채움
+            const padded = list.slice(0, slots);
+            while (padded.length < slots) padded.push(null);
+
+            const items = padded.map(art => {
+                if (!art) {
+                    return `<div class="cat-side-item cat-side-empty${withThumb ? ' has-thumb' : ''}"></div>`;
+                }
+                const thumbHtml = withThumb
+                    ? `<div class="cat-side-thumb"><img src="${getThumbUrl(art.image)}" alt="${art.title}" onerror="${THUMB_ONERROR}"></div>`
+                    : '';
+                return `
+                    <a href="viewer.html?id=${art.id}" class="cat-side-item${withThumb ? ' has-thumb' : ''}">
+                        ${thumbHtml}
+                        <div class="cat-side-title">${art.title}</div>
+                    </a>
+                `;
+            });
+
+            // fill 모드: 기사 사이에 구분 칸을 넣어 왼쪽 높이에 맞춰 간격을 균등 배분
+            const inner = fill ? items.join('<div class="cat-side-sep"></div>') : items.join('');
+            return `<div class="cat-side-list${fill ? ' cat-side-fill' : ''}">${inner}</div>`;
+        }
+
+        function renderCategorySector(elementId, list, mode) {
+            const container = document.getElementById(elementId);
+            if (!container) return;
+
+            // 기사가 없거나 부족해도 칸 구조는 항상 표시 (빈 칸은 내용 없이)
+            const lead = list[0] || null;
+
+            if (mode === 'wide' || mode === 'opinion') {
+                // 왼쪽 최신 기사 + 오른쪽 나머지 4칸 (높이 맞춤)
+                const splitClass = mode === 'opinion' ? 'opinion-split' : 'cat-split';
+                container.innerHTML = `
+                    <div class="${splitClass}">
+                        ${lead ? buildLeadCard(lead, true) : buildEmptyLead()}
+                        ${buildSideList(list.slice(1, 5), { fill: true, thumb: mode === 'opinion', slots: 4 })}
+                    </div>
+                `;
+            } else {
+                container.innerHTML = (lead ? buildLeadCard(lead, false) : buildEmptyLead())
+                    + buildSideList(list.slice(1, 3), { slots: 2 });
+            }
+        }
+
+        window.addEventListener('scroll', function() {
+            const fixedHeader = document.getElementById('fixedSmallHeader');
+            const largeHeader = document.getElementById('largeHeader');
+            
+            const winScroll = window.pageYOffset || document.documentElement.scrollTop;
+            const threshold = largeHeader ? largeHeader.offsetHeight : 131;
+
+            if (winScroll > threshold) {
+                fixedHeader.classList.add('active');
+            } else {
+                fixedHeader.classList.remove('active');
+            }
+        });
+    </script>
+
+</body>
+</html>

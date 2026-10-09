@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026년 5월호</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f4f4f4;
+}
+
+.viewer-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.viewer-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 1100px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.page-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  overflow: hidden;
+}
+
+canvas {
+  width: 100%;
+  max-width: 48%;
+  background: #fff;
+  border-radius: 8px;
+  touch-action: none;
+  transform-origin: center center;
+}
+
+/* 컨트롤 */
+.controls {
+  text-align: center;
+  margin-top: 12px;
+}
+
+.controls button {
+  margin: 5px;
+  padding: 8px 14px;
+  border: none;
+  background: #eee;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* 모바일 */
+@media (max-width: 768px) {
+  .page-container {
+    flex-direction: column;
+  }
+  canvas {
+    max-width: 100%;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="header"></div>
+
+<div class="viewer-wrapper">
+  <div class="viewer-card" id="viewer">
+
+    <div class="page-container">
+      <canvas id="leftCanvas"></canvas>
+      <canvas id="rightCanvas"></canvas>
+    </div>
+
+    <div class="controls">
+      <button onclick="prevPage()" id="prevBtn">◀ 이전</button>
+      <span id="pageInfo"></span>
+      <button onclick="nextPage()" id="nextBtn">다음 ▶</button>
+
+      <br>
+
+      <button id="zoomBtn" onclick="enableZoom()">🔍 돋보기</button>
+      <button id="resetBtn" onclick="disableZoom()" style="display:none;">❌ 원래대로</button>
+    </div>
+
+  </div>
+</div>
+
+<div id="footer"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+<script>
+fetch("components/header.html").then(r=>r.text()).then(d=>header.innerHTML=d);
+fetch("components/footer.html").then(r=>r.text()).then(d=>footer.innerHTML=d);
+
+const url = "https://raw.githubusercontent.com/sin13248920/weekly-seo-viewer/main/test01.pdf";
+
+let pdfDoc = null;
+let currentPage = 1;
+let zoomMode = false;
+
+pdfjsLib.getDocument(url).promise.then(pdf => {
+  pdfDoc = pdf;
+  renderPages();
+});
+
+/* 렌더 */
+function renderPages() {
+  if (window.innerWidth < 768) renderSingle(currentPage);
+  else currentPage === 1 ? renderSingle(1) : renderDouble(currentPage, currentPage+1);
+}
+
+function renderSingle(n) {
+  rightCanvas.style.display = "none";
+  renderPage(n, leftCanvas);
+  pageInfo.textContent = `${n} / ${pdfDoc.numPages}`;
+}
+
+function renderDouble(l, r) {
+  rightCanvas.style.display = "block";
+  renderPage(l, leftCanvas);
+  if (r <= pdfDoc.numPages) renderPage(r, rightCanvas);
+  pageInfo.textContent = `${l}-${Math.min(r,pdfDoc.numPages)} / ${pdfDoc.numPages}`;
+}
+
+function renderPage(n, canvas) {
+  pdfDoc.getPage(n).then(page => {
+    const ctx = canvas.getContext("2d");
+    const viewport = page.getViewport({ scale: 1.5 });
+
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
+
+    page.render({ canvasContext: ctx, viewport });
+  });
+}
+
+/* 페이지 이동 */
+function nextPage() {
+  if (zoomMode) return;
+
+  if (window.innerWidth < 768) currentPage++;
+  else currentPage = (currentPage === 1) ? 2 : currentPage + 2;
+
+  if (currentPage > pdfDoc.numPages) return;
+  renderPages();
+}
+
+function prevPage() {
+  if (zoomMode) return;
+
+  if (window.innerWidth < 768) currentPage--;
+  else currentPage = (currentPage === 2) ? 1 : currentPage - 2;
+
+  if (currentPage < 1) currentPage = 1;
+  renderPages();
+}
+
+/* 🔥 돋보기 */
+function enableZoom() {
+  zoomMode = true;
+
+  zoomBtn.style.display = "none";
+  resetBtn.style.display = "inline-block";
+}
+
+function disableZoom() {
+  zoomMode = false;
+
+  zoomBtn.style.display = "inline-block";
+  resetBtn.style.display = "none";
+
+  resetCanvas(leftCanvas);
+  resetCanvas(rightCanvas);
+}
+
+/* 확대 + 이동 */
+function addZoom(canvas) {
+  let scale = 1;
+  let x = 0, y = 0;
+  let startX = 0, startY = 0;
+
+  /* 휠 확대 */
+  canvas.addEventListener("wheel", e => {
+    if (!zoomMode) return;
+    e.preventDefault();
+
+    scale += e.deltaY * -0.001;
+    scale = Math.min(Math.max(1, scale), 3);
+
+    update();
+  });
+
+  /* 드래그 이동 */
+  canvas.addEventListener("mousedown", e => {
+    if (!zoomMode) return;
+
+    startX = e.clientX - x;
+    startY = e.clientY - y;
+
+    function move(e) {
+      x = e.clientX - startX;
+      y = e.clientY - startY;
+      update();
+    }
+
+    function up() {
+      window.removeEventListener("mousemove", move);
+      window.removeEventListener("mouseup", up);
+    }
+
+    window.addEventListener("mousemove", move);
+    window.addEventListener("mouseup", up);
+  });
+
+  /* 모바일 핀치 */
+  let lastDist = null;
+
+  canvas.addEventListener("touchmove", e => {
+    if (!zoomMode) return;
+
+    if (e.touches.length === 2) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+
+      if (lastDist) {
+        scale += (dist - lastDist) * 0.005;
+        scale = Math.min(Math.max(1, scale), 3);
+      }
+
+      lastDist = dist;
+      update();
+    }
+  });
+
+  function update() {
+    canvas.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
+  }
+
+  function reset() {
+    scale = 1;
+    x = 0;
+    y = 0;
+    update();
+  }
+
+  return { reset };
+}
+
+const zoomLeft = addZoom(leftCanvas);
+const zoomRight = addZoom(rightCanvas);
+
+function resetCanvas(canvas) {
+  canvas.style.transform = "translate(0,0) scale(1)";
+}
+
+window.addEventListener("resize", renderPages);
+</script>
+
+</body>
+</html>
