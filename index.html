@@ -266,27 +266,50 @@
             overflow: hidden;
         }
 
-        /* 오른쪽 수직 3칸: 광고 이미지 (모두 같은 높이) */
+        /* 오른쪽 수직 3칸: 광고 이미지 (모두 같은 높이, 뉴스가 아님을 AD 표시로 구분) */
         .right-vertical-news.ad-mode {
             gap: 12px;
         }
 
         .right-vertical-ad {
             flex: 1 1 0;
-            min-height: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #ffffff;
+            min-height: 60px;
+            min-width: 0;
+            position: relative;
+            display: block;
+            background-color: #f6f7f8;
             border: 1px solid #e1e4e8;
             overflow: hidden;
         }
 
         .right-vertical-ad img {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
             object-fit: contain;
+            padding: 4px;
+            box-sizing: border-box;
             display: block;
+        }
+
+        .right-vertical-ad:hover img {
+            opacity: 0.85;
+        }
+
+        .ad-badge {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #ffffff;
+            background-color: rgba(0, 0, 0, 0.55);
+            padding: 1px 6px;
+            line-height: 1.5;
         }
 
         .bottom-news-grid {
@@ -389,10 +412,10 @@
             margin: 0 auto;
         }
 
-        /* 카테고리 섹터: 위 2개(사회, 경제) / 아래 3개(정치, 부동산, 문화) */
+        /* 카테고리 섹터: 위 3개(사회, 경제, 정치) / 아래 2개(부동산, 문화) + 오른쪽 서비스 칸 */
         .category-top-row {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
             margin-top: 30px;
         }
@@ -655,12 +678,14 @@
             font-size: 15px;
         }
 
-        /* 아래 3개 카테고리: 최신 기사(사진+제목) 아래에 최신 2개(제목만) */
+        /* 위/아래 카테고리: 최신 기사(사진+제목) 아래에 최신 2개(제목만) */
+        .category-top-row .cat-lead-title,
         .category-bottom-row .cat-lead-title {
             font-size: 15px;
             margin-bottom: 0;
         }
 
+        .category-top-row .cat-side-list,
         .category-bottom-row .cat-side-list {
             margin-top: 12px;
             padding-top: 12px;
@@ -675,6 +700,53 @@
             .opinion-split {
                 gap: 20px;
             }
+        }
+
+        /* 아래 오른쪽 서비스 칸: 동네개발맵 / 월간서오 + 비어 있는 3칸 */
+        .extra-column {
+            gap: 6px;
+        }
+
+        .service-card-body {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .service-card-desc {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #555555;
+            min-width: 0;
+        }
+
+        .service-card-icon {
+            flex-shrink: 0;
+            width: 56px;
+            height: 56px;
+        }
+
+        .service-card-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .extra-empty-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            flex: 1;
+            min-height: 56px;
+            margin-top: 6px;
+        }
+
+        .extra-empty-cell {
+            border: 1px solid #e1e4e8;
+            background-color: #fafbfc;
         }
 
         .no-article-notice {
@@ -786,12 +858,15 @@
                 padding-bottom: 0;
             }
             .right-vertical-news.ad-mode {
+                flex-direction: row;
                 border-top: none;
                 padding-top: 0;
+                gap: 8px;
             }
             .right-vertical-ad {
-                flex: none;
-                height: 90px;
+                flex: 1 1 0;
+                height: 72px;
+                min-height: 0;
             }
 
             .bottom-news-grid {
@@ -913,6 +988,20 @@
             <div class="ad-container" id="randomAdContainer"></div>
         </div>
 
+        <div class="opinion-section">
+            <div class="category-column">
+                <div class="category-col-title">
+                    <a href="category.html?type=opinion">
+                        <span class="category-title-inner">
+                            <span>오피니언</span>
+                            <img src="assets/rarrow.png" alt="바로가기" class="category-arrow-img">
+                        </span>
+                    </a>
+                </div>
+                <div class="category-article-list" id="opinionArticleList"></div>
+            </div>
+        </div>
+
         <div class="category-top-row">
             <div class="category-column">
                 <div class="category-col-title">
@@ -936,9 +1025,6 @@
                 </div>
                 <div class="category-article-list" id="economyArticleList"></div>
             </div>
-        </div>
-
-        <div class="category-bottom-row">
             <div class="category-column">
                 <div class="category-col-title">
                     <a href="category.html?type=politics">
@@ -950,6 +1036,9 @@
                 </div>
                 <div class="category-article-list" id="politicsArticleList"></div>
             </div>
+        </div>
+
+        <div class="category-bottom-row">
             <div class="category-column">
                 <div class="category-col-title">
                     <a href="category.html?type=realestate">
@@ -972,19 +1061,40 @@
                 </div>
                 <div class="category-article-list" id="cultureArticleList"></div>
             </div>
-        </div>
-
-        <div class="opinion-section">
-            <div class="category-column">
-                <div class="category-col-title">
-                    <a href="category.html?type=opinion">
-                        <span class="category-title-inner">
-                            <span>오피니언</span>
-                            <img src="assets/rarrow.png" alt="바로가기" class="category-arrow-img">
-                        </span>
-                    </a>
+            <div class="category-column extra-column">
+                <div class="service-card">
+                    <div class="category-col-title">
+                        <a href="jae.html">
+                            <span class="category-title-inner">
+                                <span>동네개발맵</span>
+                                <img src="assets/rarrow.png" alt="바로가기" class="category-arrow-img">
+                            </span>
+                        </a>
+                    </div>
+                    <div class="service-card-body">
+                        <p class="service-card-desc">우리 동네 개발 소식을 지도로 한눈에 확인하세요.</p>
+                        <div class="service-card-icon"><img src="assets/develop.png" alt="" onerror="this.style.visibility='hidden'"></div>
+                    </div>
                 </div>
-                <div class="category-article-list" id="opinionArticleList"></div>
+                <div class="service-card">
+                    <div class="category-col-title">
+                        <a href="https://sin13248920.github.io/weekly-seo-e-viewer/">
+                            <span class="category-title-inner">
+                                <span>월간서오</span>
+                                <img src="assets/rarrow.png" alt="바로가기" class="category-arrow-img">
+                            </span>
+                        </a>
+                    </div>
+                    <div class="service-card-body">
+                        <p class="service-card-desc">매달 전하는 서오일보의 이야기를 만나보세요.</p>
+                        <div class="service-card-icon"><img src="assets/weekly.png" alt="" onerror="this.style.visibility='hidden'"></div>
+                    </div>
+                </div>
+                <div class="extra-empty-row">
+                    <div class="extra-empty-cell"></div>
+                    <div class="extra-empty-cell"></div>
+                    <div class="extra-empty-cell"></div>
+                </div>
             </div>
         </div>
 
@@ -1141,9 +1251,9 @@
             const subArticles = mainPool.slice(1, 5); 
             // 오른쪽 세로 3칸: ad 폴더의 이미지 3개 (높이 동일)
             const verticalAds = [
-                { src: 'ad/seoilbocrim.png', alt: '서오일보 광고' },
-                { src: 'ad/weeklyseo.png', alt: '위클리서오 광고' },
-                { src: 'ad/seoarchilogo.png', alt: '서오아키 광고' }
+                { src: 'ad/seoilbocrim.png', alt: '서오일보 광고', link: 'https://www.link.com' },
+                { src: 'ad/weeklyseo.png', alt: '위클리서오 광고', link: 'https://www.link.com' },
+                { src: 'ad/seoarchilogo.png', alt: '서오아키 광고', link: 'https://www.link.com' }
             ];
 
             const leadThumbHtml = `<img src="${getThumbUrl(leadArticle.image)}" alt="대표 이미지" onerror="${THUMB_ONERROR}">`;
@@ -1164,9 +1274,10 @@
 
             verticalAds.forEach(ad => {
                 html += `
-                    <div class="right-vertical-ad">
-                        <img src="${ad.src}" alt="${ad.alt}">
-                    </div>
+                    <a href="${ad.link}" target="_blank" rel="noopener noreferrer sponsored" class="right-vertical-ad">
+                        <span class="ad-badge">AD</span>
+                        <img src="${ad.src}" alt="${ad.alt}" onerror="this.style.display='none'">
+                    </a>
                 `;
             });
 
@@ -1204,11 +1315,10 @@
         function renderCategoryNews(articles) {
             const hasCategory = (art, ...names) => art.category && names.some(n => art.category.includes(n));
 
-            // 헤더 메뉴 순서대로 (오피니언은 별도 처리 예정)
-            // wide: 위 2개 (왼쪽 최신 기사 사진+제목+내용 / 오른쪽 나머지 3개 제목만)
-            // compact: 아래 3개 (최신 기사 사진+제목 / 그 아래 최신 2개 제목만)
-            renderCategorySector('societyArticleList', articles.filter(a => hasCategory(a, '사회')), 'wide');
-            renderCategorySector('economyArticleList', articles.filter(a => hasCategory(a, '경제')), 'wide');
+            // 위 3개(사회, 경제, 정치) / 아래 2개(부동산, 문화): 모두 compact
+            // compact: 최신 기사 사진+제목 / 그 아래 최신 2개 제목만
+            renderCategorySector('societyArticleList', articles.filter(a => hasCategory(a, '사회')), 'compact');
+            renderCategorySector('economyArticleList', articles.filter(a => hasCategory(a, '경제')), 'compact');
             renderCategorySector('politicsArticleList', articles.filter(a => hasCategory(a, '정치')), 'compact');
             renderCategorySector('realestateArticleList', articles.filter(a => hasCategory(a, '부동산')), 'compact');
             renderCategorySector('cultureArticleList', articles.filter(a => hasCategory(a, '문화', '생활')), 'compact');
