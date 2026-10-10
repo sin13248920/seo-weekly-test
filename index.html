@@ -266,6 +266,29 @@
             overflow: hidden;
         }
 
+        /* 오른쪽 수직 3칸: 광고 이미지 (모두 같은 높이) */
+        .right-vertical-news.ad-mode {
+            gap: 12px;
+        }
+
+        .right-vertical-ad {
+            flex: 1 1 0;
+            min-height: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffffff;
+            border: 1px solid #e1e4e8;
+            overflow: hidden;
+        }
+
+        .right-vertical-ad img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
         .bottom-news-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -762,6 +785,14 @@
                 border-bottom: none;
                 padding-bottom: 0;
             }
+            .right-vertical-news.ad-mode {
+                border-top: none;
+                padding-top: 0;
+            }
+            .right-vertical-ad {
+                flex: none;
+                height: 90px;
+            }
 
             .bottom-news-grid {
                 grid-template-columns: 1fr;
@@ -1098,7 +1129,7 @@
         function renderMainNews(articles) {
             const container = document.getElementById('topNewsGrid');
 
-            // 대표 기사와 아래 작은 기사 4개에는 오피니언 기사를 제외 (오피니언은 오른쪽 세로 기사에서 표시)
+            // 대표 기사와 아래 작은 기사 4개에는 오피니언 기사를 제외
             const mainPool = articles.filter(art => !(art.category && art.category.includes('오피니언')));
 
             if (mainPool.length === 0) {
@@ -1108,8 +1139,12 @@
 
             const leadArticle = mainPool[0]; 
             const subArticles = mainPool.slice(1, 5); 
-            // 오른쪽 세로 기사: 최신 오피니언 카테고리 기사 3개
-            const verticalArticles = articles.filter(art => art.category && art.category.includes('오피니언')).slice(0, 3);
+            // 오른쪽 세로 3칸: ad 폴더의 이미지 3개 (높이 동일)
+            const verticalAds = [
+                { src: 'ad/seoilbocrim.png', alt: '서오일보 광고' },
+                { src: 'ad/weeklyseo.png', alt: '위클리서오 광고' },
+                { src: 'ad/seoarchilogo.png', alt: '서오아키 광고' }
+            ];
 
             const leadThumbHtml = `<img src="${getThumbUrl(leadArticle.image)}" alt="대표 이미지" onerror="${THUMB_ONERROR}">`;
 
@@ -1124,25 +1159,16 @@
                         <div class="main-lead-thumb">${leadThumbHtml}</div>
                     </a>
                     
-                    <div class="right-vertical-news">
+                    <div class="right-vertical-news ad-mode">
             `;
 
-            for (let i = 0; i < 3; i++) {
-                if (verticalArticles[i]) {
-                    const art = verticalArticles[i];
-                    html += `
-                        <a href="viewer.html?id=${art.id}" class="right-vertical-card">
-                            <div class="right-vertical-title">${art.title}</div>
-                        </a>
-                    `;
-                } else {
-                    html += `
-                        <div class="right-vertical-card" style="visibility: hidden;">
-                            <div class="right-vertical-title">&nbsp;</div>
-                        </div>
-                    `;
-                }
-            }
+            verticalAds.forEach(ad => {
+                html += `
+                    <div class="right-vertical-ad">
+                        <img src="${ad.src}" alt="${ad.alt}">
+                    </div>
+                `;
+            });
 
             html += `</div></div>`;
 
